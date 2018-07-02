@@ -94,7 +94,7 @@ class TableProducers extends Component {
     }
 
     getProducerLatency(producerIndex) {
-        let timeOut = 2000;
+        let timeOut = 3000;
         let timer;
         let url = this.state.producers[producerIndex].url;
         let pName = this.state.producers[producerIndex].owner;
@@ -113,7 +113,7 @@ class TableProducers extends Component {
 
             let pLatency = new Array(that.state.producers.length);
             pLatency = that.state.producersLatency;
-            pLatency[producerIndex] = latency < timeOut ? latency : 0;
+            pLatency[producerIndex] = latency < timeOut ? latency : "-";
             that.setState({
                 producersLatency: pLatency
             });
