@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Grid, Row, Col, Table } from 'react-bootstrap'
+import ModalProducerInfo from './Modals/ModalProducerInfo'
 import nodeInfoAPI from '../scripts/nodeInfo'
 import getHummanTime from '../scripts/timeHelper'
-import axios from 'axios';
 
 class TableProducers extends Component {
     constructor(props) {
@@ -17,8 +17,9 @@ class TableProducers extends Component {
             blockTime: 0,
             lastTimeProduced: [],
             lastIrrBlockNumber: 0,
-            // currentLatency:0,
-            producersLatency: []
+            producersLatency: [],
+            showModalProducerInfo: false,
+            producerSelected: ''
         }
     }
 
@@ -120,6 +121,13 @@ class TableProducers extends Component {
         }
     }
 
+    showProducerInfo(producerSelected) {
+        this.setState({
+            producerSelected: producerSelected,
+            showModalProducerInfo: !this.state.showModalProducerInfo
+        });
+    }
+    
     renderTableBody() {
         if (this.state.producers) {
             let body =
@@ -129,7 +137,11 @@ class TableProducers extends Component {
                             return (
                                 <tr key={i}>
                                     <td>{val.owner == this.state.activeProducerName ? "Active" : i + 1}</td>
-                                    <td>{val.owner}</td>
+                                    <td>
+                                        <a href="#" onClick={() => this.showProducerInfo(val.owner)}>
+                                            {val.owner}
+                                        </a>
+                                    </td>
                                     <td>{this.state.producersLatency[i]} ms</td>
                                     <td>{val.owner == this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i]} </td>
                                     <td>{val.owner == this.state.activeProducerName ?
@@ -148,6 +160,7 @@ class TableProducers extends Component {
     }
 
     render() {
+        // console.clear();
         return (
             <div>
                 <h4>Block version: {this.state.nodeVersion}</h4>
@@ -169,10 +182,10 @@ class TableProducers extends Component {
                         {this.renderTableBody()}
                     </Table>
                 </div>
-            </div >
+                <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo(' ')} producername={this.state.producerSelected}/>
+            </div>
         );
     }
 }
-
 
 export default TableProducers;
