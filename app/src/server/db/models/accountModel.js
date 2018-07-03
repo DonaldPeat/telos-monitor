@@ -3,14 +3,12 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var AccountModel = new Schema({
-    account: {
-        name: String,
-        ownerPubKey: String,
-        activePubKey: String
-    },
-
+    name: { type: String },
+    ownerPubKey: { type: String },
+    activePubKey: { type: String }
 }, {
         collection: 'accounts'
-    });
+    }
+);
 
 module.exports = mongoose.model('AccountModel', AccountModel);
