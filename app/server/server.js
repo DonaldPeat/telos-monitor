@@ -19,6 +19,7 @@ mongoose.connect(_mongoURL)
     });
 
 var accountRouter = require('./routes/accountRouter');
+var emailRouter = require('./routes/emailRouter');
 
 // Use middlewares to set view engine and post json data to the server
 app.use(express.static('public'));
@@ -27,6 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use('/', accountRouter);
+app.use('/emailserver', emailRouter);
 
 app.listen(_port, () => {
     console.log('server listening...');
