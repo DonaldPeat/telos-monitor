@@ -182,7 +182,7 @@ class TableProducers extends Component {
                         {this.renderTableBody()}
                     </Table>
                 </div>
-                <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo(' ')} producername={this.state.producerSelected}/>
+                <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo('')} producername={this.state.producerSelected}/>
             </div>
         );
     }

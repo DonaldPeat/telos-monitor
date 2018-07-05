@@ -19,17 +19,17 @@ class ModalProducerInfo extends Component {
 
     async componentWillUpdate() {
         if (this.state.producerInfo == null) {
-            let producerInfo = await nodeInfoAPI.getAccountInfo(this.props.producername);
-            if (producerInfo) {
-                this.setState({
-                    producerInfo: producerInfo
-                })
-                console.log(this.state.producerInfo);
-                // console.log(this.getPSTHour(this.state.producerInfo.created));
+            if (this.props.producername != "") {
+                let producerInfo = await nodeInfoAPI.getAccountInfo(this.props.producername);
+                if (producerInfo) {
+                    this.setState({
+                        producerInfo: producerInfo
+                    })
+                }
             }
         }
     }
-
+    
     onModalHide() {
         this.setState({
             producerInfo: null
