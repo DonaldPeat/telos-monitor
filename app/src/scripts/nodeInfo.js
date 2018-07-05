@@ -36,11 +36,24 @@ export default {
         }
     },
 
-    getBlockHeaderState: async (num) => {
+    // getBlockHeaderState: async (num) => {
+    //     try {
+    //         var response = await axios.post(config.endPoint + 'v1/chain/get_block_header_state',
+    //             JSON.stringify({
+    //                 'block_num_or_id': num, 
+    //                 'json':true
+    //             }));
+    //         return response.data;
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // },
+
+    getAccountInfo: async (accountName) => {
         try {
-            var response = await axios.post(config.endPoint + 'v1/chain/get_block_header_state',
+            var response = await axios.post(config.endPoint + 'v1/chain/get_account',
                 JSON.stringify({
-                    'block_num_or_id': num
+                    'account_name': accountName
                 }));
             return response.data;
         } catch (error) {
@@ -48,11 +61,11 @@ export default {
         }
     },
 
-    getAccountInfo: async (accountName) => {
+    getTransactionInfo: async (id) => {
         try {
-            var response = await axios.post(config.endPoint + 'v1/chain/get_account',
+            var response = await axios.post(config.endPoint + 'v1/history/get_transaction',
                 JSON.stringify({
-                    'account_name': accountName
+                    'id': id
                 }));
             return response.data;
         } catch (error) {

@@ -99,7 +99,6 @@ class TableProducers extends Component {
         let url = this.state.producers[producerIndex].url;
         let result = await Axios.post('http://localhost:4200/latency', { host: url+"/bp.json" });
         let latency = result.data.latency;
-        console.log("latency: " + latency);
         let pLatency = new Array(this.state.producers.length);
         pLatency = this.state.producersLatency;
         pLatency[producerIndex] = latency < 1000 ? latency : "-";
@@ -147,13 +146,14 @@ class TableProducers extends Component {
     }
 
     render() {
-        // console.clear();
         return (
             <div>
                 <h4>Block version: {this.state.nodeVersion}</h4>
                 <h6>Block: {this.state.currentBlockNumber}</h6>
                 <h6>Last irreversible block: {this.state.lastIrrBlockNumber}</h6>
-                <div style={{ height: '56em', overflowY: 'scroll' }}>
+                <br/>
+                <h2>Producers</h2>
+                <div style={{ height: '25em', overflowY: 'scroll' }}>
                     <Table responsive>
                         <thead>
                             <tr>
