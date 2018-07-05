@@ -13,7 +13,7 @@ latencyRouter.route('/').post((req, res) => {
         var end = new Date();
         return res.json({
             "host": host,
-            "latency": (end - start) + " ms",
+            "latency": (end - start),
         });
     });
 });

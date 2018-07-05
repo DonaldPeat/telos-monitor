@@ -3,6 +3,7 @@ import { Grid, Row, Col, Table } from 'react-bootstrap'
 import ModalProducerInfo from './Modals/ModalProducerInfo'
 import nodeInfoAPI from '../scripts/nodeInfo'
 import getHummanTime from '../scripts/timeHelper'
+import Axios from 'axios';
 
 class TableProducers extends Component {
     constructor(props) {
@@ -30,8 +31,8 @@ class TableProducers extends Component {
 
     componentDidMount() {
         let producerIndex = 0;
-        setInterval(() => {
-            this.getProducerLatency(producerIndex++);
+        setInterval(async () => {
+            await this.getProducerLatency(producerIndex++);
             if (producerIndex > this.state.producers.length - 1) producerIndex = 0;
         }, 1000);
     }
@@ -61,7 +62,7 @@ class TableProducers extends Component {
                 lastTimeProduced = this.state.lastTimeProduced;
                 lastTimeProduced[producerIndex] = nodeInfo.head_block_time;
 
-                this.getProducerLatency(producerIndex);
+                await this.getProducerLatency(producerIndex);
                 lastProducerIndex = lastProducerIndex;
             }
 
@@ -94,31 +95,17 @@ class TableProducers extends Component {
         return strProducerPercentage;
     }
 
-    getProducerLatency(producerIndex) {
-        let timeOut = 3000;
-        let timer;
+    async getProducerLatency(producerIndex) {
         let url = this.state.producers[producerIndex].url;
-        let pName = this.state.producers[producerIndex].owner;
-        let start = new Date().getTime();
-        let img = new Image();
-        img.src = url;
-        img.onload = pingCheck;
-        img.onerror = pingCheck;
-        let that = this;
-        timer = setTimeout(pingCheck(), timeOut);
-        function pingCheck(arg) {
-            if (timer) clearTimeout(timer);
-
-            let end = new Date().getTime();
-            let latency = end - start;
-
-            let pLatency = new Array(that.state.producers.length);
-            pLatency = that.state.producersLatency;
-            pLatency[producerIndex] = latency < timeOut ? latency : "-";
-            that.setState({
-                producersLatency: pLatency
-            });
-        }
+        let result = await Axios.post('http://localhost:4200/latency', { host: url+"/bp.json" });
+        let latency = result.data.latency;
+        console.log("latency: " + latency);
+        let pLatency = new Array(this.state.producers.length);
+        pLatency = this.state.producersLatency;
+        pLatency[producerIndex] = latency < 1000 ? latency : "-";
+        this.setState({
+            producersLatency: pLatency
+        });
     }
 
     showProducerInfo(producerSelected) {
@@ -127,7 +114,7 @@ class TableProducers extends Component {
             showModalProducerInfo: !this.state.showModalProducerInfo
         });
     }
-    
+
     renderTableBody() {
         if (this.state.producers) {
             let body =
@@ -182,7 +169,7 @@ class TableProducers extends Component {
                         {this.renderTableBody()}
                     </Table>
                 </div>
-                <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo('')} producername={this.state.producerSelected}/>
+                <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo('')} producername={this.state.producerSelected} />
             </div>
         );
     }
