@@ -13,8 +13,6 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-
-
 emailRouter.route('/').post((req, res) => {
     console.log('sending email...');
     var name = req.body.name;
