@@ -41,6 +41,9 @@ class ModalRegisterProducer extends Component {
         producer.url = this.state.url;
         producer.telegramChannel = this.state.telegramChannel;
 
+        console.log(this.getProducerNameValidationState());
+
+        
         serverAPI.registerProducerNode(producer,(res)=>{
             alert(res);
             this.onModalHide();
@@ -54,8 +57,11 @@ class ModalRegisterProducer extends Component {
     }
 
     getProducerNameValidationState() {
-        const length = this.state.producerName.length;
-        if (length != 12) return 'error';
+        const producerRegex = new RegExp(/^[a-z1-5_\-]+$/);
+        const {producerName} = this.state;
+        const length = producerName.length;
+
+        if (length != 12 || !producerRegex.test(producerName)) return 'error';
         else return 'success';
 
         return null;
@@ -65,6 +71,12 @@ class ModalRegisterProducer extends Component {
         this.setState({
             organization: arg.target.value
         })
+    }
+
+    getOrganizationValidationState() {
+        //
+        const {organization} = this.state;
+        return 'success';
     }
 
     onServerLocationChange(arg) {
