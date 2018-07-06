@@ -3,7 +3,7 @@ import { Grid, Row, Col, Table } from 'react-bootstrap'
 import ModalProducerInfo from './Modals/ModalProducerInfo'
 import nodeInfoAPI from '../scripts/nodeInfo'
 import getHummanTime from '../scripts/timeHelper'
-import Axios from 'axios';
+import serverAPI from '../scripts/serverAPI';
 
 class TableProducers extends Component {
     constructor(props) {
@@ -97,8 +97,8 @@ class TableProducers extends Component {
 
     async getProducerLatency(producerIndex) {
         let url = this.state.producers[producerIndex].url;
-        let result = await Axios.post('http://localhost:4200/latency', { host: url+"/bp.json" });
-        let latency = result.data.latency;
+        let result = await serverAPI.getEndpointLatency(url);
+        let latency = result.latency;
         let pLatency = new Array(this.state.producers.length);
         pLatency = this.state.producersLatency;
         pLatency[producerIndex] = latency < 1000 ? latency : "-";

@@ -4,8 +4,6 @@ import nodeInfoAPI from '../../scripts/nodeInfo'
 import getHummanTime from '../../scripts/nodeInfo'
 
 class ModalProducerInfo extends Component {
-    //1MiB = 
-
     constructor(props) {
         super(props);
         this.state = {
@@ -14,7 +12,6 @@ class ModalProducerInfo extends Component {
             One_KiB: 1034.067383,
             EOS_Weight: 10000
         }
-
     }
 
     async componentWillUpdate() {
