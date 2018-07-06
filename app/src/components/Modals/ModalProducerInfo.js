@@ -21,7 +21,7 @@ class ModalProducerInfo extends Component {
                 if (producerInfo) {
                     this.setState({
                         producerInfo: producerInfo
-                    })
+                    });
                 }
             }
         }

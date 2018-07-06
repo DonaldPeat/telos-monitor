@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Grid, Row, Col, Table } from 'react-bootstrap'
 import NodeInfoAPI from '../scripts/nodeInfo'
 import ModalBlockInfo from './Modals/ModalBlockInfo'
+import ModalTransactionInfo from './Modals/ModalTransactionInfo'
 import { PacmanLoader } from 'react-spinners'
 
 class TableBlockTransactions extends Component {
@@ -38,7 +39,7 @@ class TableBlockTransactions extends Component {
             if (arrBlocksProduced.length < this.maxTableItems) {
                 arrBlocksProduced.push(block);
             } else {
-                
+
             }
 
             if (block.transactions) {
@@ -90,7 +91,7 @@ class TableBlockTransactions extends Component {
                         this.state.transactions.map((val, i) => {
                             return (
                                 <tr key={i}>
-                                    <td>{val.trx.id}</td>
+                                    <td><a href="#" onClick={() => this.showHideModalTransactionInfo(val)}>{val.trx.id}</a></td>
                                     <td>{val.blockId}</td>
                                     <td>{val.trx.transaction.expiration}</td>
                                     <td>{val.trx.transaction.actions.length}</td>
@@ -108,17 +109,22 @@ class TableBlockTransactions extends Component {
             blockSelected: blockSelected,
 
         });
-        this.forceUpdate(()=>{
+        this.forceUpdate(() => {
             this.setState({
                 showModalBlockInfo: !this.state.showModalBlockInfo
             });
         })
     }
 
-    showHideModalTransactionInfo() {
+    showHideModalTransactionInfo(txSelected) {
         this.setState({
-            showModalTxInfo: !this.state.showModalTxInfo
+            transactionSelected: txSelected
         });
+        this.forceUpdate(() => {
+            this.setState({
+                showModalTxInfo: !this.state.showModalTxInfo
+            });
+        })
     }
 
     render() {
@@ -168,10 +174,11 @@ class TableBlockTransactions extends Component {
                                 loading={this.state.isLoading}
                             />
                         </div>
-
                     </div>
                 </Col>
+
                 <ModalBlockInfo show={this.state.showModalBlockInfo} onHide={() => this.showHideModalBlockInfo(null)} block={this.state.blockSelected} />
+                <ModalTransactionInfo show={this.state.showModalTxInfo} onHide={() => this.showHideModalTransactionInfo(null)} tx={this.state.transactionSelected} />
             </div>
         )
     }
