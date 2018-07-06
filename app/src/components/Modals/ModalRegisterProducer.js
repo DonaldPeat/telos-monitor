@@ -74,7 +74,6 @@ class ModalRegisterProducer extends Component {
     }
 
     getOrganizationValidationState() {
-        //
         const {organization} = this.state;
         return 'success';
     }
@@ -121,6 +120,21 @@ class ModalRegisterProducer extends Component {
         })
     }
 
+    getOwnerPublicKeyValidationState(){
+        const {ownerPublicKey} = this.state;
+        const length = ownerPublicKey.length;
+        const ownerKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
+        
+        if( ownerPublicKey.slice(0, 3) != 'EOS' ||
+            length != 53 ||
+            !ownerKeyRegex.test(ownerPublicKey) ){
+            return 'error';
+        }else{
+            return 'success';
+        }
+        return null;
+    }
+
     onActivePublicKeyChange(arg) {
         this.setState({
             activePublicKey: arg.target.value
@@ -162,6 +176,7 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtOrganization"
+                            validationstate={this.getOrganizationValidationState()}
                             label="Organization"
                             type="text"
                             value={this.state.organization}
@@ -217,6 +232,7 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtOwnerPublicKey"
+                            validationstate={this.getOwnerPublicKeyValidationState()}
                             label="Owner public key"
                             type="text"
                             help="EOS7d9vjuzCT67Jv9hZrBY8R3LhvHMrHepN1ArSeY3e1EKKaEUEc8"
