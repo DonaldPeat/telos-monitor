@@ -6,7 +6,7 @@ var app = express();
 var cleosRouter = express.Router();
 
 cleosRouter.route('/').post((req, res) => {
-    const SYMBOL = "EOS";
+    const SYMBOL = "TLOS";
     const MEMO = "Regiter producer account.";
     const CPU = "1000";
     const NET = "1000";
