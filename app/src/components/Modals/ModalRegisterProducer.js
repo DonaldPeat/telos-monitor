@@ -114,6 +114,21 @@ class ModalRegisterProducer extends Component {
         })
     }
 
+    getProducerPublicKeyValidationState(){
+        const {producerPublicKey} = this.state;
+        const length = producerPublicKey.length;
+        const producerPublicKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
+
+        if( producerPublicKey.slice(0, 3) != 'EOS' ||
+            length != 53 ||
+            !producerPublicKeyRegex.test(producerPublicKey) ){
+            return 'error';
+        }else{
+            return 'success';
+        }
+        return null;
+    }
+
     onOwnerPublicKeyChange(arg) {
         this.setState({
             ownerPublicKey: arg.target.value
@@ -123,11 +138,11 @@ class ModalRegisterProducer extends Component {
     getOwnerPublicKeyValidationState(){
         const {ownerPublicKey} = this.state;
         const length = ownerPublicKey.length;
-        const ownerKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
+        const ownerPublicKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
         
         if( ownerPublicKey.slice(0, 3) != 'EOS' ||
             length != 53 ||
-            !ownerKeyRegex.test(ownerPublicKey) ){
+            !ownerPublicKeyRegex.test(ownerPublicKey) ){
             return 'error';
         }else{
             return 'success';
@@ -224,6 +239,7 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtProducerPublicKey"
+                            validationstate={this.getProducerPublicKeyValidationState()}
                             label="Producer public key"
                             type="text"
                             help="EOS7d9vjuzCT67Jv9hZrBY8R3LhvHMrHepN1ArSeY3e1EKKaEUEc8"
