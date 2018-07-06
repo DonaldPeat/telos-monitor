@@ -38,8 +38,6 @@ class TableBlockTransactions extends Component {
             let block = await NodeInfoAPI.getBlockInfo(blockNum);
             if (arrBlocksProduced.length < this.maxTableItems) {
                 arrBlocksProduced.push(block);
-            } else {
-
             }
 
             if (block.transactions) {
@@ -91,7 +89,11 @@ class TableBlockTransactions extends Component {
                         this.state.transactions.map((val, i) => {
                             return (
                                 <tr key={i}>
-                                    <td><a href="#" onClick={() => this.showHideModalTransactionInfo(val)}>{val.trx.id}</a></td>
+                                    <td>
+                                        <div style={{ whiteSpace: "noWrap", overflow: "hidden", textOverflow: "ellipsis", width: "25%" }}>
+                                            <a href="#" onClick={() => this.showHideModalTransactionInfo(val)}>{val.trx.id}</a>
+                                        </div>
+                                    </td>
                                     <td>{val.blockId}</td>
                                     <td>{val.trx.transaction.expiration}</td>
                                     <td>{val.trx.transaction.actions.length}</td>
