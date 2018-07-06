@@ -40,9 +40,6 @@ class ModalRegisterProducer extends Component {
         producer.activePublicKey = this.state.activePublicKey;
         producer.url = this.state.url;
         producer.telegramChannel = this.state.telegramChannel;
-
-        console.log(this.getProducerNameValidationState());
-
         
         serverAPI.registerProducerNode(producer,(res)=>{
             alert(res);
@@ -73,11 +70,6 @@ class ModalRegisterProducer extends Component {
         })
     }
 
-    getOrganizationValidationState() {
-        const {organization} = this.state;
-        return 'success';
-    }
-
     onServerLocationChange(arg) {
         this.setState({
             serverLocation: arg.target.value
@@ -90,10 +82,43 @@ class ModalRegisterProducer extends Component {
         })
     }
 
+    getHttpServerAddressValidationState(){
+        const {httpServerAddress} = this.state;
+        const httpServerAddressRegex = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$/g);
+        
+        //
+        let validationTarget = httpServerAddress;
+        if(httpServerAddress.indexOf('http://') === 0){
+            validationTarget = httpServerAddress.slice(7);
+        }
+        return httpServerAddressRegex.test(validationTarget);
+        //return httpServerAddressRegex.test(validationTarget) && httpsServerAddress === '' ? 'success' : 'error';
+    }
+
     onHttpsServerAddressChange(arg) {
         this.setState({
             httpsServerAddress: arg.target.value
         })
+    }
+
+    getHttpsServerAddressValidtationState(){
+        const {httpsServerAddress} = this.state;
+        const httpsServerAddressRegex = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$/g);
+    
+        //
+        let validationTarget = httpsServerAddress;
+        if(httpsServerAddress.indexOf('https://') === 0){
+            validationTarget = httpsServerAddress.slice(8);
+        }
+        return httpsServerAddressRegex.test(validationTarget);
+        //return httpsServerAddressRegex.test(validationTarget) && httpServerAddress === '' ? 'success' : 'error';
+    }
+
+    getServerAddressValidationState(){
+        const {httpServerAddress, httpsServerAddress} = this.state;
+        if(this.getHttpServerAddressValidationState() && httpsServerAddress === '') return 'success';
+        if(this.getHttpsServerAddressValidtationState() && httpServerAddress === '') return 'success';
+        return 'error';
     }
 
     onP2pListenEndpointChange(arg) {
@@ -206,7 +231,6 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtOrganization"
-                            validationstate={this.getOrganizationValidationState()}
                             label="Organization"
                             type="text"
                             value={this.state.organization}
@@ -222,17 +246,19 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtHttpServerAddress"
+                            validationstate={this.getServerAddressValidationState()}
                             label="Http server address"
                             type="text"
-                            help="0.0.0.0:8888"
+                            help="0.0.0.0:8888, please choose either HTTP or HTTPS server address"
                             value={this.state.httpServerAddress}
                             onChange={(arg) => this.onHttpServerAddressChange(arg)}
                         />
                         <FormCustomControl
                             id="txtHttpsServerAddress"
+                            validationstate={this.getServerAddressValidationState()}
                             label="Https server address"
                             type="text"
-                            help="0.0.0.0:443"
+                            help="0.0.0.0:443, please choose either HTTP or HTTPS server address"
                             value={this.state.httpsServerAddress}
                             onChange={(arg) => this.onHttpsServerAddressChange(arg)}
                         />
