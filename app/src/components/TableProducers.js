@@ -153,7 +153,7 @@ class TableProducers extends Component {
                 <h6>Last irreversible block: {this.state.lastIrrBlockNumber}</h6>
                 <br/>
                 <h2>Producers</h2>
-                <div style={{ height: '25em', overflowY: 'scroll' }}>
+                <div style={{ height: '15em', overflowY: 'scroll' }}>
                     <Table responsive>
                         <thead>
                             <tr>

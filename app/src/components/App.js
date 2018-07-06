@@ -3,7 +3,7 @@ import '../styles/App.css';
 import nodeInfoAPI from '../scripts/nodeInfo'
 import { Grid, Row, Col,Button } from 'react-bootstrap'
 import TableProducers from './TableProducers'
-import TableTransactions from './TableTransactions';
+import TableBlocksTransactions from './TableBlocksTransactions';
 import ModalRegisterProducer from './Modals/ModalRegisterProducer'
 
 class App extends Component {
@@ -33,7 +33,7 @@ class App extends Component {
         </Row>
         <Row >
           <Col xs={12} md={12}>
-            <TableTransactions />
+            <TableBlocksTransactions />
           </Col>
         </Row>
       </Grid>
