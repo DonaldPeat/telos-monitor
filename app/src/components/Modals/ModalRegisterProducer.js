@@ -41,6 +41,9 @@ class ModalRegisterProducer extends Component {
         producer.url = this.state.url;
         producer.telegramChannel = this.state.telegramChannel;
 
+        console.log(this.getProducerNameValidationState());
+
+        
         serverAPI.registerProducerNode(producer,(res)=>{
             alert(res);
             this.onModalHide();
@@ -54,8 +57,11 @@ class ModalRegisterProducer extends Component {
     }
 
     getProducerNameValidationState() {
-        const length = this.state.producerName.length;
-        if (length != 12) return 'error';
+        const producerRegex = new RegExp(/^[a-z1-5_\-]+$/);
+        const {producerName} = this.state;
+        const length = producerName.length;
+
+        if (length != 12 || !producerRegex.test(producerName)) return 'error';
         else return 'success';
 
         return null;
@@ -65,6 +71,11 @@ class ModalRegisterProducer extends Component {
         this.setState({
             organization: arg.target.value
         })
+    }
+
+    getOrganizationValidationState() {
+        const {organization} = this.state;
+        return 'success';
     }
 
     onServerLocationChange(arg) {
@@ -103,10 +114,40 @@ class ModalRegisterProducer extends Component {
         })
     }
 
+    getProducerPublicKeyValidationState(){
+        const {producerPublicKey} = this.state;
+        const length = producerPublicKey.length;
+        const producerPublicKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
+
+        if( producerPublicKey.slice(0, 3) != 'EOS' ||
+            length != 53 ||
+            !producerPublicKeyRegex.test(producerPublicKey) ){
+            return 'error';
+        }else{
+            return 'success';
+        }
+        return null;
+    }
+
     onOwnerPublicKeyChange(arg) {
         this.setState({
             ownerPublicKey: arg.target.value
         })
+    }
+
+    getOwnerPublicKeyValidationState(){
+        const {ownerPublicKey} = this.state;
+        const length = ownerPublicKey.length;
+        const ownerPublicKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
+        
+        if( ownerPublicKey.slice(0, 3) != 'EOS' ||
+            length != 53 ||
+            !ownerPublicKeyRegex.test(ownerPublicKey) ){
+            return 'error';
+        }else{
+            return 'success';
+        }
+        return null;
     }
 
     onActivePublicKeyChange(arg) {
@@ -150,6 +191,7 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtOrganization"
+                            validationstate={this.getOrganizationValidationState()}
                             label="Organization"
                             type="text"
                             value={this.state.organization}
@@ -197,6 +239,7 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtProducerPublicKey"
+                            validationstate={this.getProducerPublicKeyValidationState()}
                             label="Producer public key"
                             type="text"
                             help="EOS7d9vjuzCT67Jv9hZrBY8R3LhvHMrHepN1ArSeY3e1EKKaEUEc8"
@@ -205,6 +248,7 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtOwnerPublicKey"
+                            validationstate={this.getOwnerPublicKeyValidationState()}
                             label="Owner public key"
                             type="text"
                             help="EOS7d9vjuzCT67Jv9hZrBY8R3LhvHMrHepN1ArSeY3e1EKKaEUEc8"
