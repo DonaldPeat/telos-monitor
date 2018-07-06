@@ -1,13 +1,20 @@
 import React, { Component } from 'react';
 import { Grid, Row, Col, Table } from 'react-bootstrap'
 import NodeInfoAPI from '../scripts/nodeInfo'
+import ModalBlockInfo from './Modals/ModalBlockInfo'
+import { PacmanLoader } from 'react-spinners'
 
 class TableBlockTransactions extends Component {
     constructor(props) {
         super(props);
         this.state = {
             blocksProduced: [],
-            transactions: []
+            transactions: [],
+            blockSelected: {},
+            transactionSelected: {},
+            isLoading: true,
+            showModalBlockInfo: false,
+            showModalTxInfo: false
         }
 
         this.maxTableItems = 30;
@@ -20,7 +27,6 @@ class TableBlockTransactions extends Component {
     }
 
     async updateBlocksAndTransactions() {
-        console.log("here")
         let nodeInfo = await NodeInfoAPI.getInfo();
         let blockNum = nodeInfo.head_block_num;
 
@@ -31,13 +37,15 @@ class TableBlockTransactions extends Component {
             let block = await NodeInfoAPI.getBlockInfo(blockNum);
             if (arrBlocksProduced.length < this.maxTableItems) {
                 arrBlocksProduced.push(block);
+            } else {
+                
             }
 
             if (block.transactions) {
                 let trx = block.transactions;
                 for (let i = 0; i < trx.length; i++) {
                     let tr = trx[i];
-                    if(tr.trx.transaction){
+                    if (tr.trx.transaction) {
                         tr.blockId = block.block_num;
                         arrTransactions.push(tr);
                     }
@@ -48,7 +56,8 @@ class TableBlockTransactions extends Component {
 
         this.setState({
             blocksProduced: arrBlocksProduced,
-            transactions: arrTransactions
+            transactions: arrTransactions,
+            isLoading: false
         });
     }
 
@@ -60,7 +69,7 @@ class TableBlockTransactions extends Component {
                         this.state.blocksProduced.map((val, i) => {
                             return (
                                 <tr key={i}>
-                                    <td>{val.block_num}</td>
+                                    <td><a href="#" onClick={() => this.showHideModalBlockInfo(val)}>{val.block_num}</a></td>
                                     <td>{val.producer}</td>
                                     <td>{val.timestamp}</td>
                                     <td>{val.transactions.length}</td>
@@ -79,7 +88,7 @@ class TableBlockTransactions extends Component {
                 <tbody>
                     {
                         this.state.transactions.map((val, i) => {
-                            return ( 
+                            return (
                                 <tr key={i}>
                                     <td>{val.trx.id}</td>
                                     <td>{val.blockId}</td>
@@ -92,6 +101,24 @@ class TableBlockTransactions extends Component {
                 </tbody>
             return body;
         }
+    }
+
+    showHideModalBlockInfo(blockSelected) {
+        this.setState({
+            blockSelected: blockSelected,
+
+        });
+        this.forceUpdate(()=>{
+            this.setState({
+                showModalBlockInfo: !this.state.showModalBlockInfo
+            });
+        })
+    }
+
+    showHideModalTransactionInfo() {
+        this.setState({
+            showModalTxInfo: !this.state.showModalTxInfo
+        });
     }
 
     render() {
@@ -112,6 +139,12 @@ class TableBlockTransactions extends Component {
                             </thead>
                             {this.renderBlocksTableBody()}
                         </Table>
+                        <div style={{ width: "20%", margin: "0 auto" }}>
+                            <PacmanLoader
+                                color="red" height={50} margin="3px"
+                                loading={this.state.isLoading}
+                            />
+                        </div>
                     </div>
                 </Col>
                 <Col xs={6}>
@@ -129,8 +162,16 @@ class TableBlockTransactions extends Component {
                             </thead>
                             {this.renderTransactionsTableBody()}
                         </Table>
+                        <div style={{ width: "20%", margin: "0 auto" }}>
+                            <PacmanLoader
+                                color="red"
+                                loading={this.state.isLoading}
+                            />
+                        </div>
+
                     </div>
                 </Col>
+                <ModalBlockInfo show={this.state.showModalBlockInfo} onHide={() => this.showHideModalBlockInfo(null)} block={this.state.blockSelected} />
             </div>
         )
     }
