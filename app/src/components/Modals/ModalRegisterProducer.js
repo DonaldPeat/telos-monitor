@@ -19,7 +19,6 @@ class ModalRegisterProducer extends Component {
             activePublicKey: "",
             url: "",
             telegramChannel: "",
-            psswrd: ""
         }
     }
 
@@ -41,7 +40,6 @@ class ModalRegisterProducer extends Component {
         producer.activePublicKey = this.state.activePublicKey;
         producer.url = this.state.url;
         producer.telegramChannel = this.state.telegramChannel;
-        producer.psswrd = this.state.psswrd;
 
         serverAPI.registerProducerNode(producer,(res)=>{
             alert(res);
@@ -129,11 +127,6 @@ class ModalRegisterProducer extends Component {
         })
     }
 
-    onPsswrdChange(arg) {
-        this.setState({
-            psswrd: arg.target.value
-        })
-    }
 
     render() {
         return (
@@ -241,13 +234,6 @@ class ModalRegisterProducer extends Component {
                             help="http://telosfoundation.io"
                             value={this.state.url}
                             onChange={(arg) => this.onUrlChange(arg)}
-                        />
-                        <FormCustomControl
-                            id="txtPassword"
-                            label="Password"
-                            type="password"
-                            value={this.state.psswrd}
-                            onChange={(arg) => this.onPsswrdChange(arg)}
                         />
                     </form>
                 </Modal.Body>
