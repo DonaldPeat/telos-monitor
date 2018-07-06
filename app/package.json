@@ -14,11 +14,13 @@
     "react": "^16.4.1",
     "react-bootstrap": "^0.32.1",
     "react-dom": "^16.4.1",
-    "react-scripts": "1.1.4"
+    "react-scripts": "1.1.4",
+    "shelljs": "^0.8.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "server": "cd server/ && nodemon server.js",
+    "cleos_server": "cd cleosServer/ && nodemon server.js",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
