@@ -3,6 +3,11 @@ import { Modal, Row, Col, Button } from 'react-bootstrap'
 import FormCustomControl from '../FormControls/FormCustomControl'
 import serverAPI from '../../scripts/serverAPI'
 
+//regex
+const urlRegexWithPort = new RegExp(/^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,}):[0-9]+$/);
+const urlRegex = new RegExp(/^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,})$/);
+const ipRegex = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$/g);
+
 class ModalRegisterProducer extends Component {
     constructor(props) {
         super(props);
@@ -84,15 +89,12 @@ class ModalRegisterProducer extends Component {
 
     getHttpServerAddressValidationState(){
         const {httpServerAddress} = this.state;
-        const httpServerAddressRegex = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$/g);
         
-        //
         let validationTarget = httpServerAddress;
         if(httpServerAddress.indexOf('http://') === 0){
             validationTarget = httpServerAddress.slice(7);
         }
-        return httpServerAddressRegex.test(validationTarget);
-        //return httpServerAddressRegex.test(validationTarget) && httpsServerAddress === '' ? 'success' : 'error';
+        return ipRegex.test(validationTarget);
     }
 
     onHttpsServerAddressChange(arg) {
@@ -102,16 +104,13 @@ class ModalRegisterProducer extends Component {
     }
 
     getHttpsServerAddressValidtationState(){
-        const {httpsServerAddress} = this.state;
-        const httpsServerAddressRegex = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$/g);
-    
+        const {httpsServerAddress} = this.state;    
         //
         let validationTarget = httpsServerAddress;
         if(httpsServerAddress.indexOf('https://') === 0){
             validationTarget = httpsServerAddress.slice(8);
         }
-        return httpsServerAddressRegex.test(validationTarget);
-        //return httpsServerAddressRegex.test(validationTarget) && httpServerAddress === '' ? 'success' : 'error';
+        return ipRegex.test(validationTarget);
     }
 
     getServerAddressValidationState(){
@@ -127,10 +126,28 @@ class ModalRegisterProducer extends Component {
         })
     }
 
+    getP2pListenEndpointValidationState(){
+        const {p2pListenEndpoint} = this.state;
+        let validationTarget = p2pListenEndpoint;
+        if(p2pListenEndpoint.indexOf('http://') === 0) validationTarget = p2pListenEndpoint.slice(7);
+        if(p2pListenEndpoint.indexOf('https://') === 0) validationTarget = p2pListenEndpoint.slice(8);
+        return ipRegex.test(validationTarget) ? 'success' : 'error';
+    }
+
     onP2pServerAddressChange(arg) {
         this.setState({
             p2pServerAddress: arg.target.value
         })
+    }
+
+    getP2pServerAddressValidationState(){
+        const {p2pServerAddress} = this.state;
+
+        let validationTarget = p2pServerAddress;
+        if(p2pServerAddress.indexOf('http://') === 0) validationTarget = p2pServerAddress.slice(7);
+        if(p2pServerAddress.indexOf('https://') === 0) validationTarget = p2pServerAddress.slice(8);
+        if(urlRegexWithPort.test(validationTarget) || ipRegex.test(validationTarget)) return 'success';
+        return 'error';
     }
 
     onProducerPublicKeyChange(arg) {
@@ -202,6 +219,15 @@ class ModalRegisterProducer extends Component {
         })
     }
 
+    getUrlValidationState(){
+        const {url} = this.state;
+
+        let validationTarget = url;
+        if(url.indexOf('http://') === 0) validationTarget = url.slice(7);
+        if(url.indexOf('https://') === 0) validationTarget = url.slice(8);
+        return urlRegex.test(validationTarget) ? 'success' : 'error';
+    }
+
     onTelegramChannelchange(arg) {
         this.setState({
             telegramChannel: arg.target.value
@@ -264,6 +290,7 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtP2pListenEndpoint"
+                            validationstate={this.getP2pListenEndpointValidationState()}
                             label="P2P Listen endpoint"
                             type="text"
                             help="0.0.0.0:9876"
@@ -272,6 +299,7 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtP2pServerEndpoint"
+                            validationstate={this.getP2pServerAddressValidationState()}
                             label="P2P server address"
                             type="text"
                             help="IP_ADDRESS:9876"
@@ -315,6 +343,7 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtURL"
+                            validationstate={this.getUrlValidationState()}
                             label="URL"
                             type="text"
                             help="http://telosfoundation.io"
