@@ -3,6 +3,11 @@ import { Modal, Row, Col, Button } from 'react-bootstrap'
 import FormCustomControl from '../FormControls/FormCustomControl'
 import serverAPI from '../../scripts/serverAPI'
 
+//regex
+const urlRegexWithPort = new RegExp(/^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,}):[0-9]+$/);
+const urlRegex = new RegExp(/^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,})$/);
+const ipRegex = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$/g);
+
 class ModalRegisterProducer extends Component {
     constructor(props) {
         super(props);
@@ -40,9 +45,6 @@ class ModalRegisterProducer extends Component {
         producer.activePublicKey = this.state.activePublicKey;
         producer.url = this.state.url;
         producer.telegramChannel = this.state.telegramChannel;
-
-        console.log(this.getProducerNameValidationState());
-
         
         serverAPI.registerProducerNode(producer,(res)=>{
             alert(res);
@@ -73,11 +75,6 @@ class ModalRegisterProducer extends Component {
         })
     }
 
-    getOrganizationValidationState() {
-        const {organization} = this.state;
-        return 'success';
-    }
-
     onServerLocationChange(arg) {
         this.setState({
             serverLocation: arg.target.value
@@ -90,10 +87,37 @@ class ModalRegisterProducer extends Component {
         })
     }
 
+    getHttpServerAddressValidationState(){
+        const {httpServerAddress} = this.state;
+        
+        let validationTarget = httpServerAddress;
+        if(httpServerAddress.indexOf('http://') === 0){
+            validationTarget = httpServerAddress.slice(7);
+        }
+        return ipRegex.test(validationTarget);
+    }
+
     onHttpsServerAddressChange(arg) {
         this.setState({
             httpsServerAddress: arg.target.value
         })
+    }
+
+    getHttpsServerAddressValidtationState(){
+        const {httpsServerAddress} = this.state;    
+        //
+        let validationTarget = httpsServerAddress;
+        if(httpsServerAddress.indexOf('https://') === 0){
+            validationTarget = httpsServerAddress.slice(8);
+        }
+        return ipRegex.test(validationTarget);
+    }
+
+    getServerAddressValidationState(){
+        const {httpServerAddress, httpsServerAddress} = this.state;
+        if(this.getHttpServerAddressValidationState() && httpsServerAddress === '') return 'success';
+        if(this.getHttpsServerAddressValidtationState() && httpServerAddress === '') return 'success';
+        return 'error';
     }
 
     onP2pListenEndpointChange(arg) {
@@ -102,10 +126,28 @@ class ModalRegisterProducer extends Component {
         })
     }
 
+    getP2pListenEndpointValidationState(){
+        const {p2pListenEndpoint} = this.state;
+        let validationTarget = p2pListenEndpoint;
+        if(p2pListenEndpoint.indexOf('http://') === 0) validationTarget = p2pListenEndpoint.slice(7);
+        if(p2pListenEndpoint.indexOf('https://') === 0) validationTarget = p2pListenEndpoint.slice(8);
+        return ipRegex.test(validationTarget) ? 'success' : 'error';
+    }
+
     onP2pServerAddressChange(arg) {
         this.setState({
             p2pServerAddress: arg.target.value
         })
+    }
+
+    getP2pServerAddressValidationState(){
+        const {p2pServerAddress} = this.state;
+
+        let validationTarget = p2pServerAddress;
+        if(p2pServerAddress.indexOf('http://') === 0) validationTarget = p2pServerAddress.slice(7);
+        if(p2pServerAddress.indexOf('https://') === 0) validationTarget = p2pServerAddress.slice(8);
+        if(urlRegexWithPort.test(validationTarget) || ipRegex.test(validationTarget)) return 'success';
+        return 'error';
     }
 
     onProducerPublicKeyChange(arg) {
@@ -155,11 +197,35 @@ class ModalRegisterProducer extends Component {
             activePublicKey: arg.target.value
         })
     }
+
+    getActivePublicKeyValidationState(){
+        const {activePublicKey} = this.state;
+        const length = activePublicKey.length;
+        const activePublicKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
+        
+        if( activePublicKey.slice(0, 3) != 'EOS' ||
+            length != 53 ||
+            !activePublicKeyRegex.test(activePublicKey) ){
+            return 'error';
+        }else{
+            return 'success';
+        }
+        return null;        
+    }
     
     onUrlChange(arg) {
         this.setState({
             url: arg.target.value
         })
+    }
+
+    getUrlValidationState(){
+        const {url} = this.state;
+
+        let validationTarget = url;
+        if(url.indexOf('http://') === 0) validationTarget = url.slice(7);
+        if(url.indexOf('https://') === 0) validationTarget = url.slice(8);
+        return urlRegex.test(validationTarget) ? 'success' : 'error';
     }
 
     onTelegramChannelchange(arg) {
@@ -191,7 +257,6 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtOrganization"
-                            validationstate={this.getOrganizationValidationState()}
                             label="Organization"
                             type="text"
                             value={this.state.organization}
@@ -207,22 +272,25 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtHttpServerAddress"
+                            validationstate={this.getServerAddressValidationState()}
                             label="Http server address"
                             type="text"
-                            help="0.0.0.0:8888"
+                            help="0.0.0.0:8888, please choose either HTTP or HTTPS server address"
                             value={this.state.httpServerAddress}
                             onChange={(arg) => this.onHttpServerAddressChange(arg)}
                         />
                         <FormCustomControl
                             id="txtHttpsServerAddress"
+                            validationstate={this.getServerAddressValidationState()}
                             label="Https server address"
                             type="text"
-                            help="0.0.0.0:443"
+                            help="0.0.0.0:443, please choose either HTTP or HTTPS server address"
                             value={this.state.httpsServerAddress}
                             onChange={(arg) => this.onHttpsServerAddressChange(arg)}
                         />
                         <FormCustomControl
                             id="txtP2pListenEndpoint"
+                            validationstate={this.getP2pListenEndpointValidationState()}
                             label="P2P Listen endpoint"
                             type="text"
                             help="0.0.0.0:9876"
@@ -231,6 +299,7 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtP2pServerEndpoint"
+                            validationstate={this.getP2pServerAddressValidationState()}
                             label="P2P server address"
                             type="text"
                             help="IP_ADDRESS:9876"
@@ -257,6 +326,7 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtActivePublicKey"
+                            validationstate={this.getActivePublicKeyValidationState()}
                             label="Active public key"
                             type="text"
                             help="EOS7d9vjuzCT67Jv9hZrBY8R3LhvHMrHepN1ArSeY3e1EKKaEUEc8"
@@ -273,6 +343,7 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtURL"
+                            validationstate={this.getUrlValidationState()}
                             label="URL"
                             type="text"
                             help="http://telosfoundation.io"
