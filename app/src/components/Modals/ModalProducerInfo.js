@@ -53,8 +53,7 @@ class ModalProducerInfo extends Component {
             <Modal
                 {...this.props}
                 bsSize="large"
-                aria-labelledby="contained-modal-title-lg"
-            >
+                aria-labelledby="contained-modal-title-lg">
                 <Modal.Header>
                     <Modal.Title id="contained-modal-title-lg">{this.state.producerInfo != null ? "Producer: " + this.state.producerInfo.account_name : " "}</Modal.Title>
                 </Modal.Header>
