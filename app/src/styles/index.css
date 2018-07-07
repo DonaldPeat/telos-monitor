@@ -1,5 +1,24 @@
+/*probably just goint to do the styles here*/
+
 body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	color: #d94e00;
+}
+
+a {
+	color: #f9a73b;
+}
+
+a:hover {
+	color: #f9af39;
+}
+
+.table-responsive thead {
+	background: linear-gradient(to right, rgba(249,175,57,0.5) 0%,rgba(249,175,57,0.1) 40%,rgba(249,175,57,0.1) 60%,rgba(249,175,57,0.5) 100%);
+	padding: 20px 0;
 }
