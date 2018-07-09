@@ -13,9 +13,11 @@ teclosRouter.route('/').post((req, res) => {
     const RAM = "1000";
     const AMOUNT = "1000";
     
-    var accountName = req.body.name;
-    var ownerPubKey = req.body.ownerPublicKey;
-    var activePubKey = req.body.activePublicKey;
+    console.log("req body: ", req.body.producer);
+
+    var accountName = req.body.producer.name;
+    var ownerPubKey = req.body.producer.ownerPublicKey;
+    var activePubKey = req.body.producer.activePublicKey;
 
     // Running teclos commands
     const createAccountCMD = `teclos system newaccount --transfer eosio ${accountName} ${ownerPubKey} ${activePubKey} --stake-net "${NET}.0000 ${SYMBOL}" --stake-cpu "${CPU}.0000 ${SYMBOL}" --buy-ram "${RAM}.0000 ${SYMBOL}"`;
