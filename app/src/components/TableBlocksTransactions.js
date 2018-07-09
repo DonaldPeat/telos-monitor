@@ -22,13 +22,15 @@ class TableBlockTransactions extends Component {
     }
 
     async componentWillMount() {
-        this.updateBlocksAndTransactions();
-
-        setTimeout(() => this.updateBlocksAndTransactions(), 10000);
+        if (this.updateBlocksAndTransactions()) {
+            setTimeout(() => this.updateBlocksAndTransactions(), 10000);
+        }
     }
 
     async updateBlocksAndTransactions() {
         let nodeInfo = await NodeInfoAPI.getInfo();
+        if (!nodeInfo) return false;
+
         let blockNum = nodeInfo.head_block_num;
 
         let arrBlocksProduced = new Array(0);
@@ -130,59 +132,67 @@ class TableBlockTransactions extends Component {
     }
 
     render() {
-        return (
-            <div>
-                <Col xs={6}>
-                    <h2>Blocks</h2>
-                    <h6>Last 30 blocks produced</h6>
-                    <div style={{ height: '15em', overflowY: 'scroll' }}>
-                        <Table responsive>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Producer</th>
-                                    <th>Timestamp</th>
-                                    <th>Trx</th>
-                                </tr>
-                            </thead>
-                            {this.renderBlocksTableBody()}
-                        </Table>
-                        <div style={{ width: "20%", margin: "0 auto" }}>
-                            <PacmanLoader
-                                color="red" height={50} margin="3px"
-                                loading={this.state.isLoading}
-                            />
+        if (this.state.transactions.length < 1) {
+            return (
+                <div>
+                    <h3>There are no blocks and transactions found</h3>
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <Col xs={6}>
+                        <h2>Blocks</h2>
+                        <h6>Last 30 blocks produced</h6>
+                        <div style={{ height: '15em', overflowY: 'scroll' }}>
+                            <Table responsive>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Producer</th>
+                                        <th>Timestamp</th>
+                                        <th>Trx</th>
+                                    </tr>
+                                </thead>
+                                {this.renderBlocksTableBody()}
+                            </Table>
+                            <div style={{ width: "20%", margin: "0 auto" }}>
+                                <PacmanLoader
+                                    color="red" height={50} margin="3px"
+                                    loading={this.state.isLoading}
+                                />
+                            </div>
                         </div>
-                    </div>
-                </Col>
-                <Col xs={6}>
-                    <h2>Transactions</h2>
-                    <h6>Last 30 transactions</h6>
-                    <div style={{ height: '15em', overflowY: 'scroll' }}>
-                        <Table responsive>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>BlockId</th>
-                                    <th>Expiration</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            {this.renderTransactionsTableBody()}
-                        </Table>
-                        <div style={{ width: "20%", margin: "0 auto" }}>
-                            <PacmanLoader
-                                color="red"
-                                loading={this.state.isLoading}
-                            />
+                    </Col>
+                    <Col xs={6}>
+                        <h2>Transactions</h2>
+                        <h6>Last 30 transactions</h6>
+                        <div style={{ height: '15em', overflowY: 'scroll' }}>
+                            <Table responsive>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>BlockId</th>
+                                        <th>Expiration</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                {this.renderTransactionsTableBody()}
+                            </Table>
+                            <div style={{ width: "20%", margin: "0 auto" }}>
+                                <PacmanLoader
+                                    color="red"
+                                    loading={this.state.isLoading}
+                                />
+                            </div>
                         </div>
-                    </div>
-                </Col>
+                    </Col>
 
-                <ModalBlockInfo show={this.state.showModalBlockInfo} onHide={() => this.showHideModalBlockInfo(null)} block={this.state.blockSelected} />
-                <ModalTransactionInfo show={this.state.showModalTxInfo} onHide={() => this.showHideModalTransactionInfo(null)} tx={this.state.transactionSelected} />
-            </div>
-        )
+                    <ModalBlockInfo show={this.state.showModalBlockInfo} onHide={() => this.showHideModalBlockInfo(null)} block={this.state.blockSelected} />
+                    <ModalTransactionInfo show={this.state.showModalTxInfo} onHide={() => this.showHideModalTransactionInfo(null)} tx={this.state.transactionSelected} />
+                </div>
+            )
+        }
     }
 }
 

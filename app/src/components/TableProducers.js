@@ -25,8 +25,9 @@ class TableProducers extends Component {
     }
 
     async componentWillMount() {
-        await this.getProducersInfo();
-        await this.updateProducersInfo();
+        if (await this.getProducersInfo()) {
+            await this.updateProducersInfo();
+        }
     }
 
     componentDidMount() {
@@ -39,42 +40,47 @@ class TableProducers extends Component {
 
     async getProducersInfo() {
         let data = await nodeInfoAPI.getProducers();
-        let producers = data.rows;
+        if (data) {
+            let producers = data.rows;
 
-        this.setState({
-            producers: producers,
-            totalVotesWheight: data.total_producer_vote_weight
-        });
+            this.setState({
+                producers: producers,
+                totalVotesWheight: data.total_producer_vote_weight
+            });
+            return true;
+        } else return false;
     }
 
     async updateProducersInfo() {
-        let lastProducerIndex = 0;
-        setInterval(async () => {
-            let nodeInfo = await nodeInfoAPI.getInfo();
-            let producerIndex = this.state.producers.findIndex((bp) => bp.owner == nodeInfo.head_block_producer);
-            let blocksProduced = new Array(this.state.producers.length);
-            let lastTimeProduced = new Array(this.state.producers.length);
+        if (this.state.producers.length > 0) {
+            let lastProducerIndex = 0;
+            setInterval(async () => {
+                let nodeInfo = await nodeInfoAPI.getInfo();
+                let producerIndex = this.state.producers.findIndex((bp) => bp.owner == nodeInfo.head_block_producer);
+                let blocksProduced = new Array(this.state.producers.length);
+                let lastTimeProduced = new Array(this.state.producers.length);
 
-            if (producerIndex > -1) {
-                blocksProduced = this.state.blocksProduced;
-                blocksProduced[producerIndex] = nodeInfo.head_block_num;
+                if (producerIndex > -1) {
+                    blocksProduced = this.state.blocksProduced;
+                    blocksProduced[producerIndex] = nodeInfo.head_block_num;
 
-                lastTimeProduced = this.state.lastTimeProduced;
-                lastTimeProduced[producerIndex] = nodeInfo.head_block_time;
+                    lastTimeProduced = this.state.lastTimeProduced;
+                    lastTimeProduced[producerIndex] = nodeInfo.head_block_time;
 
-                await this.getProducerLatency(producerIndex);
-                lastProducerIndex = lastProducerIndex;
-            }
+                    await this.getProducerLatency(producerIndex);
+                    lastProducerIndex = lastProducerIndex;
+                }
 
-            this.setState({
-                nodeVersion: nodeInfo.server_version,
-                activeProducerName: nodeInfo.head_block_producer,
-                currentBlockNumber: nodeInfo.head_block_num,
-                blockTime: nodeInfo.head_block_time,
-                lastIrrBlockNumber: nodeInfo.last_irreversible_block_num,
-                blocksProduced: blocksProduced
-            });
-        }, 1000);
+                this.setState({
+                    nodeVersion: nodeInfo.server_version,
+                    activeProducerName: nodeInfo.head_block_producer,
+                    currentBlockNumber: nodeInfo.head_block_num,
+                    blockTime: nodeInfo.head_block_time,
+                    lastIrrBlockNumber: nodeInfo.last_irreversible_block_num,
+                    blocksProduced: blocksProduced
+                });
+            }, 1000);
+        }
     }
 
     getLasTimeBlockProduced(bpBlockTime) {
@@ -96,15 +102,17 @@ class TableProducers extends Component {
     }
 
     async getProducerLatency(producerIndex) {
-        let url = this.state.producers[producerIndex].url;
-        let result = await serverAPI.getEndpointLatency(url);
-        let latency = result.latency;
-        let pLatency = new Array(this.state.producers.length);
-        pLatency = this.state.producersLatency;
-        pLatency[producerIndex] = latency < 1000 ? latency : "-";
-        this.setState({
-            producersLatency: pLatency
-        });
+        if (this.state.producers.length > 0) {
+            let url = this.state.producers[producerIndex].url;
+            let result = await serverAPI.getEndpointLatency(url);
+            let latency = result.latency;
+            let pLatency = new Array(this.state.producers.length);
+            pLatency = this.state.producersLatency;
+            pLatency[producerIndex] = latency < 1000 ? latency : "-";
+            this.setState({
+                producersLatency: pLatency
+            });
+        }
     }
 
     showProducerInfo(producerSelected) {
@@ -115,7 +123,7 @@ class TableProducers extends Component {
     }
 
     renderTableBody() {
-        if (this.state.producers) {
+        if (this.state.producers.length > 0) {
             let body =
                 <tbody>
                     {
@@ -142,34 +150,43 @@ class TableProducers extends Component {
                     }
                 </tbody>;
             return body;
-        }
+        } else return (
+            <div>
+            </div>
+        );
     }
 
     render() {
-        return (
-            <div>
-                <h4>Block version: {this.state.nodeVersion}</h4>
-                <h6>Block: {this.state.currentBlockNumber}</h6>
-                <h6>Last irreversible block: {this.state.lastIrrBlockNumber}</h6>
-                <br/>
-                <h2>Producers</h2>
-                <div style={{ height: '15em', overflowY: 'scroll' }}>
-                    <Table responsive>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Latency</th>
-                                <th>Last block</th>
-                                <th>Last time produced</th>
-                                {/* <th>Organization</th> */}
-                                <th>Votes</th>
-                            </tr>
-                        </thead>
-                        {this.renderTableBody()}
-                    </Table>
+        if (this.state.producers.length > 0) {
+            return (
+                <div>
+                    <h4>Block version: {this.state.nodeVersion}</h4>
+                    <h6>Block: {this.state.currentBlockNumber}</h6>
+                    <h6>Last irreversible block: {this.state.lastIrrBlockNumber}</h6>
+                    <br />
+                    <h2>Producers</h2>
+                    <div style={{ height: '15em', overflowY: 'scroll' }}>
+                        <Table responsive>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Latency</th>
+                                    <th>Last block</th>
+                                    <th>Last time produced</th>
+                                    {/* <th>Organization</th> */}
+                                    <th>Votes</th>
+                                </tr>
+                            </thead>
+                            {this.renderTableBody()}
+                        </Table>
+                    </div>
+                    <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo('')} producername={this.state.producerSelected} />
                 </div>
-                <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo('')} producername={this.state.producerSelected} />
+            );
+        } else return (
+            <div>
+                <h3>There are no producers found</h3>
             </div>
         );
     }
