@@ -70,7 +70,11 @@ class TableBlockTransactions extends Component {
                         this.state.blocksProduced.map((val, i) => {
                             return (
                                 <tr key={i}>
-                                    <td><a href="#" onClick={() => this.showHideModalBlockInfo(val)}>{val.block_num}</a></td>
+                                    <td><a href="#" 
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            this.showHideModalBlockInfo(val);
+                                        }}>{val.block_num}</a></td>
                                     <td>{val.producer}</td>
                                     <td>{val.timestamp}</td>
                                     <td>{val.transactions.length}</td>
@@ -130,8 +134,8 @@ class TableBlockTransactions extends Component {
                 <Col xs={12}>
                     <h2>Blocks</h2>
                     <h6>Last 30 blocks produced</h6>
-                    <div style={{ height: '15em', overflowY: 'scroll' }}>
-                        <Table responsive>
+                    <div style={{ height: '30em', overflowY: 'auto' }}>
+                        <Table responsive striped>
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -158,8 +162,8 @@ class TableBlockTransactions extends Component {
                 <Col xs={12}>
                     <h2>Transactions</h2>
                     <h6>Last 30 transactions</h6>
-                    <div style={{ height: '15em', overflowY: 'scroll' }}>
-                        <Table responsive>
+                    <div style={{ height: '30em', overflowY: 'auto' }}>
+                        <Table responsive striped>
                             <thead>
                                 <tr>
                                     <th>#</th>

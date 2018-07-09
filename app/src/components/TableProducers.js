@@ -124,7 +124,10 @@ class TableProducers extends Component {
                                 <tr key={i}>
                                     <td>{val.owner == this.state.activeProducerName ? "Active" : i + 1}</td>
                                     <td>
-                                        <a href="#" onClick={() => this.showProducerInfo(val.owner)}>
+                                        <a href="#" onClick={(e) => {
+                                            e.preventDefault();
+                                            this.showProducerInfo(val.owner);
+                                        }}>
                                             {val.owner}
                                         </a>
                                     </td>
@@ -153,8 +156,8 @@ class TableProducers extends Component {
                 <h6>Last irreversible block: {this.state.lastIrrBlockNumber}</h6>
                 <br/>
                 <h2>Producers</h2>
-                <div style={{ height: '15em', overflowY: 'scroll' }}>
-                    <Table responsive>
+                <div style={{ height: '30em', overflowY: 'auto' }}>
+                    <Table responsive striped>
                         <thead>
                             <tr>
                                 <th>#</th>
