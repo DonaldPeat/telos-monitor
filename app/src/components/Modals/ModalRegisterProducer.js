@@ -31,6 +31,7 @@ class ModalRegisterProducer extends Component {
 
     async componentWillMount() {
         let nodeInfo = await nodeAPI.getInfo();
+        console.log(nodeInfo.server_version);
         let nodeVersion = nodeInfo.server_version;
 
         this.setState({

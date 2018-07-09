@@ -25,7 +25,7 @@ producerRouter.route('/').post((req, res) => {
     pModel.save()
         .then(acc => {
             res.json('Producer added successfully.');
-            axios.get('http://localhost:5300/')
+            axios.post('http://localhost:5300/')
                 .then(res => console.log("response: " + res))
                 .catch(err => console.log("error message: " + err));
         })
