@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Button } from 'react-bootstrap'
 import FormCustomControl from '../FormControls/FormCustomControl'
 import serverAPI from '../../scripts/serverAPI'
+import nodeAPI from '../../scripts/nodeInfo'
 
 //regex
 const urlRegexWithPort = new RegExp(/^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,}):[0-9]+$/);
@@ -12,6 +13,7 @@ class ModalRegisterProducer extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            nodeVersion: "",
             producerName: "",
             organization: "",
             serverLocation: "",
@@ -27,12 +29,22 @@ class ModalRegisterProducer extends Component {
         }
     }
 
+    async componentWillMount() {
+        let nodeInfo = await nodeAPI.getInfo();
+        let nodeVersion = nodeInfo.server_version;
+
+        this.setState({
+            nodeVersion: nodeVersion
+        });
+    }
+
     onModalHide() {
         this.props.onHide();
     }
 
     onRegister() {
         let producer = {};
+        producer.nodeVersion = this.state.nodeVersion;
         producer.name = this.state.producerName;
         producer.organization = this.state.organization;
         producer.serverLocation = this.state.serverLocation;
@@ -45,9 +57,8 @@ class ModalRegisterProducer extends Component {
         producer.activePublicKey = this.state.activePublicKey;
         producer.url = this.state.url;
         producer.telegramChannel = this.state.telegramChannel;
-        
-        serverAPI.registerProducerNode(producer,(res)=>{
-            alert(res);
+
+        serverAPI.registerProducerNode(producer, (res) => {
             this.onModalHide();
         });
     }
@@ -60,7 +71,7 @@ class ModalRegisterProducer extends Component {
 
     getProducerNameValidationState() {
         const producerRegex = new RegExp(/^[a-z1-5_\-]+$/);
-        const {producerName} = this.state;
+        const { producerName } = this.state;
         const length = producerName.length;
 
         if (length != 12 || !producerRegex.test(producerName)) return 'error';
@@ -87,11 +98,11 @@ class ModalRegisterProducer extends Component {
         })
     }
 
-    getHttpServerAddressValidationState(){
-        const {httpServerAddress} = this.state;
-        
+    getHttpServerAddressValidationState() {
+        const { httpServerAddress } = this.state;
+
         let validationTarget = httpServerAddress;
-        if(httpServerAddress.indexOf('http://') === 0){
+        if (httpServerAddress.indexOf('http://') === 0) {
             validationTarget = httpServerAddress.slice(7);
         }
         return ipRegex.test(validationTarget);
@@ -103,20 +114,20 @@ class ModalRegisterProducer extends Component {
         })
     }
 
-    getHttpsServerAddressValidtationState(){
-        const {httpsServerAddress} = this.state;    
+    getHttpsServerAddressValidtationState() {
+        const { httpsServerAddress } = this.state;
         //
         let validationTarget = httpsServerAddress;
-        if(httpsServerAddress.indexOf('https://') === 0){
+        if (httpsServerAddress.indexOf('https://') === 0) {
             validationTarget = httpsServerAddress.slice(8);
         }
         return ipRegex.test(validationTarget);
     }
 
-    getServerAddressValidationState(){
-        const {httpServerAddress, httpsServerAddress} = this.state;
-        if(this.getHttpServerAddressValidationState() && httpsServerAddress === '') return 'success';
-        if(this.getHttpsServerAddressValidtationState() && httpServerAddress === '') return 'success';
+    getServerAddressValidationState() {
+        const { httpServerAddress, httpsServerAddress } = this.state;
+        if (this.getHttpServerAddressValidationState() && httpsServerAddress === '') return 'success';
+        if (this.getHttpsServerAddressValidtationState() && httpServerAddress === '') return 'success';
         return 'error';
     }
 
@@ -126,11 +137,11 @@ class ModalRegisterProducer extends Component {
         })
     }
 
-    getP2pListenEndpointValidationState(){
-        const {p2pListenEndpoint} = this.state;
+    getP2pListenEndpointValidationState() {
+        const { p2pListenEndpoint } = this.state;
         let validationTarget = p2pListenEndpoint;
-        if(p2pListenEndpoint.indexOf('http://') === 0) validationTarget = p2pListenEndpoint.slice(7);
-        if(p2pListenEndpoint.indexOf('https://') === 0) validationTarget = p2pListenEndpoint.slice(8);
+        if (p2pListenEndpoint.indexOf('http://') === 0) validationTarget = p2pListenEndpoint.slice(7);
+        if (p2pListenEndpoint.indexOf('https://') === 0) validationTarget = p2pListenEndpoint.slice(8);
         return ipRegex.test(validationTarget) ? 'success' : 'error';
     }
 
@@ -140,13 +151,13 @@ class ModalRegisterProducer extends Component {
         })
     }
 
-    getP2pServerAddressValidationState(){
-        const {p2pServerAddress} = this.state;
+    getP2pServerAddressValidationState() {
+        const { p2pServerAddress } = this.state;
 
         let validationTarget = p2pServerAddress;
-        if(p2pServerAddress.indexOf('http://') === 0) validationTarget = p2pServerAddress.slice(7);
-        if(p2pServerAddress.indexOf('https://') === 0) validationTarget = p2pServerAddress.slice(8);
-        if(urlRegexWithPort.test(validationTarget) || ipRegex.test(validationTarget)) return 'success';
+        if (p2pServerAddress.indexOf('http://') === 0) validationTarget = p2pServerAddress.slice(7);
+        if (p2pServerAddress.indexOf('https://') === 0) validationTarget = p2pServerAddress.slice(8);
+        if (urlRegexWithPort.test(validationTarget) || ipRegex.test(validationTarget)) return 'success';
         return 'error';
     }
 
@@ -156,16 +167,16 @@ class ModalRegisterProducer extends Component {
         })
     }
 
-    getProducerPublicKeyValidationState(){
-        const {producerPublicKey} = this.state;
+    getProducerPublicKeyValidationState() {
+        const { producerPublicKey } = this.state;
         const length = producerPublicKey.length;
         const producerPublicKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
 
-        if( producerPublicKey.slice(0, 3) != 'EOS' ||
+        if (producerPublicKey.slice(0, 3) != 'EOS' ||
             length != 53 ||
-            !producerPublicKeyRegex.test(producerPublicKey) ){
+            !producerPublicKeyRegex.test(producerPublicKey)) {
             return 'error';
-        }else{
+        } else {
             return 'success';
         }
         return null;
@@ -177,16 +188,16 @@ class ModalRegisterProducer extends Component {
         })
     }
 
-    getOwnerPublicKeyValidationState(){
-        const {ownerPublicKey} = this.state;
+    getOwnerPublicKeyValidationState() {
+        const { ownerPublicKey } = this.state;
         const length = ownerPublicKey.length;
         const ownerPublicKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
-        
-        if( ownerPublicKey.slice(0, 3) != 'EOS' ||
+
+        if (ownerPublicKey.slice(0, 3) != 'EOS' ||
             length != 53 ||
-            !ownerPublicKeyRegex.test(ownerPublicKey) ){
+            !ownerPublicKeyRegex.test(ownerPublicKey)) {
             return 'error';
-        }else{
+        } else {
             return 'success';
         }
         return null;
@@ -198,33 +209,33 @@ class ModalRegisterProducer extends Component {
         })
     }
 
-    getActivePublicKeyValidationState(){
-        const {activePublicKey} = this.state;
+    getActivePublicKeyValidationState() {
+        const { activePublicKey } = this.state;
         const length = activePublicKey.length;
         const activePublicKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
-        
-        if( activePublicKey.slice(0, 3) != 'EOS' ||
+
+        if (activePublicKey.slice(0, 3) != 'EOS' ||
             length != 53 ||
-            !activePublicKeyRegex.test(activePublicKey) ){
+            !activePublicKeyRegex.test(activePublicKey)) {
             return 'error';
-        }else{
+        } else {
             return 'success';
         }
-        return null;        
+        return null;
     }
-    
+
     onUrlChange(arg) {
         this.setState({
             url: arg.target.value
         })
     }
 
-    getUrlValidationState(){
-        const {url} = this.state;
+    getUrlValidationState() {
+        const { url } = this.state;
 
         let validationTarget = url;
-        if(url.indexOf('http://') === 0) validationTarget = url.slice(7);
-        if(url.indexOf('https://') === 0) validationTarget = url.slice(8);
+        if (url.indexOf('http://') === 0) validationTarget = url.slice(7);
+        if (url.indexOf('https://') === 0) validationTarget = url.slice(8);
         return urlRegex.test(validationTarget) ? 'success' : 'error';
     }
 
