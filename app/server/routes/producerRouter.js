@@ -20,12 +20,14 @@ producerRouter.route('/').get((req, res) => {
 producerRouter.route('/').post((req, res) => {
     var producer = req.body.producer;
     console.log(producer);
-    
+
     var pModel = new ProducerModel(producer);
     pModel.save()
         .then(acc => {
             res.json('Producer added successfully.');
-            axios.get('http://localhost:5300/');
+            axios.get('http://localhost:5300/')
+                .then(res => console.log("response: " + res))
+                .catch(err => console.log("error message: " + err));
         })
         .catch((err) => res.status(400).send("unable to save to database"));
 });
