@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link, withRouter} from 'react-router-dom';
 import {Navbar, Nav, NavItem} from 'react-bootstrap';
+import logo from '../img/telos_logo.png';
 
 const Navigation = (props) => {
 
@@ -8,9 +9,17 @@ const Navigation = (props) => {
 		<Navbar fluid={true} collapseOnSelect>
 		  <Navbar.Header>
 		    <Navbar.Toggle />
+		    <Navbar.Brand>
+		      <a href='#' onClick={(e) => {
+		      	e.preventDefault();
+		      	props.history.push('/');
+		      }}>
+		      	<img src={logo} alt='logo' className='img-responsive logo' />
+		      </a>
+		    </Navbar.Brand>
 		  </Navbar.Header>
 		  <Navbar.Collapse>
-			<Nav>
+			<Nav pullRight>
 				<NavItem onClick={() => props.history.push('/')}>
 					PRODUCERS
 				</NavItem>

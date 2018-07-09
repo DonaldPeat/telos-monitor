@@ -1,10 +1,11 @@
 import React from 'react';
 import Navigation from './Navigation';
+import header_background from '../img/header_curved.png';
 
 const Header = () => {
 
 	return (
-		<header className='main_header'>
+		<header style={{backgroundImage: `url(${header_background})`}} className='main_header'>
 			<Navigation />
 		</header>
 	);
