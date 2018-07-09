@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col, Table } from 'react-bootstrap'
+import {Table } from 'react-bootstrap'
 import ModalProducerInfo from './Modals/ModalProducerInfo'
 import nodeInfoAPI from '../scripts/nodeInfo'
 import getHummanTime from '../scripts/timeHelper'
@@ -53,10 +53,9 @@ class TableProducers extends Component {
 
     async updateProducersInfo() {
         if (this.state.producers.length > 0) {
-            let lastProducerIndex = 0;
             setInterval(async () => {
                 let nodeInfo = await nodeInfoAPI.getInfo();
-                let producerIndex = this.state.producers.findIndex((bp) => bp.owner == nodeInfo.head_block_producer);
+                let producerIndex = this.state.producers.findIndex((bp) => bp.owner === nodeInfo.head_block_producer);
                 let blocksProduced = new Array(this.state.producers.length);
                 let lastTimeProduced = new Array(this.state.producers.length);
 
@@ -68,7 +67,6 @@ class TableProducers extends Component {
                     lastTimeProduced[producerIndex] = nodeInfo.head_block_time;
 
                     await this.getProducerLatency(producerIndex);
-                    lastProducerIndex = lastProducerIndex;
                 }
 
                 this.setState({
@@ -130,15 +128,15 @@ class TableProducers extends Component {
                         this.state.producers.map((val, i) => {
                             return (
                                 <tr key={i}>
-                                    <td>{val.owner == this.state.activeProducerName ? "Active" : i + 1}</td>
+                                    <td>{val.owner === this.state.activeProducerName ? "Active" : i + 1}</td>
                                     <td>
-                                        <a href="#" onClick={() => this.showProducerInfo(val.owner)}>
+                                        <a onClick={() => this.showProducerInfo(val.owner)}>
                                             {val.owner}
                                         </a>
                                     </td>
                                     <td>{this.state.producersLatency[i]} ms</td>
-                                    <td>{val.owner == this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i]} </td>
-                                    <td>{val.owner == this.state.activeProducerName ?
+                                    <td>{val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i]} </td>
+                                    <td>{val.owner === this.state.activeProducerName ?
                                         "producing..." :
                                         this.getLasTimeBlockProduced(this.state.lastTimeProduced[i])}
                                     </td>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Row, Col, Button } from 'react-bootstrap'
+import { Modal, Button } from 'react-bootstrap'
 import FormCustomControl from '../FormControls/FormCustomControl'
 import serverAPI from '../../scripts/serverAPI'
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col, Table } from 'react-bootstrap'
+import { Col, Table } from 'react-bootstrap'
 import NodeInfoAPI from '../scripts/nodeInfo'
 import ModalBlockInfo from './Modals/ModalBlockInfo'
 import ModalTransactionInfo from './Modals/ModalTransactionInfo'
@@ -77,7 +77,7 @@ class TableBlockTransactions extends Component {
                         this.state.blocksProduced.map((val, i) => {
                             return (
                                 <tr key={i}>
-                                    <td><a href="#" onClick={() => this.showHideModalBlockInfo(val)}>{val.block_num}</a></td>
+                                    <td><a onClick={() => this.showHideModalBlockInfo(val)}>{val.block_num}</a></td>
                                     <td>{val.producer}</td>
                                     <td>{val.timestamp}</td>
                                     <td>{val.transactions.length}</td>
@@ -110,7 +110,7 @@ class TableBlockTransactions extends Component {
                                 <tr key={i}>
                                     <td>
                                         <div style={{ whiteSpace: "noWrap", overflow: "hidden", textOverflow: "ellipsis", width: "25%" }}>
-                                            <a href="#" onClick={() => this.showHideModalTransactionInfo(val)}>{val.trx.id}</a>
+                                            <a onClick={() => this.showHideModalTransactionInfo(val)}>{val.trx.id}</a>
                                         </div>
                                     </td>
                                     <td>{val.blockId}</td>

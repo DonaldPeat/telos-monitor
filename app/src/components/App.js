@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import '../styles/App.css';
-import nodeInfoAPI from '../scripts/nodeInfo'
 import { Grid, Row, Col,Button } from 'react-bootstrap'
 import TableProducers from './TableProducers'
 import TableBlocksTransactions from './TableBlocksTransactions';
