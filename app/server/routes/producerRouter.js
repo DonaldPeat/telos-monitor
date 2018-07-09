@@ -18,13 +18,11 @@ producerRouter.route('/').get((req, res) => {
 });
 
 producerRouter.route('/').post((req, res) => {
-    var producer = req.body;
-    console.log(producer);
-
-    var pModel = new ProducerModel(producer);
+    var pModel = new ProducerModel(req.body.producer);
     pModel.save()
         .then(acc => {
             res.json('Producer added successfully.');
+            var producer = req.body;
             axios.post('http://localhost:5300/', producer)
                 .then(res => console.log("response: " + res))
                 .catch(err => console.log("error message: " + err));
