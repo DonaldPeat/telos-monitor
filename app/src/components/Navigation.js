@@ -17,6 +17,9 @@ const Navigation = (props) => {
 				<NavItem onClick={() => props.history.push('/blocks')}>
 					BLOCKS
 				</NavItem>
+				<NavItem onClick={() => props.history.push('/transactions')}>
+					TRANSACTIONS
+				</NavItem>
 			</Nav>
 		  </Navbar.Collapse>
 		</Navbar>

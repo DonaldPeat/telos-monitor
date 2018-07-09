@@ -29,6 +29,7 @@ class App extends Component {
             <Button onClick={()=>this.showModalRegisterProducer()}>Register</Button>
             <Switch>
               <Route path='/blocks' component={TableBlocksTransactions} />
+              <Route path='/transactions' component={TableBlocksTransactions} />
               <Route path='/' component={TableProducers} />
             </Switch>
           </Grid>

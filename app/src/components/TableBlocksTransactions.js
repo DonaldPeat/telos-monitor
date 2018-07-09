@@ -3,6 +3,7 @@ import { Grid, Row, Col, Table } from 'react-bootstrap'
 import NodeInfoAPI from '../scripts/nodeInfo'
 import ModalBlockInfo from './Modals/ModalBlockInfo'
 import { PacmanLoader } from 'react-spinners'
+import {withRouter} from 'react-router-dom';
 
 class TableBlockTransactions extends Component {
     constructor(props) {
@@ -122,9 +123,11 @@ class TableBlockTransactions extends Component {
     }
 
     render() {
-        return (
-            <div>
-                <Col xs={6}>
+        const {pathname} = this.props.location;
+
+        const renderBlocks = () => {
+            return (
+                <Col xs={12}>
                     <h2>Blocks</h2>
                     <h6>Last 30 blocks produced</h6>
                     <div style={{ height: '15em', overflowY: 'scroll' }}>
@@ -147,7 +150,12 @@ class TableBlockTransactions extends Component {
                         </div>
                     </div>
                 </Col>
-                <Col xs={6}>
+            );
+        };
+
+        const renderTransactions = () => {
+            return (
+                <Col xs={12}>
                     <h2>Transactions</h2>
                     <h6>Last 30 transactions</h6>
                     <div style={{ height: '15em', overflowY: 'scroll' }}>
@@ -171,6 +179,13 @@ class TableBlockTransactions extends Component {
 
                     </div>
                 </Col>
+            );
+        };
+
+        return (
+            <div>
+                {pathname === '/blocks' ? renderBlocks() : renderTransactions()}
+
                 <ModalBlockInfo show={this.state.showModalBlockInfo} onHide={() => this.showHideModalBlockInfo(null)} block={this.state.blockSelected} />
             </div>
         )
