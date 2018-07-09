@@ -8,13 +8,22 @@ const urlRegexWithPort = new RegExp(/^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0
 const urlRegex = new RegExp(/^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,})$/);
 const ipRegex = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$/g);
 //validate port number
-const hasValidPortNumber = (validationTarget) => {
+/*const hasValidPortNumber = (validationTarget) => {
     const portNumber = validationTarget.slice(validationTarget.lastIndexOf(':') + 1);
     if(isNaN(portNumber)) return false;
     if(parseInt(portNumber) > 65535) return false;
     if(parseInt(portNumber) < 0) return false;
     return true;
-};
+};*/
+
+function hasValidPortNumber(validationTarget){
+    const portNumber = validationTarget.slice(validationTarget.lastIndexOf(':') + 1);
+    console.log(parseInt(portNumber));
+    if(isNaN(portNumber)) return false;
+    if(parseInt(portNumber) > 65535) return false;
+    if(parseInt(portNumber) < 0) return false;
+    return true;  
+}
 
 class ModalRegisterProducer extends Component {
     constructor(props) {
@@ -41,7 +50,9 @@ class ModalRegisterProducer extends Component {
             producerPublicKeyTouched: false,
             ownerPublicKeyTouched: false,
             activePublicKeyTouched: false,
-            urlTouched: false
+            urlTouched: false,
+
+            httpClass: ''
         }
     }
 
@@ -131,41 +142,33 @@ class ModalRegisterProducer extends Component {
         })
     }
 
-    getHttpServerAddressValidationState(){
-        const {httpServerAddress} = this.state;
-        
-        let validationTarget = httpServerAddress;
-        if(httpServerAddress.indexOf('http://') === 0){
-            validationTarget = httpServerAddress.slice(7);
-        }
-        if(!hasValidPortNumber(validationTarget)) return false;
-        return ipRegex.test(validationTarget);
-    }
-
     onHttpsServerAddressChange(arg) {
         this.setState({
             httpsServerAddress: arg.target.value
         })
     }
 
-    getHttpsServerAddressValidtationState(){
-        const {httpsServerAddress} = this.state;    
-        //
-        let validationTarget = httpsServerAddress;
-        if(httpsServerAddress.indexOf('https://') === 0){
-            validationTarget = httpsServerAddress.slice(8);
+    validateServerAddresses(){
+        const {httpServerAddress, httpsServerAddress} = this.state;
+
+        let httpValidationTarget = httpServerAddress;
+        let httpsValidationTarget = httpsServerAddress;
+        if(httpServerAddress.indexOf('http://') === 0){
+            httpValidationTarget = httpServerAddress.slice(7);
         }
-        if(!hasValidPortNumber(validationTarget)) return false;
-        return ipRegex.test(validationTarget);
+        if(httpsServerAddress.indexOf('https://') === 0){
+            httpsValidationTarget = httpsServerAddress.slice(8);
+        }
+        if(
+            (ipRegex.test(httpValidationTarget) && httpsServerAddress === '' && hasValidPortNumber(httpValidationTarget)) ||
+            (ipRegex.test(httpsValidationTarget) && httpServerAddress === '' && hasValidPortNumber(httpsValidationTarget))
+        ){
+            this.setState({httpClass: 'has-success'});
+            return;
+        }
+        this.setState({httpClass: 'has-error'});       
     }
 
-    getServerAddressValidationState(){
-        if(!this.state.serverAddressTouched) return null;
-        const {httpServerAddress, httpsServerAddress} = this.state;
-        if(this.getHttpServerAddressValidationState() && httpsServerAddress === '') return 'success';
-        if(this.getHttpsServerAddressValidtationState() && httpServerAddress === '') return 'success';
-        return 'error';
-    }
 
     onP2pListenEndpointChange(arg) {
         this.setState({
@@ -176,14 +179,16 @@ class ModalRegisterProducer extends Component {
     getP2pListenEndpointValidationState(){
         if(!this.state.p2pListenEndpointTouched) return null;
         const {p2pListenEndpoint} = this.state;
+
         let validationTarget = p2pListenEndpoint;
         //check for http, https
         if(p2pListenEndpoint.indexOf('http://') === 0) validationTarget = p2pListenEndpoint.slice(7);
-        if(p2pListenEndpoint.indexOf('https://') === 0) validationTarget = p2pListenEndpoint.slice(8);
+        else if(p2pListenEndpoint.indexOf('https://') === 0) validationTarget = p2pListenEndpoint.slice(8);
         //validate port number
         if(!hasValidPortNumber(validationTarget)) return 'error';
-
-        return ipRegex.test(validationTarget) ? 'success' : 'error';
+        
+        if(urlRegexWithPort.test(validationTarget) || ipRegex.test(validationTarget)) return 'success';
+        return 'error';
     }
 
     onP2pServerAddressChange(arg) {
@@ -219,8 +224,8 @@ class ModalRegisterProducer extends Component {
         const length = producerPublicKey.length;
         const producerPublicKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
 
-        if( producerPublicKey.slice(0, 3) != 'EOS' ||
-            length != 53 ||
+        if( producerPublicKey.slice(0, 4) != 'TLOS' ||
+            length != 54 ||
             !producerPublicKeyRegex.test(producerPublicKey) ){
             return 'error';
         }else{
@@ -241,8 +246,8 @@ class ModalRegisterProducer extends Component {
         const length = ownerPublicKey.length;
         const ownerPublicKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
         
-        if( ownerPublicKey.slice(0, 3) != 'EOS' ||
-            length != 53 ||
+        if( ownerPublicKey.slice(0, 4) != 'TLOS' ||
+            length != 54 ||
             !ownerPublicKeyRegex.test(ownerPublicKey) ){
             return 'error';
         }else{
@@ -263,8 +268,8 @@ class ModalRegisterProducer extends Component {
         const length = activePublicKey.length;
         const activePublicKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
         
-        if( activePublicKey.slice(0, 3) != 'EOS' ||
-            length != 53 ||
+        if( activePublicKey.slice(0, 4) != 'TLOS' ||
+            length != 54 ||
             !activePublicKeyRegex.test(activePublicKey) ){
             return 'error';
         }else{
@@ -334,22 +339,24 @@ class ModalRegisterProducer extends Component {
                         />
                         <FormCustomControl
                             id="txtHttpServerAddress"
-                            validationstate={this.getServerAddressValidationState()}
                             label="Http server address"
                             type="text"
                             help="0.0.0.0:8888, please choose either HTTP or HTTPS server address"
                             value={this.state.httpServerAddress}
-                            onChange={(arg) => this.onHttpServerAddressChange(arg)}
+                            httpclass={this.state.httpClass}
+                            onChange={e => this.setState({httpServerAddress: e.target.value})}
+                            onKeyUp={() => this.validateServerAddresses()}
                             onFocus={() => this.setState({serverAddressTouched: true})}
                         />
                         <FormCustomControl
                             id="txtHttpsServerAddress"
-                            validationstate={this.getServerAddressValidationState()}
                             label="Https server address"
                             type="text"
                             help="0.0.0.0:443, please choose either HTTP or HTTPS server address"
                             value={this.state.httpsServerAddress}
-                            onChange={(arg) => this.onHttpsServerAddressChange(arg)}
+                            httpclass={this.state.httpClass}
+                            onChange={e => this.setState({httpsServerAddress: e.target.value})}
+                            onKeyUp={() => this.validateServerAddresses()}
                             onFocus={() => this.setState({serverAddressTouched: true})}
                         />
                         <FormCustomControl
@@ -359,7 +366,7 @@ class ModalRegisterProducer extends Component {
                             type="text"
                             help="0.0.0.0:9876"
                             value={this.state.p2pListenEndpoint}
-                            onChange={(arg) => this.onP2pListenEndpointChange(arg)}
+                            onChange={(e) => this.setState({p2pListenEndpoint: e.target.value})}
                             onFocus={() => this.setState({p2pListenEndpointTouched: true})}
                         />
                         <FormCustomControl
@@ -377,7 +384,7 @@ class ModalRegisterProducer extends Component {
                             validationstate={this.getProducerPublicKeyValidationState()}
                             label="Producer public key"
                             type="text"
-                            help="EOS7d9vjuzCT67Jv9hZrBY8R3LhvHMrHepN1ArSeY3e1EKKaEUEc8"
+                            help="TLOS7d9vjuzCT67Jv9hZrBY8R3LhvHMrHepN1ArSeY3e1EKKaEUEc8"
                             value={this.state.producerPublicKey}
                             onChange={(arg) => this.onProducerPublicKeyChange(arg)}
                             onFocus={() => this.setState({producerPublicKeyTouched: true})}
@@ -387,7 +394,7 @@ class ModalRegisterProducer extends Component {
                             validationstate={this.getOwnerPublicKeyValidationState()}
                             label="Owner public key"
                             type="text"
-                            help="EOS7d9vjuzCT67Jv9hZrBY8R3LhvHMrHepN1ArSeY3e1EKKaEUEc8"
+                            help="TLOS7d9vjuzCT67Jv9hZrBY8R3LhvHMrHepN1ArSeY3e1EKKaEUEc8"
                             value={this.state.ownerPublicKey}
                             onChange={(arg) => this.onOwnerPublicKeyChange(arg)}
                             onFocus={() => this.setState({ownerPublicKeyTouched: true})}
@@ -397,7 +404,7 @@ class ModalRegisterProducer extends Component {
                             validationstate={this.getActivePublicKeyValidationState()}
                             label="Active public key"
                             type="text"
-                            help="EOS7d9vjuzCT67Jv9hZrBY8R3LhvHMrHepN1ArSeY3e1EKKaEUEc8"
+                            help="TLOS7d9vjuzCT67Jv9hZrBY8R3LhvHMrHepN1ArSeY3e1EKKaEUEc8"
                             value={this.state.activePublicKey}
                             onChange={(arg) => this.onActivePublicKeyChange(arg)}
                             onFocus={() => this.setState({activePublicKeyTouched: true})}
