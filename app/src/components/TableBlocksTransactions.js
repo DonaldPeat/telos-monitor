@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Grid, Row, Col, Table, Alert } from 'react-bootstrap'
 import NodeInfoAPI from '../scripts/nodeInfo'
 import ModalBlockInfo from './Modals/ModalBlockInfo'
+import ModalTransactionInfo from './Modals/ModalTransactionInfo'
 import { PacmanLoader } from 'react-spinners'
 import {withRouter} from 'react-router-dom';
 
@@ -22,13 +23,15 @@ class TableBlockTransactions extends Component {
     }
 
     async componentWillMount() {
-        this.updateBlocksAndTransactions();
-
-        setTimeout(() => this.updateBlocksAndTransactions(), 10000);
+        if (this.updateBlocksAndTransactions()) {
+            setTimeout(() => this.updateBlocksAndTransactions(), 10000);
+        }
     }
 
     async updateBlocksAndTransactions() {
         let nodeInfo = await NodeInfoAPI.getInfo();
+        if (!nodeInfo) return false;
+
         let blockNum = nodeInfo.head_block_num;
 
         let arrBlocksProduced = new Array(0);
@@ -38,8 +41,6 @@ class TableBlockTransactions extends Component {
             let block = await NodeInfoAPI.getBlockInfo(blockNum);
             if (arrBlocksProduced.length < this.maxTableItems) {
                 arrBlocksProduced.push(block);
-            } else {
-                
             }
 
             if (block.transactions) {
@@ -95,7 +96,11 @@ class TableBlockTransactions extends Component {
                         this.state.transactions.map((val, i) => {
                             return (
                                 <tr key={i}>
-                                    <td>{val.trx.id}</td>
+                                    <td>
+                                        <div style={{ whiteSpace: "noWrap", overflow: "hidden", textOverflow: "ellipsis", width: "25%" }}>
+                                            <a href="#" onClick={() => this.showHideModalTransactionInfo(val)}>{val.trx.id}</a>
+                                        </div>
+                                    </td>
                                     <td>{val.blockId}</td>
                                     <td>{val.trx.transaction.expiration}</td>
                                     <td>{val.trx.transaction.actions.length}</td>
@@ -113,86 +118,86 @@ class TableBlockTransactions extends Component {
             blockSelected: blockSelected,
 
         });
-        this.forceUpdate(()=>{
+        this.forceUpdate(() => {
             this.setState({
                 showModalBlockInfo: !this.state.showModalBlockInfo
             });
         })
     }
 
-    showHideModalTransactionInfo() {
+    showHideModalTransactionInfo(txSelected) {
         this.setState({
-            showModalTxInfo: !this.state.showModalTxInfo
+            transactionSelected: txSelected
         });
+        this.forceUpdate(() => {
+            this.setState({
+                showModalTxInfo: !this.state.showModalTxInfo
+            });
+        })
     }
 
     render() {
-        const {pathname} = this.props.location;
-
-        const renderBlocks = () => {
+        if (this.state.transactions.length < 1) {
             return (
-                <Col xs={12}>
-                    <h2>Blocks</h2>
-                    <h6>Last 30 blocks produced</h6>
-                    <div style={{ height: '30em', overflowY: 'auto' }}>
-                        <Table responsive striped>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Producer</th>
-                                    <th>Timestamp</th>
-                                    <th>Trx</th>
-                                </tr>
-                            </thead>
-                            {this.renderBlocksTableBody()}
-                        </Table>
-                        <div style={{ width: "20%", margin: "0 auto" }}>
-                            <PacmanLoader
-                                color="red" height={50} margin="3px"
-                                loading={this.state.isLoading}
-                            />
-                        </div>
-                    </div>
-                </Col>
+                <div>
+                    <h3>There are no blocks and transactions found</h3>
+                </div>
             );
-        };
-
-        const renderTransactions = () => {
+        } else {
             return (
-                <Col xs={12}>
-                    <h2>Transactions</h2>
-                    <h6>Last 30 transactions</h6>
-                    <div style={{ height: '30em', overflowY: 'auto' }}>
-                        <Table responsive striped>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>BlockId</th>
-                                    <th>Expiration</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            {this.renderTransactionsTableBody()}
-                        </Table>
-                        <div style={{ width: "20%", margin: "0 auto" }}>
-                            <PacmanLoader
-                                color="red"
-                                loading={this.state.isLoading}
-                            />
+                <div>
+                    <Col xs={6}>
+                        <h2>Blocks</h2>
+                        <h6>Last 30 blocks produced</h6>
+                        <div style={{ height: '15em', overflowY: 'scroll' }}>
+                            <Table responsive>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Producer</th>
+                                        <th>Timestamp</th>
+                                        <th>Trx</th>
+                                    </tr>
+                                </thead>
+                                {this.renderBlocksTableBody()}
+                            </Table>
+                            <div style={{ width: "20%", margin: "0 auto" }}>
+                                <PacmanLoader
+                                    color="red" height={50} margin="3px"
+                                    loading={this.state.isLoading}
+                                />
+                            </div>
                         </div>
+                    </Col>
+                    <Col xs={6}>
+                        <h2>Transactions</h2>
+                        <h6>Last 30 transactions</h6>
+                        <div style={{ height: '15em', overflowY: 'scroll' }}>
+                            <Table responsive>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>BlockId</th>
+                                        <th>Expiration</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                {this.renderTransactionsTableBody()}
+                            </Table>
+                            <div style={{ width: "20%", margin: "0 auto" }}>
+                                <PacmanLoader
+                                    color="red"
+                                    loading={this.state.isLoading}
+                                />
+                            </div>
+                        </div>
+                    </Col>
 
-                    </div>
-                </Col>
-            );
-        };
-
-        return (
-            <div>
-                {pathname === '/blocks' ? renderBlocks() : renderTransactions()}
-
-                <ModalBlockInfo show={this.state.showModalBlockInfo} onHide={() => this.showHideModalBlockInfo(null)} block={this.state.blockSelected} />
-            </div>
-        )
+                    <ModalBlockInfo show={this.state.showModalBlockInfo} onHide={() => this.showHideModalBlockInfo(null)} block={this.state.blockSelected} />
+                    <ModalTransactionInfo show={this.state.showModalTxInfo} onHide={() => this.showHideModalTransactionInfo(null)} tx={this.state.transactionSelected} />
+                </div>
+            )
+        }
     }
 }
 
