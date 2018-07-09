@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col, Table } from 'react-bootstrap'
+import { Grid, Row, Col, Table, Alert } from 'react-bootstrap'
 import ModalProducerInfo from './Modals/ModalProducerInfo'
 import nodeInfoAPI from '../scripts/nodeInfo'
 import getHummanTime from '../scripts/timeHelper'
@@ -189,9 +189,9 @@ class TableProducers extends Component {
                 </div>
             );
         } else return (
-            <div>
-                <h3>There are no producers found</h3>
-            </div>
+            <Alert bsStyle="danger">
+              <strong>Server Error:</strong> There are no producers found
+            </Alert>
         );
     }
 }

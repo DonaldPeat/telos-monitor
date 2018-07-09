@@ -49,3 +49,7 @@ img.logo {
 	background: linear-gradient(to right, rgba(249,175,57,0.5) 0%,rgba(249,175,57,0.1) 40%,rgba(249,175,57,0.1) 60%,rgba(249,175,57,0.5) 100%);
 	padding: 20px 0;
 }
+
+.alert-danger {
+	margin-top: 25px;
+}
