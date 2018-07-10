@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import '../styles/tableproducers.css'
 import {Table, Alert } from 'react-bootstrap'
 import ModalProducerInfo from './Modals/ModalProducerInfo'
 import nodeInfoAPI from '../scripts/nodeInfo'
@@ -127,8 +128,8 @@ class TableProducers extends Component {
                     {
                         this.state.producers.map((val, i) => {
                             return (
-                                <tr key={i}>
-                                    <td>{val.owner === this.state.activeProducerName ? "Active" : i + 1}</td>
+                                <tr key={i} className={val.owner === this.state.activeProducerName ? "activeProducer":""}>
+                                    <td>{i + 1}</td>
                                     <td>
                                         <a href="#" onClick={(e) => {
                                             e.preventDefault();
