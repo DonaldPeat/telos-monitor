@@ -1,7 +1,7 @@
 import React from 'react';
 import Navigation from './Navigation';
 import NodeInfo from './NodeInfo';
-import header_background from '../img/header_curved.png';
+import header_background from '../img/Telos_MarketingSite_Header_2400px.png';
 
 const Header = () => {
 

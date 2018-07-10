@@ -6,6 +6,7 @@ import TableBlocksTransactions from './TableBlocksTransactions';
 import ModalRegisterProducer from './Modals/ModalRegisterProducer';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import Header from './Header';
+import Footer from './Footer';
 
 class App extends Component {
   constructor(props) {
@@ -32,6 +33,7 @@ class App extends Component {
               <Route path='/' component={TableProducers} />
             </Switch>
           </Grid>
+          <Footer />
         </div>
       </Router>
     );

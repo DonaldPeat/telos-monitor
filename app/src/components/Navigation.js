@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, withRouter} from 'react-router-dom';
 import {Navbar, Nav, NavItem} from 'react-bootstrap';
-import logo from '../img/telos_logo.png';
+import logo from '../img/Telos_MarketingSite_TelosLogo_500px.png';
 
 const Navigation = (props) => {
 
