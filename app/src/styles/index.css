@@ -23,10 +23,9 @@ a:active {
 
 .main_header {
 	background-size: 100% 100%;
-	background-repeat: no-repeat;
+	padding-top: 0;
+	padding-bottom: 10px;
 	margin-bottom: 50px;
-	padding-bottom: 75px;
-	padding-top: 10px;
 }
 
 .navbar.navbar-default {
@@ -36,14 +35,27 @@ a:active {
 	border: none;
 }
 
-.navbar-brand {
-	padding-top: 0;
-	padding-bottom: 0;
-	padding-left: 25px;
+.navbar-default.navbar {
+	background: transparent;
+	background-image: none;
+	border-bottom: none;
+	border-top: none;
 }
 
-img.logo {
-	max-height: 50px;
+.navbar-brand {
+	height: auto;
+}
+
+.logo {
+	max-width: 250px;
+	position: relative;
+}
+
+@media screen and (min-width: 768px){
+	.navbar-nav > li > a {
+		padding: 50px 15px;
+		font-size: 1.1em;
+	}
 }
 
 .table-responsive thead {
