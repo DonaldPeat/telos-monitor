@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '../styles/tableproducers.css'
-import {Table, Alert } from 'react-bootstrap'
+import { Table, Alert } from 'react-bootstrap'
 import ModalProducerInfo from './Modals/ModalProducerInfo'
 import nodeInfoAPI from '../scripts/nodeInfo'
 import getHummanTime from '../scripts/timeHelper'
@@ -27,6 +27,7 @@ class TableProducers extends Component {
 
     async componentWillMount() {
         if (await this.getProducersInfo()) {
+            console.log(this.state.producers)
             await this.updateProducersInfo();
         }
     }
@@ -128,7 +129,8 @@ class TableProducers extends Component {
                     {
                         this.state.producers.map((val, i) => {
                             return (
-                                <tr key={i} className={val.owner === this.state.activeProducerName ? "activeProducer":""}>
+                                <tr key={i} className={val.owner === this.state.activeProducerName ? "activeProducer" :
+                                    val.is_active == 1 ? "" : "offProducer"}>
                                     <td>{i + 1}</td>
                                     <td>
                                         <a href="#" onClick={(e) => {
@@ -190,7 +192,7 @@ class TableProducers extends Component {
             );
         } else return (
             <Alert bsStyle="danger">
-              <strong>Server Error:</strong> There are no producers found
+                <strong>Server Error:</strong> There are no producers found
             </Alert>
         );
     }
