@@ -25,7 +25,7 @@ class TableBlockTransactions extends Component {
 
     async componentWillMount() {
         if (this.updateBlocksAndTransactions()) {
-            setTimeout(() => this.updateBlocksAndTransactions(), 10000);
+            setTimeout(() => this.updateBlocksAndTransactions(), 15000);
         }
     }
 
@@ -46,28 +46,33 @@ class TableBlockTransactions extends Component {
 
         while (arrBlocksProduced.length < this.maxTableItems || arrTransactions.length < this.maxTableItems) {
             let block = await NodeInfoAPI.getBlockInfo(blockNum);
-            if (arrBlocksProduced.length < this.maxTableItems) {
-                arrBlocksProduced.push(block);
-            }
+            if (block != null) {
+                if (arrBlocksProduced.length < this.maxTableItems) arrBlocksProduced.push(block);
 
-            if (block.transactions) {
-                let trx = block.transactions;
-                for (let i = 0; i < trx.length; i++) {
-                    let tr = trx[i];
-                    if (tr.trx.transaction) {
-                        tr.blockId = block.block_num;
-                        arrTransactions.push(tr);
+                if (block.transactions) {
+                    let trx = block.transactions;
+                    for (let i = 0; i < trx.length; i++) {
+                        let tr = trx[i];
+                        if (tr.trx.transaction) {
+                            tr.blockId = block.block_num;
+                            arrTransactions.push(tr);
+                        }
                     }
                 }
+                blockNum--;
+                this.setState({
+                    blocksProduced: arrBlocksProduced,
+                    transactions: arrTransactions,
+                    isLoading: false
+                });
+            } else {
+                this.setState({
+                    isLoading: false
+                });
             }
-            blockNum--;
         }
 
-        this.setState({
-            blocksProduced: arrBlocksProduced,
-            transactions: arrTransactions,
-            isLoading: false
-        });
+
     }
 
     renderBlocksTableBody() {

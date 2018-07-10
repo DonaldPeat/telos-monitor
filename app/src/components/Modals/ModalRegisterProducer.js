@@ -58,13 +58,19 @@ class ModalRegisterProducer extends Component {
         if (nodeInfo) {
             let nodeVersion = nodeInfo.server_version;
             let data = await nodeAPI.getProducers();
-            let allproducers = data.rows;
-            let allProducersName = allproducers.map(val => val.owner);
+            if (data != null) {
+                let allproducers = data.rows;
+                let allProducersName = allproducers.map(val => val.owner);
 
-            this.setState({
-                nodeVersion: nodeVersion,
-                allProducersName: allProducersName
-            });
+                this.setState({
+                    nodeVersion: nodeVersion,
+                    allProducersName: allProducersName
+                });
+            } else {
+                this.setState({
+                    nodeVersion: nodeVersion
+                });
+            }
         }
     }
 
