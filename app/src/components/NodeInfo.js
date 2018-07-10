@@ -5,7 +5,7 @@ class NodeInfo extends Component {
     constructor() {
         super();
         this.state = {
-            nodeVersion: '',
+            nodeVersion: '-',
             currentBlockNumber: 0,
             lastIrrBlockNumber: 0
         };
@@ -19,11 +19,13 @@ class NodeInfo extends Component {
     async updateProducersInfo() {
         setInterval(async () => {
             let nodeInfo = await nodeInfoAPI.getInfo();
-            this.setState({
-                nodeVersion: nodeInfo.server_version,
-                currentBlockNumber: nodeInfo.head_block_num,
-                lastIrrBlockNumber: nodeInfo.last_irreversible_block_num
-            });
+            if (nodeInfo != null) {
+                this.setState({
+                    nodeVersion: nodeInfo.server_version,
+                    currentBlockNumber: nodeInfo.head_block_num,
+                    lastIrrBlockNumber: nodeInfo.last_irreversible_block_num
+                });
+            }
         }, 1000);
     }
 
