@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Button, Row, Col, Collapse, Well, Glyphicon } from 'react-bootstrap'
+import { Modal, Button, Row, Col,  Well,  } from 'react-bootstrap'
 
 class ModalTransactionInfo extends Component {
     constructor(props) {
@@ -12,7 +12,7 @@ class ModalTransactionInfo extends Component {
     }
 
     isObjEmpty(value) {
-        return Boolean(value && typeof value == 'object') && !Object.keys(value).length;
+        return Boolean(value && typeof value === 'object') && !Object.keys(value).length;
     };
 
     renderActions() {

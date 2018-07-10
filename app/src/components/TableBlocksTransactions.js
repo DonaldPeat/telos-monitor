@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col, Table, Alert } from 'react-bootstrap'
+import { Col, Table, Alert } from 'react-bootstrap'
 import NodeInfoAPI from '../scripts/nodeInfo'
 import ModalBlockInfo from './Modals/ModalBlockInfo'
 import ModalTransactionInfo from './Modals/ModalTransactionInfo'
@@ -16,7 +16,8 @@ class TableBlockTransactions extends Component {
             transactionSelected: {},
             isLoading: true,
             showModalBlockInfo: false,
-            showModalTxInfo: false
+            showModalTxInfo: false,
+            isFindingBlocks: true
         }
 
         this.maxTableItems = 30;
@@ -30,7 +31,13 @@ class TableBlockTransactions extends Component {
 
     async updateBlocksAndTransactions() {
         let nodeInfo = await NodeInfoAPI.getInfo();
-        if (!nodeInfo) return false;
+        if (!nodeInfo) {
+            this.setState({
+                isLoading: false,
+                isFindingBlocks: false
+            });
+            return false;
+        }
 
         let blockNum = nodeInfo.head_block_num;
 
@@ -64,7 +71,7 @@ class TableBlockTransactions extends Component {
     }
 
     renderBlocksTableBody() {
-        if (this.state.blocksProduced) {
+        if (this.state.blocksProduced.length > 0) {
             let body =
                 <tbody>
                     {
@@ -76,6 +83,7 @@ class TableBlockTransactions extends Component {
                                             e.preventDefault();
                                             this.showHideModalBlockInfo(val);
                                         }}>{val.block_num}</a></td>
+
                                     <td>{val.producer}</td>
                                     <td>{val.timestamp}</td>
                                     <td>{val.transactions.length}</td>
@@ -85,11 +93,21 @@ class TableBlockTransactions extends Component {
                     }
                 </tbody>
             return body;
+        } else if (this.state.blocksProduced.length < 1 && !this.state.isFindingBlocks) {
+            return (
+                <tbody>
+                    <tr>
+                        <td colSpan={4}>
+                            <h3>Blocks not found</h3>
+                        </td>
+                    </tr>
+                </tbody>
+            );
         }
     }
 
     renderTransactionsTableBody() {
-        if (this.state.transactions) {
+        if (this.state.transactions.length > 0) {
             let body =
                 <tbody>
                     {
@@ -98,7 +116,7 @@ class TableBlockTransactions extends Component {
                                 <tr key={i}>
                                     <td>
                                         <div style={{ whiteSpace: "noWrap", overflow: "hidden", textOverflow: "ellipsis", width: "25%" }}>
-                                            <a href="#" onClick={() => this.showHideModalTransactionInfo(val)}>{val.trx.id}</a>
+                                            <a onClick={() => this.showHideModalTransactionInfo(val)}>{val.trx.id}</a>
                                         </div>
                                     </td>
                                     <td>{val.blockId}</td>
@@ -110,6 +128,16 @@ class TableBlockTransactions extends Component {
                     }
                 </tbody>
             return body;
+        } else if (this.state.transactions.length < 1 && !this.state.isFindingBlocks) {
+            return (
+                <tbody>
+                    <tr>
+                        <td colSpan={4}>
+                            <h3>Transactions not found</h3>
+                        </td>
+                    </tr>
+                </tbody>
+            );
         }
     }
 
@@ -191,6 +219,7 @@ class TableBlockTransactions extends Component {
                         </div>
                     </div>
                 </Col>
+
             );
         };
 

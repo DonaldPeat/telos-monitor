@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Modal, Button, Row, Col } from 'react-bootstrap'
 import nodeInfoAPI from '../../scripts/nodeInfo'
-import getHummanTime from '../../scripts/nodeInfo'
 
 class ModalProducerInfo extends Component {
     constructor(props) {
@@ -16,7 +15,7 @@ class ModalProducerInfo extends Component {
 
     async componentWillUpdate() {
         if (this.state.producerInfo == null) {
-            if (this.props.producername != "") {
+            if (this.props.producername !== "") {
                 let producerInfo = await nodeInfoAPI.getAccountInfo(this.props.producername);
                 if (producerInfo) {
                     this.setState({

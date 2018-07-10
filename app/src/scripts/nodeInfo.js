@@ -7,7 +7,8 @@ export default {
             var response = await axios.get(config.endPoint + 'v1/chain/get_info');
             return response.data;
         } catch (error) {
-            console.error(error);
+            // console.error(error);
+            return null;
         }
     },
 
@@ -20,7 +21,8 @@ export default {
                 }));
             return response.data;
         } catch (error) {
-            console.error(error);
+            // console.error(error);
+            return null;
         }
     },
 
@@ -32,22 +34,10 @@ export default {
                 }));
             return response.data;
         } catch (error) {
-            console.error(error);
+            // console.error(error);
+            return null;
         }
     },
-
-    // getBlockHeaderState: async (num) => {
-    //     try {
-    //         var response = await axios.post(config.endPoint + 'v1/chain/get_block_header_state',
-    //             JSON.stringify({
-    //                 'block_num_or_id': num, 
-    //                 'json':true
-    //             }));
-    //         return response.data;
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // },
 
     getAccountInfo: async (accountName) => {
         try {
@@ -57,7 +47,8 @@ export default {
                 }));
             return response.data;
         } catch (error) {
-            console.error(error);
+            // console.error(error);
+            return null;
         }
     },
 
@@ -69,7 +60,8 @@ export default {
                 }));
             return response.data;
         } catch (error) {
-            console.error(error);
+            // console.error(error);
+            return null;
         }
     }
 }
