@@ -115,7 +115,7 @@ class ModalRegisterProducer extends Component {
         serverAPI.registerProducerNode(producer,(res)=>{
             alert(res);
            this.onModalHide();
-        }
+        });
                                        
     }
 
