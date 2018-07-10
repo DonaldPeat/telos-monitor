@@ -53,15 +53,17 @@ class ModalRegisterProducer extends Component {
 
     async componentWillMount() {
         let nodeInfo = await nodeAPI.getInfo();
-        let nodeVersion = nodeInfo.server_version;
-        let data = await nodeAPI.getProducers();
-        let allproducers = data.rows;
-        let allProducersName = allproducers.map(val=> val.owner);
-        
-        this.setState({
-            nodeVersion: nodeVersion,
-            allProducersName:allProducersName
-        });
+        if(nodeInfo){
+            let nodeVersion = nodeInfo.server_version;
+            let data = await nodeAPI.getProducers();
+            let allproducers = data.rows;
+            let allProducersName = allproducers.map(val=> val.owner);
+            
+            this.setState({
+                nodeVersion: nodeVersion,
+                allProducersName:allProducersName
+            });
+        }
     }
 
     onModalHide() {

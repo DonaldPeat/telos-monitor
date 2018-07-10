@@ -144,10 +144,10 @@ class TableProducers extends Component {
                                     <td>{this.state.producersLatency[i]} ms</td>
                                     <td>{val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i]} </td>
                                     <td>{val.owner === this.state.activeProducerName ?
-                                        "producing..." :
+                                        "producing block..." :
                                         this.getLasTimeBlockProduced(this.state.lastTimeProduced[i])}
                                     </td>
-                                    {/* <td>-</td> */}
+                                    {/* <td>organization</td> */}
                                     <td>{this.getProducerPercentage(val) + "%"}</td>
                                 </tr>
                             )
@@ -171,7 +171,7 @@ class TableProducers extends Component {
                     <h6>Last irreversible block: {this.state.lastIrrBlockNumber}</h6>
                     <br />
                     <h2>Producers</h2>
-                    <div style={{ height: '30em', overflowY: 'auto' }}>
+                    <div className="tableContainer">
                         <Table responsive>
                             <thead>
                                 <tr>

@@ -1,8 +1,18 @@
-.activeProducer{
+.tableContainer {
+    height: 35em;
+    overflow-y: auto
+}
+
+.loadingContainer {
+    width: 20%;
+    margin: 0 auto;
+}
+
+.activeProducer {
     background: #FADDA8;
     color: #000;
 }
 
-.offProducer{
+.offProducer {
     background: #DF4D31;
 }
