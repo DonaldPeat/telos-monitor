@@ -1,0 +1,3 @@
+[submodule "app/teclosServer/tlos-tool"]
+	path = app/teclosServer/tlos-tool
+	url = https://github.com/Telos-Foundation/tlos-tool.git

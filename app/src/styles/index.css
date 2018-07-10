@@ -23,9 +23,9 @@ a:active {
 
 .main_header {
 	background-size: 100% 100%;
-	padding-top: 0;
+	background-repeat: no-repeat;
+  padding-top: 0;
 	padding-bottom: 10px;
-	margin-bottom: 50px;
 }
 
 .navbar.navbar-default {
