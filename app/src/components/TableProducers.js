@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {Table, Alert } from 'react-bootstrap'
+import '../styles/tableproducers.css'
+import { Table, Alert } from 'react-bootstrap'
 import ModalProducerInfo from './Modals/ModalProducerInfo'
 import nodeInfoAPI from '../scripts/nodeInfo'
 import getHummanTime from '../scripts/timeHelper'
@@ -26,6 +27,7 @@ class TableProducers extends Component {
 
     async componentWillMount() {
         if (await this.getProducersInfo()) {
+            console.log(this.state.producers)
             await this.updateProducersInfo();
         }
     }
@@ -127,8 +129,9 @@ class TableProducers extends Component {
                     {
                         this.state.producers.map((val, i) => {
                             return (
-                                <tr key={i}>
-                                    <td>{val.owner === this.state.activeProducerName ? "Active" : i + 1}</td>
+                                <tr key={i} className={val.owner === this.state.activeProducerName ? "activeProducer" :
+                                    val.is_active == 1 ? "" : "offProducer"}>
+                                    <td>{i + 1}</td>
                                     <td>
                                         <a href="#" onClick={(e) => {
                                             e.preventDefault();
@@ -141,10 +144,10 @@ class TableProducers extends Component {
                                     <td>{this.state.producersLatency[i]} ms</td>
                                     <td>{val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i]} </td>
                                     <td>{val.owner === this.state.activeProducerName ?
-                                        "producing..." :
+                                        "producing block..." :
                                         this.getLasTimeBlockProduced(this.state.lastTimeProduced[i])}
                                     </td>
-                                    {/* <td>-</td> */}
+                                    {/* <td>organization</td> */}
                                     <td>{this.getProducerPercentage(val) + "%"}</td>
                                 </tr>
                             )
@@ -168,7 +171,7 @@ class TableProducers extends Component {
                     <h6>Last irreversible block: {this.state.lastIrrBlockNumber}</h6>
                     <br />
                     <h2>Producers</h2>
-                    <div style={{ height: '30em', overflowY: 'auto' }}>
+                    <div className="tableContainer">
                         <Table responsive>
                             <thead>
                                 <tr>
@@ -189,7 +192,7 @@ class TableProducers extends Component {
             );
         } else return (
             <Alert bsStyle="danger">
-              <strong>Server Error:</strong> There are no producers found
+                <strong>Server Error:</strong> There are no producers found
             </Alert>
         );
     }
