@@ -1,5 +1,55 @@
+/*probably just goint to do the styles here*/
+
 body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	color: #d94e00;
+}
+
+a {
+	color: #f9a73b;
+}
+
+a:hover,
+a:focus,
+a:active {
+	color: #f9af39;
+}
+
+.main_header {
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	margin-bottom: 50px;
+	padding-bottom: 45px;
+	padding-top: 10px;
+}
+
+.navbar.navbar-default {
+	background-color: transparent;
+	background-image: none;
+	box-shadow: none;
+	border: none;
+}
+
+.navbar-brand {
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-left: 25px;
+}
+
+img.logo {
+	max-height: 50px;
+}
+
+.table-responsive thead {
+	background: linear-gradient(to right, rgba(249,175,57,0.5) 0%,rgba(249,175,57,0.1) 40%,rgba(249,175,57,0.1) 60%,rgba(249,175,57,0.5) 100%);
+	padding: 20px 0;
+}
+
+.alert-danger {
+	margin-top: 25px;
 }

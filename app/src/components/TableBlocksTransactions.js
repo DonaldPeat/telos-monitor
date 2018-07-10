@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Col, Table } from 'react-bootstrap'
+import { Col, Table, Alert } from 'react-bootstrap'
 import NodeInfoAPI from '../scripts/nodeInfo'
 import ModalBlockInfo from './Modals/ModalBlockInfo'
 import ModalTransactionInfo from './Modals/ModalTransactionInfo'
 import { PacmanLoader } from 'react-spinners'
+import {withRouter} from 'react-router-dom';
 
 class TableBlockTransactions extends Component {
     constructor(props) {
@@ -77,7 +78,12 @@ class TableBlockTransactions extends Component {
                         this.state.blocksProduced.map((val, i) => {
                             return (
                                 <tr key={i}>
-                                    <td><a onClick={() => this.showHideModalBlockInfo(val)}>{val.block_num}</a></td>
+                                    <td><a href="#" 
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            this.showHideModalBlockInfo(val);
+                                        }}>{val.block_num}</a></td>
+
                                     <td>{val.producer}</td>
                                     <td>{val.timestamp}</td>
                                     <td>{val.transactions.length}</td>
@@ -159,9 +165,10 @@ class TableBlockTransactions extends Component {
     }
 
     render() {
-        return (
-            <div>
-                <Col xs={6}>
+        const {pathname} = this.props.location;
+        const renderBlocks = () => {
+            return (
+                <Col xs={12}>
                     <h2>Blocks</h2>
                     <h6>Last 30 blocks produced</h6>
                     <div style={{ height: '15em', overflowY: 'scroll' }}>
@@ -184,7 +191,12 @@ class TableBlockTransactions extends Component {
                         </div>
                     </div>
                 </Col>
-                <Col xs={6}>
+            );
+        };
+
+        const renderTransactions = () => {
+            return (
+                <Col xs={12}>
                     <h2>Transactions</h2>
                     <h6>Last 30 transactions</h6>
                     <div style={{ height: '15em', overflowY: 'scroll' }}>
@@ -208,11 +220,25 @@ class TableBlockTransactions extends Component {
                     </div>
                 </Col>
 
-                <ModalBlockInfo show={this.state.showModalBlockInfo} onHide={() => this.showHideModalBlockInfo(null)} block={this.state.blockSelected} />
-                <ModalTransactionInfo show={this.state.showModalTxInfo} onHide={() => this.showHideModalTransactionInfo(null)} tx={this.state.transactionSelected} />
-            </div>
-        )
+            );
+        };
+
+        if (this.state.transactions.length < 1) {
+            return (
+                <Alert bsStyle="danger">
+                  <strong>Server Error:</strong> There are no producers found
+                </Alert>
+            );
+        } else {
+            return (
+                <div>
+                    {pathname === '/blocks' ? renderBlocks() : renderTransactions()}
+                    <ModalBlockInfo show={this.state.showModalBlockInfo} onHide={() => this.showHideModalBlockInfo(null)} block={this.state.blockSelected} />
+                    <ModalTransactionInfo show={this.state.showModalTxInfo} onHide={() => this.showHideModalTransactionInfo(null)} tx={this.state.transactionSelected} />
+                </div>
+            )
+        }
     }
 }
 
-export default TableBlockTransactions;
+export default withRouter(TableBlockTransactions);

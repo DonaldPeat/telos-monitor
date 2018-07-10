@@ -3,7 +3,9 @@ import '../styles/App.css';
 import { Grid, Row, Col,Button } from 'react-bootstrap'
 import TableProducers from './TableProducers'
 import TableBlocksTransactions from './TableBlocksTransactions';
-import ModalRegisterProducer from './Modals/ModalRegisterProducer'
+import ModalRegisterProducer from './Modals/ModalRegisterProducer';
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import Header from './Header';
 
 class App extends Component {
   constructor(props) {
@@ -18,24 +20,20 @@ class App extends Component {
   }
   render() {
     return (
-      <Grid fluid>
-        <ModalRegisterProducer show={this.state.showModalRegisterProd} onHide={() => this.showModalRegisterProducer()} />
-        <Row >
-          <Col xs={12} md={12}>
-          <Button onClick={()=>this.showModalRegisterProducer()}>Register</Button>
-          </Col>
-        </Row>
-        <Row >
-          <Col xs={12} md={12}>
-            <TableProducers />
-          </Col>
-        </Row>
-        <Row >
-          <Col xs={12} md={12}>
-            <TableBlocksTransactions />
-          </Col>
-        </Row>
-      </Grid>
+      <Router>
+        <div className='site_wrapper'>
+          <Header />
+          <Grid>
+            <ModalRegisterProducer show={this.state.showModalRegisterProd} onHide={() => this.showModalRegisterProducer()} />
+            <Button onClick={()=>this.showModalRegisterProducer()}>Register</Button>
+            <Switch>
+              <Route path='/blocks' component={TableBlocksTransactions} />
+              <Route path='/transactions' component={TableBlocksTransactions} />
+              <Route path='/' component={TableProducers} />
+            </Switch>
+          </Grid>
+        </div>
+      </Router>
     );
   }
 }

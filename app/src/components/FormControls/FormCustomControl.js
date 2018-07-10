@@ -8,7 +8,7 @@ class FormCustomControl extends Component {
     }
     render() {
         return (
-            <FormGroup controlId={this.props.id} validationState={this.props.validationstate}>
+            <FormGroup controlId={this.props.id} validationState={this.props.validationstate} className={this.props.httpclass}>
                 <ControlLabel>{this.props.label}</ControlLabel>
                 <FormControl {...this.props} />
                 {this.props.help && <HelpBlock>{this.props.help}</HelpBlock>}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Table } from 'react-bootstrap'
+import {Table, Alert } from 'react-bootstrap'
 import ModalProducerInfo from './Modals/ModalProducerInfo'
 import nodeInfoAPI from '../scripts/nodeInfo'
 import getHummanTime from '../scripts/timeHelper'
@@ -130,7 +130,11 @@ class TableProducers extends Component {
                                 <tr key={i}>
                                     <td>{val.owner === this.state.activeProducerName ? "Active" : i + 1}</td>
                                     <td>
-                                        <a onClick={() => this.showProducerInfo(val.owner)}>
+                                        <a href="#" onClick={(e) => {
+                                            e.preventDefault();
+                                            this.showProducerInfo(val.owner);
+                                        }}>
+
                                             {val.owner}
                                         </a>
                                     </td>
@@ -155,6 +159,7 @@ class TableProducers extends Component {
     }
 
     render() {
+
         if (this.state.producers.length > 0) {
             return (
                 <div>
@@ -163,7 +168,7 @@ class TableProducers extends Component {
                     <h6>Last irreversible block: {this.state.lastIrrBlockNumber}</h6>
                     <br />
                     <h2>Producers</h2>
-                    <div style={{ height: '15em', overflowY: 'scroll' }}>
+                    <div style={{ height: '30em', overflowY: 'auto' }}>
                         <Table responsive>
                             <thead>
                                 <tr>
@@ -183,9 +188,9 @@ class TableProducers extends Component {
                 </div>
             );
         } else return (
-            <div>
-                <h3>There are no producers found</h3>
-            </div>
+            <Alert bsStyle="danger">
+              <strong>Server Error:</strong> There are no producers found
+            </Alert>
         );
     }
 }
