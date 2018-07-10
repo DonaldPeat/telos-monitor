@@ -13,12 +13,10 @@ class TableProducers extends Component {
             producers: [],
             activeProducerName: '',
             totalVotesWheight: 0,
-            nodeVersion: '',
             currentBlockNumber: 0,
             blocksProduced: [],
             blockTime: 0,
             lastTimeProduced: [],
-            lastIrrBlockNumber: 0,
             producersLatency: [],
             showModalProducerInfo: false,
             producerSelected: ''
@@ -72,11 +70,9 @@ class TableProducers extends Component {
                 }
 
                 this.setState({
-                    nodeVersion: nodeInfo.server_version,
                     activeProducerName: nodeInfo.head_block_producer,
                     currentBlockNumber: nodeInfo.head_block_num,
                     blockTime: nodeInfo.head_block_time,
-                    lastIrrBlockNumber: nodeInfo.last_irreversible_block_num,
                     blocksProduced: blocksProduced
                 });
             }, 1000);
@@ -166,10 +162,10 @@ class TableProducers extends Component {
         if (this.state.producers.length > 0) {
             return (
                 <div>
-                    <h4>Block version: {this.state.nodeVersion}</h4>
+                    {/* <h4>Block version: {this.state.nodeVersion}</h4>
                     <h6>Block: {this.state.currentBlockNumber}</h6>
                     <h6>Last irreversible block: {this.state.lastIrrBlockNumber}</h6>
-                    <br />
+                    <br /> */}
                     <h2>Producers</h2>
                     <div className="tableContainer">
                         <Table responsive>

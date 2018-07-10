@@ -5,6 +5,7 @@ import TableBlocksTransactions from './TableBlocksTransactions';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import NodeInfo from './NodeInfo';
 
 class App extends Component {
   constructor(props) {
@@ -19,6 +20,7 @@ class App extends Component {
         <div className='site_wrapper'>
           <Header />
           <Grid>
+            <NodeInfo/>
             <Switch>
               <Route path='/blocks' component={TableBlocksTransactions} />
               <Route path='/transactions' component={TableBlocksTransactions} />
