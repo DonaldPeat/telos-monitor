@@ -8,18 +8,10 @@ import nodeAPI from '../../scripts/nodeInfo'
 const urlRegexWithPort = new RegExp(/^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,}):[0-9]+$/);
 const urlRegex = new RegExp(/^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,})$/);
 const ipRegex = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$/g);
-//validate port number
-/*const hasValidPortNumber = (validationTarget) => {
-    const portNumber = validationTarget.slice(validationTarget.lastIndexOf(':') + 1);
-    if(isNaN(portNumber)) return false;
-    if(parseInt(portNumber) > 65535) return false;
-    if(parseInt(portNumber) < 0) return false;
-    return true;
-};*/
 
+//validate port number
 function hasValidPortNumber(validationTarget){
     const portNumber = validationTarget.slice(validationTarget.lastIndexOf(':') + 1);
-    console.log(parseInt(portNumber));
     if(isNaN(portNumber)) return false;
     if(parseInt(portNumber) > 65535) return false;
     if(parseInt(portNumber) < 0) return false;
@@ -100,7 +92,7 @@ class ModalRegisterProducer extends Component {
 
         if(
             this.getProducerNameValidationState() !== 'success' ||
-            this.getServerAddressValidationState() !== 'success' ||
+            this.validateServerAddresses() !== 'has-error' ||
             this.getP2pListenEndpointValidationState() !== 'success' ||
             this.getP2pServerAddressValidationState() !== 'success' ||
             this.getProducerPublicKeyValidationState() !== 'success' ||
@@ -183,20 +175,17 @@ class ModalRegisterProducer extends Component {
         if(httpsServerAddress.indexOf('https://') === 0){
             httpsValidationTarget = httpsServerAddress.slice(8);
         }
+        const httpValidPortNumber = hasValidPortNumber(httpValidationTarget);
+        const httpsValidPortNumber = hasValidPortNumber(httpsValidationTarget);
+
         if(
-            (ipRegex.test(httpValidationTarget) && httpsServerAddress === '' && hasValidPortNumber(httpValidationTarget)) ||
-            (ipRegex.test(httpsValidationTarget) && httpServerAddress === '' && hasValidPortNumber(httpsValidationTarget))
+            (ipRegex.test(httpsValidationTarget) && httpServerAddress === '' && httpsValidPortNumber) ||
+            (ipRegex.test(httpValidationTarget) && httpsServerAddress === '' && httpValidPortNumber)
         ){
             this.setState({httpClass: 'has-success'});
             return;
         }
-    }
-
-    getServerAddressValidationState() {
-        const { httpServerAddress, httpsServerAddress } = this.state;
-        if (this.getHttpServerAddressValidationState() && httpsServerAddress === '') return 'success';
-        if (this.getHttpsServerAddressValidtationState() && httpServerAddress === '') return 'success';
-        return 'error';
+        this.setState({httpClass: 'has-error'});
     }
 
     onP2pListenEndpointChange(arg) {
