@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Modal, Row, Col, Button } from 'react-bootstrap'
+import { Modal, Button } from 'react-bootstrap'
 import FormCustomControl from '../FormControls/FormCustomControl'
 import serverAPI from '../../scripts/serverAPI'
+import nodeAPI from '../../scripts/nodeInfo'
 
 //regex
 const urlRegexWithPort = new RegExp(/^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,}):[0-9]+$/);
@@ -29,6 +30,7 @@ class ModalRegisterProducer extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            nodeVersion: "",
             producerName: "",
             organization: "",
             serverLocation: "",
@@ -56,12 +58,23 @@ class ModalRegisterProducer extends Component {
         }
     }
 
+    async componentWillMount() {
+        let nodeInfo = await nodeAPI.getInfo();
+        console.log(nodeInfo.server_version);
+        let nodeVersion = nodeInfo.server_version;
+
+        this.setState({
+            nodeVersion: nodeVersion
+        });
+    }
+
     onModalHide() {
         this.props.onHide();
     }
 
     onRegister() {
         let producer = {};
+        producer.nodeVersion = this.state.nodeVersion;
         producer.name = this.state.producerName;
         producer.organization = this.state.organization;
         producer.serverLocation = this.state.serverLocation;
@@ -101,8 +114,9 @@ class ModalRegisterProducer extends Component {
         
         serverAPI.registerProducerNode(producer,(res)=>{
             alert(res);
-            this.onModalHide();
-        });
+           this.onModalHide();
+        }
+                                       
     }
 
     onProducerNameChange(arg) {
@@ -115,7 +129,7 @@ class ModalRegisterProducer extends Component {
         if(!this.state.producerNameTouched) return null;
 
         const producerRegex = new RegExp(/^[a-z1-5_\-]+$/);
-        const {producerName} = this.state;
+        const { producerName } = this.state;
         const length = producerName.length;
 
         if (length != 12 || !producerRegex.test(producerName)) return 'error';
@@ -166,9 +180,14 @@ class ModalRegisterProducer extends Component {
             this.setState({httpClass: 'has-success'});
             return;
         }
-        this.setState({httpClass: 'has-error'});       
     }
 
+    getServerAddressValidationState() {
+        const { httpServerAddress, httpsServerAddress } = this.state;
+        if (this.getHttpServerAddressValidationState() && httpsServerAddress === '') return 'success';
+        if (this.getHttpsServerAddressValidtationState() && httpServerAddress === '') return 'success';
+        return 'error';
+    }
 
     onP2pListenEndpointChange(arg) {
         this.setState({
@@ -189,6 +208,7 @@ class ModalRegisterProducer extends Component {
         
         if(urlRegexWithPort.test(validationTarget) || ipRegex.test(validationTarget)) return 'success';
         return 'error';
+
     }
 
     onP2pServerAddressChange(arg) {
@@ -209,6 +229,7 @@ class ModalRegisterProducer extends Component {
         if(!hasValidPortNumber(validationTarget)) return 'error';
         
         if(urlRegexWithPort.test(validationTarget) || ipRegex.test(validationTarget)) return 'success';
+
         return 'error';
     }
 
@@ -228,7 +249,7 @@ class ModalRegisterProducer extends Component {
             length != 54 ||
             !producerPublicKeyRegex.test(producerPublicKey) ){
             return 'error';
-        }else{
+        } else {
             return 'success';
         }
         return null;
@@ -250,7 +271,7 @@ class ModalRegisterProducer extends Component {
             length != 54 ||
             !ownerPublicKeyRegex.test(ownerPublicKey) ){
             return 'error';
-        }else{
+        } else {
             return 'success';
         }
         return null;
@@ -272,12 +293,12 @@ class ModalRegisterProducer extends Component {
             length != 54 ||
             !activePublicKeyRegex.test(activePublicKey) ){
             return 'error';
-        }else{
+        } else {
             return 'success';
         }
-        return null;        
+        return null;
     }
-    
+
     onUrlChange(arg) {
         this.setState({
             url: arg.target.value
@@ -289,8 +310,8 @@ class ModalRegisterProducer extends Component {
         const {url} = this.state;
 
         let validationTarget = url;
-        if(url.indexOf('http://') === 0) validationTarget = url.slice(7);
-        if(url.indexOf('https://') === 0) validationTarget = url.slice(8);
+        if (url.indexOf('http://') === 0) validationTarget = url.slice(7);
+        if (url.indexOf('https://') === 0) validationTarget = url.slice(8);
         return urlRegex.test(validationTarget) ? 'success' : 'error';
     }
 
@@ -299,7 +320,6 @@ class ModalRegisterProducer extends Component {
             telegramChannel: arg.target.value
         })
     }
-
 
     render() {
         return (

@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var ProducerModel = new Schema({
+    nodeVersion: { type: String },
     name: { type: String },
     organization: { type: String },
     serverLocation: { type: String },

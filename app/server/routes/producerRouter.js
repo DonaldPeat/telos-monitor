@@ -18,14 +18,14 @@ producerRouter.route('/').get((req, res) => {
 });
 
 producerRouter.route('/').post((req, res) => {
-    var producer = req.body.producer;
-    console.log(producer);
-    
-    var pModel = new ProducerModel(producer);
+    var pModel = new ProducerModel(req.body.producer);
     pModel.save()
         .then(acc => {
             res.json('Producer added successfully.');
-            axios.get('http://localhost:5300/');
+            var producer = req.body;
+            axios.post('http://localhost:5300/', producer)
+                .then(res => console.log("response: " + res))
+                .catch(err => console.log("error message: " + err));
         })
         .catch((err) => res.status(400).send("unable to save to database"));
 });

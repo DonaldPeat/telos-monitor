@@ -11,9 +11,9 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var cleosRouter = require('./routes/cleosRouter');
-app.use('/', cleosRouter);
+var teclosRouter = require('./routes/teclosRouter');
+app.use('/', teclosRouter);
 
 app.listen(_port, () => {
-    console.log('server cleos listening...');
+    console.log('server teclos listening...');
 });
