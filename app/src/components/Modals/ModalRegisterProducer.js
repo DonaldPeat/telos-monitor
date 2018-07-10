@@ -49,7 +49,10 @@ class ModalRegisterProducer extends Component {
 
             httpClass: '',
 
-            isNodeRegistered: false
+            isNodeRegistered: false,
+            msgFeedbackResult: "",
+            msgFeedbackAccountCreated: "",
+            msgFeedbackTLOSTranfer: ""
         }
     }
 
@@ -126,8 +129,11 @@ class ModalRegisterProducer extends Component {
             }
 
             serverAPI.registerProducerNode(producer, (res) => {
-                alert(res);
+                let response = res.data;
                 this.setState({
+                    msgFeedbackResult: response.result,
+                    msgFeedbackAccountCreated: response.createAccount,
+                    msgFeedbackTLOSTranfer: response.transferTLOS,
                     isNodeRegistered: true
                 });
             });
@@ -462,9 +468,18 @@ class ModalRegisterProducer extends Component {
 
     onDisplayTeclosCommand() {
         const teclosCommandContainer =
-            <Well>
-                Set teclos command here.
-        </Well>
+            <div>
+                <Well>
+                    <p>{this.state.msgFeedbackResult}</p>
+                    <p>{this.state.msgFeedbackAccountCreated}</p>
+                    <p>{this.state.msgFeedbackTLOSTranfer}</p>
+                </Well>
+                <Well>
+                    Please run 'teclos system regproducer accountName publicKey' to register as a producer.
+            </Well>
+            </div>
+
+
 
         return (teclosCommandContainer);
     }
