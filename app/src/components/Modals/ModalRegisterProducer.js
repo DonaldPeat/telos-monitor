@@ -104,24 +104,24 @@ class ModalRegisterProducer extends Component {
             producer.url = this.state.url;
             producer.telegramChannel = this.state.telegramChannel;
 
-            if(this.state.httpOrHttps === 'https') {
-            producer.httpsServerAddress = this.state.serverAddress;
-            producer.httpServerAddress = '';
+            if (this.state.httpOrHttps === 'https') {
+                producer.httpsServerAddress = this.state.serverAddress;
+                producer.httpServerAddress = '';
             } else {
-            producer.httpServerAddress = this.state.serverAddress;
-            producer.httpsServerAddress = '';
+                producer.httpServerAddress = this.state.serverAddress;
+                producer.httpsServerAddress = '';
             }
 
-        if(
-            this.getProducerNameValidationState() !== 'success' ||
-            this.getServerAddressValidationState() !== 'success' ||
-            this.getP2pListenEndpointValidationState() !== 'success' ||
-            this.getP2pServerAddressValidationState() !== 'success' ||
-            this.getProducerPublicKeyValidationState() !== 'success' ||
-            this.getOwnerPublicKeyValidationState() !== 'success' ||
-            this.getActivePublicKeyValidationState() !== 'success' ||
-            this.getUrlValidationState() !== 'success'
-        ){
+            if (
+                this.getProducerNameValidationState() !== 'success' ||
+                this.getServerAddressValidationState() !== 'success' ||
+                this.getP2pListenEndpointValidationState() !== 'success' ||
+                this.getP2pServerAddressValidationState() !== 'success' ||
+                this.getProducerPublicKeyValidationState() !== 'success' ||
+                this.getOwnerPublicKeyValidationState() !== 'success' ||
+                this.getActivePublicKeyValidationState() !== 'success' ||
+                this.getUrlValidationState() !== 'success'
+            ) {
                 this.setState({
                     producerNameTouched: true,
                     serverAddressTouched: true,
@@ -134,23 +134,25 @@ class ModalRegisterProducer extends Component {
                 });
                 alert('There is an error. Please check all of your inputs.');
                 return;
-        } else {
-            serverAPI.registerProducerNode(producer, (res) => {
-                let response = res.data;
-                this.setState({
-                    msgFeedbackResult: response.result,
-                    msgFeedbackAccountCreated: response.createAccount,
-                    msgFeedbackTLOSTranfer: response.transferTLOS,
-                    isNodeRegistered: true
+            } else {
+                serverAPI.registerProducerNode(producer, (res) => {
+                    let response = res.data;
+                    this.setState({
+                        msgFeedbackResult: response.result,
+                        msgFeedbackAccountCreated: response.createAccount,
+                        msgFeedbackTLOSTranfer: response.transferTLOS,
+                        isNodeRegistered: true
+                    });
                 });
-            });
-        }else {
+            }
+        } else {
             this.setState({
                 isNodeRegistered: false
             });
             this.onModalHide();
         }
     }
+
 
     onProducerNameChange(arg) {
         this.setState({
@@ -183,14 +185,14 @@ class ModalRegisterProducer extends Component {
         })
     }
 
-    getServerAddressValidationState(){
-        if(!this.state.serverAddressTouched) return null;
-        const {serverAddress} = this.state;
+    getServerAddressValidationState() {
+        if (!this.state.serverAddressTouched) return null;
+        const { serverAddress } = this.state;
 
         let validationTarget = serverAddress;
-        if(!hasValidPortNumber(validationTarget)) return 'error';
-        if(urlRegexWithPort.test(validationTarget) || ipRegex.test(validationTarget)) return 'success';
-        return 'error';   
+        if (!hasValidPortNumber(validationTarget)) return 'error';
+        if (urlRegexWithPort.test(validationTarget) || ipRegex.test(validationTarget)) return 'success';
+        return 'error';
     }
 
     onHttpServerAddressChange(arg) {
@@ -364,26 +366,26 @@ class ModalRegisterProducer extends Component {
                 value={this.state.serverLocation}
                 onChange={(arg) => this.onServerLocationChange(arg)}
             />
-           <div className='inline'>
-              <FormControl 
-                  componentClass="select" 
-                  placeholder="http or https"
-                  onChange={(e) => this.setState({httpOrHttps: e.target.value})}>
-                  <option value="https">HTTPS</option>
-                  <option value="http">HTTP</option>
-              </FormControl>
-              <FormCustomControl
-                  id="serverAddress"
-                  validationstate={this.getServerAddressValidationState()}
-                  label="Serve IP address"
-                  type="text"
-                  help="0.0.0.0:8888"
-                  value={this.state.serverAddress}
-                  onChange={e => {
-                      this.setState({serverAddress: e.target.value});
-                      console.log(this.state.serverAddress);
-                  }}
-                  onFocus={() => this.setState({serverAddressTouched: true})} />
+            <div className='inline'>
+                <FormControl
+                    componentClass="select"
+                    placeholder="http or https"
+                    onChange={(e) => this.setState({ httpOrHttps: e.target.value })}>
+                    <option value="https">HTTPS</option>
+                    <option value="http">HTTP</option>
+                </FormControl>
+                <FormCustomControl
+                    id="serverAddress"
+                    validationstate={this.getServerAddressValidationState()}
+                    label="Serve IP address"
+                    type="text"
+                    help="0.0.0.0:8888"
+                    value={this.state.serverAddress}
+                    onChange={e => {
+                        this.setState({ serverAddress: e.target.value });
+                        console.log(this.state.serverAddress);
+                    }}
+                    onFocus={() => this.setState({ serverAddressTouched: true })} />
             </div>
             <FormCustomControl
                 id="txtP2pListenEndpoint"
