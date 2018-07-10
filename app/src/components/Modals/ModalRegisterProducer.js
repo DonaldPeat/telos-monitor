@@ -44,6 +44,7 @@ class ModalRegisterProducer extends Component {
             url: "",
             telegramChannel: "",
 
+            allProducersName:[],
             //touch states
             producerNameTouched: false,
             serverAddressTouched: false,
@@ -60,11 +61,14 @@ class ModalRegisterProducer extends Component {
 
     async componentWillMount() {
         let nodeInfo = await nodeAPI.getInfo();
-        console.log(nodeInfo.server_version);
         let nodeVersion = nodeInfo.server_version;
-
+        let data = await nodeAPI.getProducers();
+        let allproducers = data.rows;
+        let allProducersName = allproducers.map(val=> val.owner);
+        
         this.setState({
-            nodeVersion: nodeVersion
+            nodeVersion: nodeVersion,
+            allProducersName:allProducersName
         });
     }
 
@@ -73,6 +77,12 @@ class ModalRegisterProducer extends Component {
     }
 
     onRegister() {
+        //find producer name
+        let pNameIndex = this.state.allProducersName.findIndex((name) => name === this.state.producerName);
+        if(pNameIndex > -1){
+            alert('Producer name already exists.');
+            return;
+        }
         let producer = {};
         producer.nodeVersion = this.state.nodeVersion;
         producer.name = this.state.producerName;
