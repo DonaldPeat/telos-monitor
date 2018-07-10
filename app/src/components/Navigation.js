@@ -1,38 +1,57 @@
-import React from 'react';
-import {Link, withRouter} from 'react-router-dom';
-import {Navbar, Nav, NavItem} from 'react-bootstrap';
+import React, { Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
+import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import logo from '../img/Telos_MarketingSite_TelosLogo_500px.png';
+import ModalRegisterProducer from './Modals/ModalRegisterProducer';
 
-const Navigation = (props) => {
+class Navigation extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {}
+	}
 
-	return (
-		<Navbar fluid={true} collapseOnSelect>
-		  <Navbar.Header>
-		    <Navbar.Toggle />
-		    <Navbar.Brand>
-		      <a href='#' onClick={(e) => {
-		      	e.preventDefault();
-		      	props.history.push('/');
-		      }}>
-		      	<img src={logo} alt='logo' className='img-responsive logo' />
-		      </a>
-		    </Navbar.Brand>
-		  </Navbar.Header>
-		  <Navbar.Collapse>
-			<Nav pullRight>
-				<NavItem onClick={() => props.history.push('/')}>
-					PRODUCERS
+	showModalRegisterProducer() {
+		this.setState({
+			showModalRegisterProd: !this.state.showModalRegisterProd
+		});
+	}
+
+	render() {
+		return (
+			<div>
+				<Navbar fluid={true} collapseOnSelect>
+					<Navbar.Header>
+						<Navbar.Toggle />
+						<Navbar.Brand>
+							<a href='#' onClick={(e) => {
+								e.preventDefault();
+								this.props.history.push('/');
+							}}>
+								<img src={logo} alt='logo' className='img-responsive logo' />
+							</a>
+						</Navbar.Brand>
+					</Navbar.Header>
+					<Navbar.Collapse>
+						<Nav pullRight>
+							<NavItem onClick={() => this.props.history.push('/')}>
+								PRODUCERS
 				</NavItem>
-				<NavItem onClick={() => props.history.push('/blocks')}>
-					BLOCKS
+							<NavItem onClick={() => this.props.history.push('/blocks')}>
+								BLOCKS
 				</NavItem>
-				<NavItem onClick={() => props.history.push('/transactions')}>
-					TRANSACTIONS
+							<NavItem onClick={() => this.props.history.push('/transactions')}>
+								TRANSACTIONS
 				</NavItem>
-			</Nav>
-		  </Navbar.Collapse>
-		</Navbar>
-	);
-};
+							<NavItem onClick={()=>this.showModalRegisterProducer()}>
+							 REGISTER
+				</NavItem>
+						</Nav>
+					</Navbar.Collapse>
+				</Navbar>
+				<ModalRegisterProducer show={this.state.showModalRegisterProd} onHide={() => this.showModalRegisterProducer()} />
+			</div>
+		);
+	}
+}
 
 export default withRouter(Navigation);
