@@ -468,7 +468,7 @@ class ModalRegisterProducer extends Component {
                     <p>{this.state.msgFeedbackTLOSTranfer}</p>
                 </Well>
                 <Well>
-                    Please run 'teclos system regproducer accountName publicKey' to register as a producer.
+                    {`Please run "teclos system regproducer ${this.state.producerName} ${this.state.producerPublicKey}" to register as a producer.`}
             </Well>
             </div>
         return (teclosCommandContainer);
