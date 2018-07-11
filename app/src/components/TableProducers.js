@@ -29,7 +29,6 @@ class TableProducers extends Component {
             this.setState({
                 accounts: res.data
             });
-            console.log(this.state.accounts);
             if (await this.getProducersInfo()) {
                 await this.updateProducersInfo();
             }

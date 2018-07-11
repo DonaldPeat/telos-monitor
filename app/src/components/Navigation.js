@@ -33,18 +33,11 @@ class Navigation extends Component {
 					</Navbar.Header>
 					<Navbar.Collapse>
 						<Nav pullRight>
-							<NavItem onClick={() => this.props.history.push('/')}>
-								PRODUCERS
-				</NavItem>
-							<NavItem onClick={() => this.props.history.push('/blocks')}>
-								BLOCKS
-				</NavItem>
-							<NavItem onClick={() => this.props.history.push('/transactions')}>
-								TRANSACTIONS
-				</NavItem>
-							<NavItem onClick={()=>this.showModalRegisterProducer()}>
-							 REGISTER
-				</NavItem>
+							<NavItem onClick={() => this.props.history.push('/')}>PRODUCERS</NavItem>
+							<NavItem onClick={() => this.props.history.push('/blocks')}>BLOCKS</NavItem>
+							<NavItem onClick={() => this.props.history.push('/transactions')}>TRANSACTIONS</NavItem>
+							<NavItem onClick={() => this.props.history.push('/p2plist')}>P2P LIST</NavItem>
+							<NavItem onClick={() => this.showModalRegisterProducer()}>REGISTER</NavItem>
 						</Nav>
 					</Navbar.Collapse>
 				</Navbar>

@@ -33,7 +33,7 @@ class NodeInfo extends Component {
         const { nodeVersion, currentBlockNumber, lastIrrBlockNumber } = this.state;
         return (
             <div className='node_info'>
-                <h4>Block version: {nodeVersion}</h4>
+                <h4>Node version: {nodeVersion}</h4>
                 <h6>Block: {currentBlockNumber}</h6>
                 <h6>Last irreversible block: {lastIrrBlockNumber}</h6>
             </div>
