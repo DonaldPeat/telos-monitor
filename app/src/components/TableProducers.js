@@ -187,8 +187,8 @@ class TableProducers extends Component {
                 </div>
             );
         } else return (
-            <Alert bsStyle="danger">
-                <strong>Server Error:</strong> There are no producers found
+            <Alert bsStyle="warning">
+                <strong>Warning:</strong> There are no producers found yet.
             </Alert>
         );
     }

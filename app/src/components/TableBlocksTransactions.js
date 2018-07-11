@@ -110,8 +110,8 @@ class TableBlockTransactions extends Component {
                 <tbody>
                     <tr>
                         <td colSpan={4}>
-                            <Alert bsStyle="danger">
-                                <strong>Server Error:</strong> Blocks not found
+                            <Alert bsStyle="warning">
+                                <strong>Warning:</strong> Blocks not found
                         </Alert>
                         </td>
                     </tr>
@@ -147,8 +147,8 @@ class TableBlockTransactions extends Component {
                 <tbody>
                     <tr>
                         <td colSpan={4}>
-                            <Alert bsStyle="danger">
-                                <strong>Server Error:</strong> Transactions not found
+                            <Alert bsStyle="warning">
+                                <strong>Warning:</strong> Transactions not found
                         </Alert>
                         </td>
                     </tr>
