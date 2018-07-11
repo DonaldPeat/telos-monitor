@@ -78,6 +78,7 @@ class ModalRegisterProducer extends Component {
     }
 
     onModalHide() {
+        this.cleanFields();
         this.props.onHide();
     }
 
@@ -146,13 +147,29 @@ class ModalRegisterProducer extends Component {
                 });
             }
         } else {
-            this.setState({
-                isNodeRegistered: false
-            });
+            this.cleanFields();
             this.onModalHide();
         }
     }
 
+    cleanFields() {
+        this.setState({
+            isNodeRegistered: false,
+            nodeVersion: "",
+            producerName: "",
+            organization: "",
+            serverLocation: "",
+            serverAddress: "",
+            httpOrHttps: "https",
+            p2pListenEndpoint: "",
+            p2pServerAddress: "",
+            producerPublicKey: "",
+            ownerPublicKey: "",
+            activePublicKey: "",
+            url: "",
+            telegramChannel: "",
+        });
+    }
 
     onProducerNameChange(arg) {
         this.setState({
@@ -469,7 +486,7 @@ class ModalRegisterProducer extends Component {
                 </Well>
                 <Well>
                     {`Please run "teclos system regproducer ${this.state.producerName} ${this.state.producerPublicKey}" to register as a producer.`}
-            </Well>
+                </Well>
             </div>
         return (teclosCommandContainer);
     }
