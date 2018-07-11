@@ -51,12 +51,10 @@ class TableBlockTransactions extends Component {
                     arrBlocksProduced.push(block);
 
                     if (block.transactions) {
-                        console.log("got block", arrBlocksProduced.length)
                         let trx = block.transactions;
                         for (let i = 0; i < trx.length; i++) {
                             let tr = trx[i];
                             if (tr.trx.transaction) {
-                                console.log("got tx")
                                 tr.blockId = block.block_num;
                                 arrTransactions.push(tr);
                             }
@@ -75,8 +73,6 @@ class TableBlockTransactions extends Component {
                 });
             }
         }
-
-
     }
 
     renderBlocksTableBody() {
@@ -110,8 +106,8 @@ class TableBlockTransactions extends Component {
                 <tbody>
                     <tr>
                         <td colSpan={4}>
-                            <Alert bsStyle="danger">
-                                <strong>Server Error:</strong> Blocks not found
+                            <Alert bsStyle="warning">
+                                <strong>Warning:</strong> Blocks not found
                         </Alert>
                         </td>
                     </tr>
@@ -147,8 +143,8 @@ class TableBlockTransactions extends Component {
                 <tbody>
                     <tr>
                         <td colSpan={4}>
-                            <Alert bsStyle="danger">
-                                <strong>Server Error:</strong> Transactions not found
+                            <Alert bsStyle="warning">
+                                <strong>Warning:</strong> Transactions not found
                         </Alert>
                         </td>
                     </tr>
