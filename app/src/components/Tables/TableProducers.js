@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import '../styles/tableproducers.css'
+import '../../styles/tableproducers.css'
 import { Table, Alert } from 'react-bootstrap'
-import ModalProducerInfo from './Modals/ModalProducerInfo'
-import nodeInfoAPI from '../scripts/nodeInfo'
-import getHummanTime from '../scripts/timeHelper'
-import serverAPI from '../scripts/serverAPI';
+import ModalProducerInfo from '../Modals/ModalProducerInfo'
+import nodeInfoAPI from '../../scripts/nodeInfo'
+import getHummanTime from '../../scripts/timeHelper'
+import serverAPI from '../../scripts/serverAPI';
 
 class TableProducers extends Component {
     constructor(props) {
@@ -29,7 +29,6 @@ class TableProducers extends Component {
             this.setState({
                 accounts: res.data
             });
-            console.log(this.state.accounts);
             if (await this.getProducersInfo()) {
                 await this.updateProducersInfo();
             }
