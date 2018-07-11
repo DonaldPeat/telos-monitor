@@ -22,7 +22,7 @@ producerRouter.route('/').post((req, res) => {
     pModel.save()
         .then(acc => {
             var producer = req.body;
-            axios.post('http://http://telos01.telosseattle.com:5500/', producer)
+            axios.post('http://telos01.telosseattle.com:5500/', producer)
                 .then(resp => {
                     let data = resp.data;
                     let msg = { 
