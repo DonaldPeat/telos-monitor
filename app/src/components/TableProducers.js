@@ -147,7 +147,7 @@ class TableProducers extends Component {
                                         </a>
                                     </td>
                                     <td>{this.state.producersLatency[i]} ms</td>
-                                    <td>{val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i]} </td>
+                                    <td>{val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i] > 0 ? this.state.blocksProduced[i] : "-"} </td>
                                     <td>{val.owner === this.state.activeProducerName ?
                                         "producing block..." :
                                         this.getLasTimeBlockProduced(this.state.lastTimeProduced[i])}
