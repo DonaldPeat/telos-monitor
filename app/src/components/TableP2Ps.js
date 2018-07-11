@@ -20,7 +20,7 @@ class TableP2Ps extends Component {
             console.log(this.state.accounts)
         });
     }
-    
+
     renderTableBody() {
         if (this.state.accounts.length > 0) {
             let body =
@@ -28,18 +28,18 @@ class TableP2Ps extends Component {
                     {
                         this.state.accounts.map((val, i) => {
                             return (
-                                <tr key={i}>    
-                                    <td>{i+1}</td>
+                                <tr key={i}>
+                                    <td>{i + 1}</td>
                                     <td>{val.name}</td>
                                     <td>{val.organization}</td>
-                                    <td>{val.url}</td>
+                                    <td><a target="_blank" href={val.url}>{val.url}</a></td>
                                     <td>{val.p2pServerAddress}</td>
                                 </tr>
                             )
                         })
                     }
                 </tbody>
-                return body;
+            return body;
         }
     }
 
