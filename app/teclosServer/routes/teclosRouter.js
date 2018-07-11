@@ -20,7 +20,7 @@ teclosRouter.route('/').post((req, res) => {
     var activePubKey = req.body.producer.activePublicKey;
 
     // Running teclos commands
-    const teclosUnlockWallet = '../tlos-tool/tlos-tool.py --unlock';
+    const teclosUnlockWallet = '/home/dev/telos-foundation-projects/telos-monitor/app/teclosserver/tlos-tool/tlos-tool.py --unlock';
     const createAccountCMD = `teclos system newaccount --transfer eosio ${accountName} ${ownerPubKey} ${activePubKey} --stake-net "${NET}.0000 ${SYMBOL}" --stake-cpu "${CPU}.0000 ${SYMBOL}" --buy-ram "${RAM}.0000 ${SYMBOL}"`;
     const transferCMD = `teclos transfer eosio ${accountName} "${AMOUNT}.0000 ${SYMBOL}" "${MEMO}"`;
     console.log("executing cleos...");

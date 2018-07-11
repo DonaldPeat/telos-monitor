@@ -40,7 +40,7 @@ class TableProducers extends Component {
 
     async getProducersInfo() {
         let data = await nodeInfoAPI.getProducers();
-        if (data) {
+        if (data != null) {
             let producers = data.rows;
 
             this.setState({

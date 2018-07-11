@@ -394,7 +394,7 @@ class ModalRegisterProducer extends Component {
                 <FormCustomControl
                     id="serverAddress"
                     validationstate={this.getServerAddressValidationState()}
-                    label="Serve IP address"
+                    label="Server IP address"
                     type="text"
                     help="0.0.0.0:8888"
                     value={this.state.serverAddress}
