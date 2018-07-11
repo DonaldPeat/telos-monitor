@@ -3,7 +3,7 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 
 var app = express();
-const _port = 5300;
+const _port = 5500;
 
 // Use middlewares to set view engine and post json data to the server
 app.use(express.static('public'));

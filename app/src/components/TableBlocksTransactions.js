@@ -4,7 +4,7 @@ import NodeInfoAPI from '../scripts/nodeInfo'
 import ModalBlockInfo from './Modals/ModalBlockInfo'
 import ModalTransactionInfo from './Modals/ModalTransactionInfo'
 import { PacmanLoader } from 'react-spinners'
-import {withRouter} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 class TableBlockTransactions extends Component {
     constructor(props) {
@@ -25,7 +25,7 @@ class TableBlockTransactions extends Component {
 
     async componentWillMount() {
         if (this.updateBlocksAndTransactions()) {
-            setTimeout(() => this.updateBlocksAndTransactions(), 10000);
+            setTimeout(() => this.updateBlocksAndTransactions(), 30000);
         }
     }
 
@@ -46,28 +46,33 @@ class TableBlockTransactions extends Component {
 
         while (arrBlocksProduced.length < this.maxTableItems || arrTransactions.length < this.maxTableItems) {
             let block = await NodeInfoAPI.getBlockInfo(blockNum);
-            if (arrBlocksProduced.length < this.maxTableItems) {
-                arrBlocksProduced.push(block);
-            }
+            if (block != null) {
+                if (arrBlocksProduced.length < this.maxTableItems) {
+                    arrBlocksProduced.push(block);
 
-            if (block.transactions) {
-                let trx = block.transactions;
-                for (let i = 0; i < trx.length; i++) {
-                    let tr = trx[i];
-                    if (tr.trx.transaction) {
-                        tr.blockId = block.block_num;
-                        arrTransactions.push(tr);
+                    if (block.transactions) {
+                        let trx = block.transactions;
+                        for (let i = 0; i < trx.length; i++) {
+                            let tr = trx[i];
+                            if (tr.trx.transaction) {
+                                tr.blockId = block.block_num;
+                                arrTransactions.push(tr);
+                            }
+                        }
                     }
+                    blockNum--;
+                    this.setState({
+                        blocksProduced: arrBlocksProduced,
+                        transactions: arrTransactions,
+                        isLoading: false
+                    });
                 }
+            } else {
+                this.setState({
+                    isLoading: false
+                });
             }
-            blockNum--;
         }
-
-        this.setState({
-            blocksProduced: arrBlocksProduced,
-            transactions: arrTransactions,
-            isLoading: false
-        });
     }
 
     renderBlocksTableBody() {
@@ -78,12 +83,15 @@ class TableBlockTransactions extends Component {
                         this.state.blocksProduced.map((val, i) => {
                             return (
                                 <tr key={i}>
-                                    <td><a href="#" 
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            this.showHideModalBlockInfo(val);
-                                        }}>{val.block_num}</a></td>
-
+                                    <td>
+                                        <a href="#"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                this.showHideModalBlockInfo(val);
+                                            }}>
+                                            {val.block_num}
+                                        </a>
+                                    </td>
                                     <td>{val.producer}</td>
                                     <td>{val.timestamp}</td>
                                     <td>{val.transactions.length}</td>
@@ -98,7 +106,9 @@ class TableBlockTransactions extends Component {
                 <tbody>
                     <tr>
                         <td colSpan={4}>
-                            <h3>Blocks not found</h3>
+                            <Alert bsStyle="warning">
+                                <strong>Warning:</strong> Blocks not found
+                        </Alert>
                         </td>
                     </tr>
                 </tbody>
@@ -115,7 +125,7 @@ class TableBlockTransactions extends Component {
                             return (
                                 <tr key={i}>
                                     <td>
-                                        <div style={{ whiteSpace: "noWrap", overflow: "hidden", textOverflow: "ellipsis", width: "25%" }}>
+                                        <div style={{ whiteSpace: "noWrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                                             <a onClick={() => this.showHideModalTransactionInfo(val)}>{val.trx.id}</a>
                                         </div>
                                     </td>
@@ -133,7 +143,9 @@ class TableBlockTransactions extends Component {
                 <tbody>
                     <tr>
                         <td colSpan={4}>
-                            <h3>Transactions not found</h3>
+                            <Alert bsStyle="warning">
+                                <strong>Warning:</strong> Transactions not found
+                        </Alert>
                         </td>
                     </tr>
                 </tbody>
@@ -165,13 +177,13 @@ class TableBlockTransactions extends Component {
     }
 
     render() {
-        const {pathname} = this.props.location;
+        const { pathname } = this.props.location;
         const renderBlocks = () => {
             return (
                 <Col xs={12}>
                     <h2>Blocks</h2>
                     <h6>Last 30 blocks produced</h6>
-                    <div style={{ height: '15em', overflowY: 'scroll' }}>
+                    <div className="tableContainer">
                         <Table responsive>
                             <thead>
                                 <tr>
@@ -183,9 +195,11 @@ class TableBlockTransactions extends Component {
                             </thead>
                             {this.renderBlocksTableBody()}
                         </Table>
-                        <div style={{ width: "20%", margin: "0 auto" }}>
+                        <div className="loadingContainer">
+                            <h4>{this.state.isLoading ? "Loading blocks..." : ""}</h4>
                             <PacmanLoader
-                                color="red" height={50} margin="3px"
+                                margin="0px 0px 0px 45px"
+                                color="#DF4D31"
                                 loading={this.state.isLoading}
                             />
                         </div>
@@ -199,7 +213,7 @@ class TableBlockTransactions extends Component {
                 <Col xs={12}>
                     <h2>Transactions</h2>
                     <h6>Last 30 transactions</h6>
-                    <div style={{ height: '15em', overflowY: 'scroll' }}>
+                    <div className="tableContainer">
                         <Table responsive>
                             <thead>
                                 <tr>
@@ -211,9 +225,11 @@ class TableBlockTransactions extends Component {
                             </thead>
                             {this.renderTransactionsTableBody()}
                         </Table>
-                        <div style={{ width: "20%", margin: "0 auto" }}>
+                        <div className="loadingContainer">
+                            <h4>{this.state.isLoading ? "Loading transactions..." : ""}</h4>
                             <PacmanLoader
-                                color="red"
+                                margin="0px 0px 0px 45px"
+                                color="#DF4D31"
                                 loading={this.state.isLoading}
                             />
                         </div>
@@ -223,21 +239,13 @@ class TableBlockTransactions extends Component {
             );
         };
 
-        if (this.state.transactions.length < 1) {
-            return (
-                <Alert bsStyle="danger">
-                  <strong>Server Error:</strong> There are no producers found
-                </Alert>
-            );
-        } else {
-            return (
-                <div>
-                    {pathname === '/blocks' ? renderBlocks() : renderTransactions()}
-                    <ModalBlockInfo show={this.state.showModalBlockInfo} onHide={() => this.showHideModalBlockInfo(null)} block={this.state.blockSelected} />
-                    <ModalTransactionInfo show={this.state.showModalTxInfo} onHide={() => this.showHideModalTransactionInfo(null)} tx={this.state.transactionSelected} />
-                </div>
-            )
-        }
+        return (
+            <div>
+                {pathname === '/blocks' ? renderBlocks() : renderTransactions()}
+                <ModalBlockInfo show={this.state.showModalBlockInfo} onHide={() => this.showHideModalBlockInfo(null)} block={this.state.blockSelected} />
+                <ModalTransactionInfo show={this.state.showModalTxInfo} onHide={() => this.showHideModalTransactionInfo(null)} tx={this.state.transactionSelected} />
+            </div>
+        )
     }
 }
 

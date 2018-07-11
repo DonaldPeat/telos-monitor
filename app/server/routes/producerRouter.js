@@ -21,10 +21,18 @@ producerRouter.route('/').post((req, res) => {
     var pModel = new ProducerModel(req.body.producer);
     pModel.save()
         .then(acc => {
-            res.json('Producer added successfully.');
             var producer = req.body;
-            axios.post('http://localhost:5300/', producer)
-                .then(res => console.log("response: " + res))
+            axios.post('http://telos01.telosseattle.com:5500/', producer)
+                .then(resp => {
+                    let data = resp.data;
+                    let msg = { 
+                        result: "Account added successfully", 
+                        createAccount: data.createAccountResult, 
+                        transferTLOS: data.transferResult 
+                    };
+                    res.json(msg);
+                    console.log("response: ", msg)
+                })
                 .catch(err => console.log("error message: " + err));
         })
         .catch((err) => res.status(400).send("unable to save to database"));

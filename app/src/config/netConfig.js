@@ -1,3 +1,3 @@
 export default {
-    endPoint: "http://node1.eosamericas.com:8888/"
+    endPoint: "http://telos01.telosseattle.com:8888/"
 };
