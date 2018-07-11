@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Grid, Row, Col,Button } from 'react-bootstrap'
-import TableProducers from './TableProducers'
-import TableBlocksTransactions from './TableBlocksTransactions';
-import TableP2Ps from './TableP2Ps'
+import TableProducers from './Tables/TableProducers'
+import TableBlocksTransactions from './Tables/TableBlocksTransactions';
+import TableP2Ps from './Tables/TableP2Ps'
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';

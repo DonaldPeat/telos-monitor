@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Col, Table, Alert } from 'react-bootstrap'
-import NodeInfoAPI from '../scripts/nodeInfo'
-import ModalBlockInfo from './Modals/ModalBlockInfo'
-import ModalTransactionInfo from './Modals/ModalTransactionInfo'
+import NodeInfoAPI from '../../scripts/nodeInfo'
+import ModalBlockInfo from '../Modals/ModalBlockInfo'
+import ModalTransactionInfo from '../Modals/ModalTransactionInfo'
 import { PacmanLoader } from 'react-spinners'
 import { withRouter } from 'react-router-dom';
 

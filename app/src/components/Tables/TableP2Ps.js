@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import serverAPI from '../scripts/serverAPI';
+import serverAPI from '../../scripts/serverAPI';
 import { withRouter } from 'react-router-dom';
 import { Table } from 'react-bootstrap'
-import '../styles/tableproducers.css'
+import '../../styles/tableproducers.css'
 
 class TableP2Ps extends Component {
     constructor(props) {
