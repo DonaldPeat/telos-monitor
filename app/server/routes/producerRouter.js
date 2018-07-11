@@ -8,12 +8,8 @@ var ProducerModel = require('../db/models/producerModel');
 
 producerRouter.route('/').get((req, res) => {
     ProducerModel.find((err, itms) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.json(itms);
-        }
+        if (err) console.log(err);
+        else res.json(itms);
     });
 });
 
@@ -22,7 +18,7 @@ producerRouter.route('/').post((req, res) => {
     pModel.save()
         .then(acc => {
             var producer = req.body;
-            axios.post('http://telos01.telosseattle.com:5500/', producer)
+            axios.post('http://localhost:5500/', producer)
                 .then(resp => {
                     let data = resp.data;
                     let msg = { 
