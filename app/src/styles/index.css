@@ -42,6 +42,12 @@ a:active {
 	border-top: none;
 }
 
+@media screen and (max-width: 767px){
+	.navbar-nav.navbar-right {
+		text-align: right;
+	}
+}
+
 .navbar-brand {
 	height: auto;
 }
