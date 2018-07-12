@@ -1,9 +1,9 @@
 import axios from 'axios'
-
+import netConfig from '../config/netConfig'
 export default {
     getEndpointLatency: async (url) => {
         try {
-            var result = await axios.post('http://localhost:4200/api/v1/latency', { host: url });
+            var result = await axios.post(netConfig.apiEndpoint + 'api/v1/latency', { host: url });
             return result.data;
         } catch (error) {
             console.error(error);
@@ -11,7 +11,7 @@ export default {
     },
 
     registerProducerNode: (producer, cb) => {
-        axios.post('http://localhost:4200/api/v1/producer', { producer: producer })
+        axios.post(netConfig.apiEndpoint + 'api/v1/producer', { producer: producer })
             .then((value) => {
                 cb(value);
             })
@@ -19,7 +19,7 @@ export default {
     },
 
     getAllAccounts: (cb) => {
-        axios.get('http://localhost:4200/api/v1/producer')
+        axios.get(netConfig.apiEndpoint + 'api/v1/producer')
             .then((value) => {
                 cb(value)
             })
