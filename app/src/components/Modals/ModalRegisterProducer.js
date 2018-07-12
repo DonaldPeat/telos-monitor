@@ -479,7 +479,7 @@ class ModalRegisterProducer extends Component {
     onDisplayTeclosCommand() {
         const teclosCommandContainer =
             <div>
-                <Well>blablabla
+                <Well>
                     <p>{this.state.msgFeedbackResult}</p>
                     <p>{this.state.msgFeedbackAccountCreated}</p>
                     <p>{this.state.msgFeedbackTLOSTranfer}</p>
