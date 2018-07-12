@@ -17,7 +17,6 @@ class TableP2Ps extends Component {
             this.setState({
                 accounts: res.data
             })
-            console.log(this.state.accounts)
         });
     }
 
@@ -33,6 +32,7 @@ class TableP2Ps extends Component {
                                     <td>{val.name}</td>
                                     <td>{val.organization}</td>
                                     <td><a target="_blank" href={val.url}>{val.url}</a></td>
+                                    <td>{val.httpServerAddress != "" ? val.httpServerAddress : val.httpsServerAddress}</td>
                                     <td>{val.p2pServerAddress}</td>
                                 </tr>
                             )
@@ -55,6 +55,7 @@ class TableP2Ps extends Component {
                                 <th>Account</th>
                                 <th>Organization</th>
                                 <th>URL</th>
+                                <th>HTTP / HTTPS server address</th>
                                 <th>Peer server address</th>
                             </tr>
                         </thead>
