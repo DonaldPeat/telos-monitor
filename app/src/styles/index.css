@@ -15,6 +15,12 @@ h6 {
 	color: #625a51;
 }
 
+h6 {
+	word-wrap: break-word;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
 a {
 	color: #625a51;
 	transition: color 0.15s ease;
@@ -195,9 +201,10 @@ a:active {
 	margin-right: 0;
 }
 
-.infoContainer{
+.infoContainer {
 	margin-top: 2em;
 }
+
 .pInfo {
 	text-align: justify;
 	font-size: 18px;
