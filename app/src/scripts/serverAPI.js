@@ -18,6 +18,14 @@ export default {
             .catch((err) => console.error(err));
     },
 
+    getAccount: (producerKey, cb) => {
+        axios.get(netConfig.teclosEndpoint + 'api/v1/teclos/' + producerKey)
+            .then(value => {
+                cb(value);
+            })
+            .catch((err) => console.error(err));
+    },
+
     getAllAccounts: (cb) => {
         axios.get(netConfig.apiEndpoint + 'api/v1/producer')
             .then((value) => {
