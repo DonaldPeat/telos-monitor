@@ -23,10 +23,7 @@ class Navigation extends Component {
 					<Navbar.Header>
 						<Navbar.Toggle />
 						<Navbar.Brand>
-							<a href='#' onClick={(e) => {
-								e.preventDefault();
-								this.props.history.push('/');
-							}}>
+							<a href='https://telosfoundation.io'>
 								<img src={logo} alt='logo' className='img-responsive logo' />
 							</a>
 						</Navbar.Brand>
