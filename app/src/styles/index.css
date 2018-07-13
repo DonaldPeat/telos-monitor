@@ -133,7 +133,7 @@ a:active {
 	text-align: justify;
 	font-size: 16px;
 	margin-left: 3em;
-}*/
+}
 
 /* footer */
 .main_footer {
@@ -147,6 +147,10 @@ a:active {
 @media screen and (min-width: 767px) {
 	.main_footer {
 		top: 100px;
+		background-size: 100% 100%;
+		padding-top: 45px;
+		padding-bottom: 30px;
+		position: relative;
 	}
 
 	.main_footer .col-sm-4:nth-child(1){
