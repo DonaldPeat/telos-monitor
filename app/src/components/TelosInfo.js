@@ -7,6 +7,7 @@ class TelosInfo extends Component {
         super(props);
         this.state = {}
     }
+
     render() {
         return (
             <Row>
@@ -16,7 +17,7 @@ class TelosInfo extends Component {
                         <p className="pInfo1"><strong>1.</strong> Go to http://github.com/Telos-Foundation/telos and clone the most recent changes from our “developer” branch.</p>
                         <p className="pInfo1"><strong>2.</strong> Open a terminal and navigate to where you cloned the source. Run the below commands.</p>
                         <p className="pInfo2">
-<pre>{`./eosio_build.sh -s TLOS
+                            <pre>{`./eosio_build.sh -s TLOS
 cd build
 sudo make install`}</pre>
                         </p>
@@ -26,21 +27,27 @@ sudo make install`}</pre>
                         <p className="pInfo2"><strong>c.</strong> Configure your p2p endpoints and addresses in the config.ini file. The fields to be changed are http-server-address, p2p-listen-endpoint, p2p-server-address, and p2p-peer-address.</p>
                         <p className="pInfo2"><strong>d.</strong> The only plugin required to become a producer is the eosio::producer_plugin, but if you’d like to be able to process transactions or respond to API requests then include the following plugins: </p>
                         <p className="pInfo2">
-<pre>{`plugin = eosio::http_plugin
+                            <pre>{
+                                `plugin = eosio::http_plugin
 plugin = eosio::chain_plugin
 plugin = eosio::chain_api_plugin
 plugin = eosio::history_plugin
 plugin = eosio::history_api_plugin
 plugin = eosio::net_plugin
 plugin = eosio::net_api_plugin
-plugin = eosio::producer_plugin`}</pre>
+plugin = eosio::producer_plugin`
+                            }</pre>
                         </p>
                         <p className="pInfo1"><strong>4.</strong> Navigate to testnet.telosfoundation.io and click on the register tab. Enter your configuration into the form and click submit. This will create your account on the testnet. Copy the command generated from the form, you will need it in the following step.</p>
                         <p className="pInfo2"><strong>a.</strong> Run the ‘regproducer’ command generated from the previous step in your terminal to register your node on the network. You MUST run this command in order to be added as a producer.</p>
                         <p className="pInfo2"><strong>b.</strong> At this point your Producer account has been created and you are registered as a producer. Feel free to cast your votes now and watch the testnet monitor reflect your actions.</p>
+                        <p className="pInfo">Connection Info:</p>
+                        <pre>{
+                            `p2p-peer-address = stage01.telosfoundation.io:9876`
+                        }</pre>
+                        <a href="./resources/genesis.json" download="genesis.json">Download genesis.json</a>
                     </Col>
                 </div>
-
             </Row>
         );
     }
