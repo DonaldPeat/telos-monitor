@@ -38,8 +38,8 @@ class TableProducers extends Component {
     componentDidMount() {
         let producerIndex = 0;
         setInterval(async () => {
-            await this.getProducerLatency(producerIndex++);
-            if (producerIndex > this.state.producers.length - 1) producerIndex = 0;
+            await this.getProducerLatency(producerIndex);
+            if (++producerIndex > this.state.producers.length - 1) producerIndex = 0;
         }, 1000);
     }
 
