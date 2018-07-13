@@ -1,5 +1,5 @@
 export default {
-    endPoint: "http://66.42.66.39:8888/",
-    apiEndpoint:"http://66.42.66.39:4200/",
-    teclosEndpoint:"http://66.42.66.39:5500/",
+    endPoint: "http://localhost:8888/",
+    apiEndpoint:"http://localhost:4200/",
+    teclosEndpoint:"http://localhost:5500/",
 };
