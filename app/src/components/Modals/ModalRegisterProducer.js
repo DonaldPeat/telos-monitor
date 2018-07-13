@@ -143,8 +143,8 @@ class ModalRegisterProducer extends Component {
     }
 
     addAccount(producer){
-        serverAPI.getAccount(producer.producerPublicKey, (resAccount) => {
-            if (resAccount.error === "") {
+        serverAPI.getAccount(producer.producerPublicKey, (resAccount) => { console.log(resAccount)
+            if (resAccount.data.error === "") {
                 serverAPI.registerProducerNode(producer, (res) => {
                     let response = res.data;
                     this.setState({
@@ -154,7 +154,7 @@ class ModalRegisterProducer extends Component {
                         isNodeRegistered: true
                     });
                 });
-            } else alert("Error: " + resAccount.error);
+            } else alert("Error: " + resAccount.data.error);
         });
     }
 
@@ -406,7 +406,6 @@ class ModalRegisterProducer extends Component {
                     value={this.state.serverAddress}
                     onChange={e => {
                         this.setState({ serverAddress: e.target.value });
-                        console.log(this.state.serverAddress);
                     }}
                     onFocus={() => this.setState({ serverAddressTouched: true })} />
             </div>
