@@ -6,7 +6,7 @@ export default {
             var result = await axios.post(netConfig.apiEndpoint + 'api/v1/latency', { host: url });
             return result.data;
         } catch (error) {
-            console.error(error);
+            return null;
         }
     },
 
