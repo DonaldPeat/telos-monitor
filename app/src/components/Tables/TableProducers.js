@@ -110,10 +110,10 @@ class TableProducers extends Component {
             let matchedProducer = this.state.accounts.find((item) => item.name === producerName);
             let url = matchedProducer.p2pServerAddress;
             let result = await serverAPI.getEndpointLatency(url);
-            let latency = result.latency;
             let pLatency = new Array(this.state.producers.length);
             pLatency = this.state.producersLatency;
-            pLatency[producerIndex] = latency < 1000 ? latency : "-";
+            let latency = result != null ? result.latency : "-";
+            pLatency[producerIndex] = latency != "-" ? latency < 1000 ? latency : "-" : "-";
             this.setState({
                 producersLatency: pLatency
             });
