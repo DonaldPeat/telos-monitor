@@ -108,8 +108,6 @@ a:active {
 	flex: 1;
 }
 
-<<<<<<< HEAD
-=======
 .infoContainer {
 	margin-top: 2em;
 }
@@ -135,9 +133,8 @@ a:active {
 	text-align: justify;
 	font-size: 16px;
 	margin-left: 3em;
-}*/
+}
 
->>>>>>> d9195fffbb8ca406508e4f9addbb1a9e914c3d0a
 /* footer */
 .main_footer {
 	background-size: 100% 100%;
@@ -150,6 +147,10 @@ a:active {
 @media screen and (min-width: 767px) {
 	.main_footer {
 		top: 100px;
+		background-size: 100% 100%;
+		padding-top: 45px;
+		padding-bottom: 30px;
+		position: relative;
 	}
 
 	.main_footer .col-sm-4:nth-child(1){
