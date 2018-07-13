@@ -12,7 +12,7 @@ class TelosInfo extends Component {
             <Row>
                 <div className="infoContainer">
                     <Col sm={12}>
-                        <p className="pInfo">Hello and welcome to the Telos Test Net! If you are here, you must be interested in participating in this stage of Telos. Below are the steps you need to follow to get your own node on the Test Net.</p>
+                        <p className="pInfo">Hello and welcome to the Telos Testnet! If you are here, you must be interested in participating in this stage of Telos. Below are the steps you need to follow to get your own node on the Testnet.</p>
                         <p className="pInfo1"><strong>1.</strong> Go to http://github.com/Telos-Foundation/telos and clone the most recent changes from our “developer” branch.</p>
                         <p className="pInfo1"><strong>2.</strong> Open a terminal and navigate to where you cloned the source. Run the below commands.</p>
                         <p className="pInfo2"><strong>a.</strong> ./eosio_build.sh -s TLOS </p>
@@ -33,7 +33,7 @@ class TelosInfo extends Component {
                         <p className="pInfo3"><strong>viii.</strong> plugin = eosio::producer_plugin  </p>
                         <p className="pInfo1"><strong>4.</strong> Navigate to testnet.telosfoundation.io and click on the register tab. Enter your configuration into the form and click submit. This will create your account on the testnet. Copy the command generated from the form, you will need it in the following step.</p>
                         <p className="pInfo2"><strong>a.</strong> Run the ‘regproducer’ command generated from the previous step in your terminal to register your node on the network. You MUST run this command in order to be added as a producer.</p>
-                        <p className="pInfo2"><strong>b.</strong> At this point your Producer account has been created and you are registered as a producer. Feel free to cast your votes now and watch the test net monitor reflect your actions.</p>
+                        <p className="pInfo2"><strong>b.</strong> At this point your Producer account has been created and you are registered as a producer. Feel free to cast your votes now and watch the testnet monitor reflect your actions.</p>
                     </Col>
                 </div>
 

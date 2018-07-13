@@ -38,8 +38,8 @@ class TableProducers extends Component {
     componentDidMount() {
         let producerIndex = 0;
         setInterval(async () => {
-            await this.getProducerLatency(producerIndex++);
-            if (producerIndex > this.state.producers.length - 1) producerIndex = 0;
+            await this.getProducerLatency(producerIndex);
+            if (++producerIndex > this.state.producers.length - 1) producerIndex = 0;
         }, 1000);
     }
 
@@ -59,26 +59,28 @@ class TableProducers extends Component {
         if (this.state.producers.length > 0) {
             setInterval(async () => {
                 let nodeInfo = await nodeInfoAPI.getInfo();
-                let producerIndex = this.state.producers.findIndex((bp) => bp.owner === nodeInfo.head_block_producer);
-                let blocksProduced = new Array(this.state.producers.length);
-                let lastTimeProduced = new Array(this.state.producers.length);
+                if (nodeInfo != null) {
+                    let producerIndex = this.state.producers.findIndex((bp) => bp.owner === nodeInfo.head_block_producer);
+                    let blocksProduced = new Array(this.state.producers.length);
+                    let lastTimeProduced = new Array(this.state.producers.length);
 
-                if (producerIndex > -1) {
-                    blocksProduced = this.state.blocksProduced;
-                    blocksProduced[producerIndex] = nodeInfo.head_block_num;
+                    if (producerIndex > -1) {
+                        blocksProduced = this.state.blocksProduced;
+                        blocksProduced[producerIndex] = nodeInfo.head_block_num;
 
-                    lastTimeProduced = this.state.lastTimeProduced;
-                    lastTimeProduced[producerIndex] = nodeInfo.head_block_time;
+                        lastTimeProduced = this.state.lastTimeProduced;
+                        lastTimeProduced[producerIndex] = nodeInfo.head_block_time;
 
-                    await this.getProducerLatency(producerIndex);
+                        await this.getProducerLatency(producerIndex);
+                    }
+
+                    this.setState({
+                        activeProducerName: nodeInfo.head_block_producer,
+                        currentBlockNumber: nodeInfo.head_block_num,
+                        blockTime: nodeInfo.head_block_time,
+                        blocksProduced: blocksProduced
+                    });
                 }
-
-                this.setState({
-                    activeProducerName: nodeInfo.head_block_producer,
-                    currentBlockNumber: nodeInfo.head_block_num,
-                    blockTime: nodeInfo.head_block_time,
-                    blocksProduced: blocksProduced
-                });
             }, 1000);
         }
     }
