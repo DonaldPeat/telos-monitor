@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import nodeInfoAPI from '../scripts/nodeInfo';
-
+import { Row, Col } from 'react-bootstrap'
 class NodeInfo extends Component {
     constructor() {
         super();
@@ -8,7 +8,7 @@ class NodeInfo extends Component {
             nodeVersion: '-',
             currentBlockNumber: 0,
             lastIrrBlockNumber: 0,
-            chainId:""
+            chainId: ""
         };
     }
 
@@ -35,10 +35,12 @@ class NodeInfo extends Component {
         const { nodeVersion, currentBlockNumber, lastIrrBlockNumber, chainId } = this.state;
         return (
             <div className='node_info'>
-                <h4>Node version: {nodeVersion}</h4>
-                <h6>Chain id: {chainId}</h6>
-                <h6>Block: {currentBlockNumber}</h6>
-                <h6>Last irreversible block: {lastIrrBlockNumber}</h6>
+                <Row>
+                    <Col sm={12}><h4>Node version: {nodeVersion}</h4></Col>
+                    <Col sm={12}><h6>Chain id: {chainId}</h6></Col>
+                    <Col sm={12}><h6>Block: {currentBlockNumber}</h6></Col>
+                    <Col sm={12}><h6>Last irreversible block: {lastIrrBlockNumber}</h6></Col>
+                </Row>
             </div>
         );
     }

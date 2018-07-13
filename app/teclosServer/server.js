@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 var teclosRouter = require('./routes/teclosRouter');
-app.use('/', teclosRouter);
+app.use('/api/v1/teclos', teclosRouter);
 
 app.listen(_port, () => {
     console.log('server teclos listening...');

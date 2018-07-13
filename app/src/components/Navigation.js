@@ -23,16 +23,14 @@ class Navigation extends Component {
 					<Navbar.Header>
 						<Navbar.Toggle />
 						<Navbar.Brand>
-							<a href='#' onClick={(e) => {
-								e.preventDefault();
-								this.props.history.push('/');
-							}}>
+							<a href='https://telosfoundation.io'>
 								<img src={logo} alt='logo' className='img-responsive logo' />
 							</a>
 						</Navbar.Brand>
 					</Navbar.Header>
 					<Navbar.Collapse>
 						<Nav pullRight>
+							<NavItem onClick={() => this.props.history.push('/info')}>INFO</NavItem>
 							<NavItem onClick={() => this.props.history.push('/')}>PRODUCERS</NavItem>
 							<NavItem onClick={() => this.props.history.push('/blocks')}>BLOCKS</NavItem>
 							<NavItem onClick={() => this.props.history.push('/transactions')}>TRANSACTIONS</NavItem>

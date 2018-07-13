@@ -135,7 +135,16 @@ class ModalRegisterProducer extends Component {
                 });
                 alert('There is an error. Please check all of your inputs.');
                 return;
-            } else {
+            } else this.addAccount(producer);
+        } else {
+            this.cleanFields();
+            this.onModalHide();
+        }
+    }
+
+    addAccount(producer){
+        serverAPI.getAccount(producer.producerPublicKey, (resAccount) => {
+            if (resAccount.error === "") {
                 serverAPI.registerProducerNode(producer, (res) => {
                     let response = res.data;
                     this.setState({
@@ -145,11 +154,8 @@ class ModalRegisterProducer extends Component {
                         isNodeRegistered: true
                     });
                 });
-            }
-        } else {
-            this.cleanFields();
-            this.onModalHide();
-        }
+            } else alert("Error: " + resAccount.error);
+        });
     }
 
     cleanFields() {
