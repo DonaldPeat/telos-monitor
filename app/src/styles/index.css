@@ -1,13 +1,26 @@
 /*probably just goint to do the styles here*/
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
 }
 
-h1,h2,h3,h4,h5,h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
 	color: #625a51;
+	margin-top:5px;
+	margin-bottom: 5px;
+}
+
+h6 {
+	word-wrap: break-word;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 a {
@@ -24,7 +37,7 @@ a:active {
 .main_header {
 	background-size: 100% 100%;
 	background-repeat: no-repeat;
-  padding-top: 0;
+	padding-top: 0;
 	padding-bottom: 10px;
 }
 
@@ -42,7 +55,7 @@ a:active {
 	border-top: none;
 }
 
-@media screen and (max-width: 767px){
+@media screen and (max-width: 767px) {
 	.navbar-nav.navbar-right {
 		text-align: right;
 	}
@@ -57,8 +70,8 @@ a:active {
 	position: relative;
 }
 
-@media screen and (min-width: 768px){
-	.navbar-nav > li > a {
+@media screen and (min-width: 768px) {
+	.navbar-nav>li>a {
 		padding: 50px 15px;
 		font-size: 1.1em;
 	}
@@ -78,6 +91,7 @@ a:active {
 }
 
 /*form styles*/
+
 .inline {
 	display: flex;
 	flex-direction: row;
@@ -94,6 +108,36 @@ a:active {
 	flex: 1;
 }
 
+<<<<<<< HEAD
+=======
+.infoContainer {
+	margin-top: 2em;
+}
+
+.pInfo {
+	text-align: justify;
+	font-size: 18px;
+}
+
+.pInfo1 {
+	text-align: justify;
+	font-size: 16px;
+	margin-left: 1em;
+}
+
+.pInfo2 {
+	text-align: justify;
+	font-size: 16px;
+	margin-left: 2em;
+}
+
+.pInfo3 {
+	text-align: justify;
+	font-size: 16px;
+	margin-left: 3em;
+}*/
+
+>>>>>>> d9195fffbb8ca406508e4f9addbb1a9e914c3d0a
 /* footer */
 .main_footer {
 	background-size: 100% 100%;

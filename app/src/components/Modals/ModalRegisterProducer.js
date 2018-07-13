@@ -135,7 +135,16 @@ class ModalRegisterProducer extends Component {
                 });
                 alert('There is an error. Please check all of your inputs.');
                 return;
-            } else {
+            } else this.addAccount(producer);
+        } else {
+            this.cleanFields();
+            this.onModalHide();
+        }
+    }
+
+    addAccount(producer){
+        serverAPI.getAccount(producer.producerPublicKey, (resAccount) => {
+            if (resAccount.error === "") {
                 serverAPI.registerProducerNode(producer, (res) => {
                     let response = res.data;
                     this.setState({
@@ -145,11 +154,8 @@ class ModalRegisterProducer extends Component {
                         isNodeRegistered: true
                     });
                 });
-            }
-        } else {
-            this.cleanFields();
-            this.onModalHide();
-        }
+            } else alert("Error: " + resAccount.error);
+        });
     }
 
     cleanFields() {
@@ -484,11 +490,25 @@ class ModalRegisterProducer extends Component {
                     <p>{this.state.msgFeedbackAccountCreated}</p>
                     <p>{this.state.msgFeedbackTLOSTranfer}</p>
                 </Well>
+                <h5>Please run the command below to register as a producer</h5>
                 <Well>
-                    {`Please run "teclos system regproducer ${this.state.producerName} ${this.state.producerPublicKey}" to register as a producer.`}
+                    {`teclos system regproducer ${this.state.producerName} ${this.state.producerPublicKey}`}
                 </Well>
             </div>
         return (teclosCommandContainer);
+    }
+
+    displayModalButtons() {
+        if (!this.state.isNodeRegistered) {
+            return (
+                <div>
+                    <Button onClick={() => this.onModalHide()}>Close</Button>
+                    <Button onClick={() => this.onRegister()}>Register</Button>
+                </div>
+            );
+        } else {
+            return (<Button onClick={() => this.onModalHide()}>Close</Button>);
+        }
     }
 
     render() {
@@ -504,8 +524,7 @@ class ModalRegisterProducer extends Component {
                     {!this.state.isNodeRegistered ? this.onLoadForm() : this.onDisplayTeclosCommand()}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={() => this.onModalHide()}>Close</Button>
-                    <Button onClick={() => this.onRegister()}>Register</Button>
+                    {this.displayModalButtons()}
                 </Modal.Footer>
             </Modal>
         )

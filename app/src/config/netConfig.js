@@ -1,3 +1,5 @@
 export default {
-    endPoint: "http://telos01.telosseattle.com:8888/"
+    endPoint: "http://66.42.66.39:8888/",
+    apiEndpoint:"http://66.42.66.39:4200/",
+    teclosEndpoint:"http://66.42.66.39:5500/",
 };

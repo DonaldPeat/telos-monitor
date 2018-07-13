@@ -75,7 +75,7 @@ class ModalProducerInfo extends Component {
                         <Col xs={3} md={3}>NET:</Col>
                         <Col xs={9} md={9}>
                             <div>
-                                <p>Staked: {this.state.producerInfo != null ? this.state.producerInfo.cpu_weight / this.state.EOS_Weight + " EOS" : ""}</p>
+                                <p>Staked: {this.state.producerInfo != null ? this.state.producerInfo.cpu_weight / this.state.EOS_Weight + " TLOS" : ""}</p>
                                 <p>Available: {this.state.producerInfo != null ? this.getMiB(this.state.producerInfo.net_limit.available) + " MiB" : ""}</p>
                                 <p>Used: {this.state.producerInfo != null ? this.state.producerInfo.net_limit.used + " bytes" : ""}</p>
                                 <p>Max: {this.state.producerInfo != null ? this.getMiB(this.state.producerInfo.net_limit.max) + " MiB" : ""}</p>
@@ -85,7 +85,7 @@ class ModalProducerInfo extends Component {
                         <Col xs={3} md={3}>CPU:</Col>
                         <Col xs={9} md={9}>
                             <div>
-                                <p>Staked: {this.state.producerInfo != null ? this.state.producerInfo.cpu_weight / this.state.EOS_Weight + " EOS" : ""}</p>
+                                <p>Staked: {this.state.producerInfo != null ? this.state.producerInfo.cpu_weight / this.state.EOS_Weight + " TLOS" : ""}</p>
                                 <p>Available: {this.state.producerInfo != null ? (this.state.producerInfo.cpu_limit.available / 1000) + " ms" : ""}</p>
                                 <p>Used: {this.state.producerInfo != null ? (this.state.producerInfo.cpu_limit.used / 1000) + " ms" : ""}</p>
                                 <p>Max: {this.state.producerInfo != null ? (this.state.producerInfo.cpu_limit.max / 1000) + " ms" : ""}</p>
