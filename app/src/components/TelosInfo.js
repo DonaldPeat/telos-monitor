@@ -45,7 +45,7 @@ plugin = eosio::producer_plugin`
                         <pre>{
                             `p2p-peer-address = stage01.telosfoundation.io:9876`
                         }</pre>
-                        <a href="./resources/genesis.json" download="genesis.json">Get genesis.json</a>
+                        <a href="./resources/genesis.json" download="genesis.json">Download genesis.json</a>
                     </Col>
                 </div>
             </Row>
