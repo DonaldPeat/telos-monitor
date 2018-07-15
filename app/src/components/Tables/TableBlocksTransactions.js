@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Col, Table, Alert } from 'react-bootstrap'
+import { Row, Col, Table, Alert } from 'react-bootstrap'
 import NodeInfoAPI from '../../scripts/nodeInfo'
 import ModalBlockInfo from '../Modals/ModalBlockInfo'
 import ModalTransactionInfo from '../Modals/ModalTransactionInfo'
@@ -180,62 +180,65 @@ class TableBlockTransactions extends Component {
         const { pathname } = this.props.location;
         const renderBlocks = () => {
             return (
-                <Col xs={12}>
-                    <h2>Blocks</h2>
-                    <h6>Last 30 blocks produced</h6>
-                    <div className="tableContainer">
-                        <Table responsive>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Producer</th>
-                                    <th>Timestamp</th>
-                                    <th>Trx</th>
-                                </tr>
-                            </thead>
-                            {this.renderBlocksTableBody()}
-                        </Table>
-                        <div className="loadingContainer">
-                            <h4>{this.state.isLoading ? "Loading blocks..." : ""}</h4>
-                            <PacmanLoader
-                                margin="0px 0px 0px 45px"
-                                color="#DF4D31"
-                                loading={this.state.isLoading}
-                            />
+                <Row>
+                    <Col xs={12}>
+                        <h2>Blocks</h2>
+                        <h6>Last 30 blocks produced</h6>
+                        <div className="tableContainer">
+                            <Table responsive>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Producer</th>
+                                        <th>Timestamp</th>
+                                        <th>Trx</th>
+                                    </tr>
+                                </thead>
+                                {this.renderBlocksTableBody()}
+                            </Table>
+                            <div className="loadingContainer">
+                                <h4>{this.state.isLoading ? "Loading blocks..." : ""}</h4>
+                                <PacmanLoader
+                                    margin="0px 0px 0px 45px"
+                                    color="#DF4D31"
+                                    loading={this.state.isLoading}
+                                />
+                            </div>
                         </div>
-                    </div>
-                </Col>
+                    </Col>
+                </Row>
             );
         };
 
         const renderTransactions = () => {
             return (
-                <Col xs={12}>
-                    <h2>Transactions</h2>
-                    <h6>Last 30 transactions</h6>
-                    <div className="tableContainer">
-                        <Table responsive>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>BlockId</th>
-                                    <th>Expiration</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            {this.renderTransactionsTableBody()}
-                        </Table>
-                        <div className="loadingContainer">
-                            <h4>{this.state.isLoading ? "Loading transactions..." : ""}</h4>
-                            <PacmanLoader
-                                margin="0px 0px 0px 45px"
-                                color="#DF4D31"
-                                loading={this.state.isLoading}
-                            />
+                <Row>
+                    <Col xs={12}>
+                        <h2>Transactions</h2>
+                        <h6>Last 30 transactions</h6>
+                        <div className="tableContainer">
+                            <Table responsive>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>BlockId</th>
+                                        <th>Expiration</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                {this.renderTransactionsTableBody()}
+                            </Table>
+                            <div className="loadingContainer">
+                                <h4>{this.state.isLoading ? "Loading transactions..." : ""}</h4>
+                                <PacmanLoader
+                                    margin="0px 0px 0px 45px"
+                                    color="#DF4D31"
+                                    loading={this.state.isLoading}
+                                />
+                            </div>
                         </div>
-                    </div>
-                </Col>
-
+                    </Col>
+                </Row>
             );
         };
 
