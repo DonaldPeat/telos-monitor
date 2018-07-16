@@ -5,6 +5,7 @@ import ModalProducerInfo from '../Modals/ModalProducerInfo'
 import nodeInfoAPI from '../../scripts/nodeInfo'
 import getHummanTime from '../../scripts/timeHelper'
 import serverAPI from '../../scripts/serverAPI';
+import ProducerMap from '../ProducerMap';
 
 class TableProducers extends Component {
     constructor(props) {
@@ -183,6 +184,7 @@ class TableProducers extends Component {
                             {this.renderTableBody()}
                         </Table>
                     </div>
+                    <ProducerMap accounts = {this.state.accounts} />
                     <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo('')} producername={this.state.producerSelected} />
                 </div>
             );
