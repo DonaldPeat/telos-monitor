@@ -5,7 +5,7 @@ import ModalBlockInfo from '../Modals/ModalBlockInfo'
 import ModalTransactionInfo from '../Modals/ModalTransactionInfo'
 import { PacmanLoader } from 'react-spinners'
 import { withRouter } from 'react-router-dom';
-import FormCustomControl from '../FormControls/FormCustomControl'
+import FormTextboxButton from '../FormControls/FormTextboxButton'
 
 class TableBlockTransactions extends Component {
     constructor(props) {
@@ -18,7 +18,8 @@ class TableBlockTransactions extends Component {
             isLoading: true,
             showModalBlockInfo: false,
             showModalTxInfo: false,
-            isFindingBlocks: true
+            isFindingBlocks: true,
+            blockNumberSearch: ""
         }
 
         this.maxTableItems = 30;
@@ -49,8 +50,8 @@ class TableBlockTransactions extends Component {
             let block = await NodeInfoAPI.getBlockInfo(blockNum);
             if (block != null) {
                 if (arrBlocksProduced.length < this.maxTableItems) {
-                    
-                    if (block.transactions.length>0) {
+
+                    if (block.transactions.length > 0) {
                         arrBlocksProduced.push(block);
                         let trx = block.transactions;
                         for (let i = 0; i < trx.length; i++) {
@@ -78,7 +79,6 @@ class TableBlockTransactions extends Component {
 
     renderBlocksTableBody() {
         if (this.state.blocksProduced.length > 0) {
-            // let blocks = this.state.blocksProduced.filter(val => val.transactions.length > 0);
             let body =
                 <tbody>
                     {
@@ -178,6 +178,18 @@ class TableBlockTransactions extends Component {
             });
         })
     }
+    onBlockSearchChange(arg) {
+        var value = arg.target.value.trim();
+        
+        if (!isNaN(value)) this.setState({ blockNumberSearch: value });
+    }
+
+    onSearchButtonClicked() {
+        NodeInfoAPI.getBlockInfo(this.state.blockNumberSearch).then(b => {
+            if(b)this.showHideModalBlockInfo(b);
+            else alert("block not found");
+        }).catch(err=>alert(err));
+    }
 
     render() {
         const { pathname } = this.props.location;
@@ -185,13 +197,21 @@ class TableBlockTransactions extends Component {
             return (
                 <div>
                     <Row>
-                        <Col sm={3}>
+                        <Col sm={7}>
                             <h2>Blocks</h2>
                             <h6>Last 30 blocks produced</h6>
                         </Col>
-                        <Col sm={7}>
-                        </Col>
-                        <Col sm={2}>
+                        <Col sm={5}>
+                            <FormTextboxButton
+                                id="txtbBlockId"
+                                buttonname="Search"
+                                label="Block id"
+                                type="text"
+                                placeHolder="Type a block id"
+                                value={this.state.blockNumberSearch}
+                                buttonclicked={() => this.onSearchButtonClicked()}
+                                onChange={(arg) => this.onBlockSearchChange(arg)}
+                            />
                         </Col>
                     </Row>
                     <Row>
