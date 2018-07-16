@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Row, Col, Table, Alert } from 'react-bootstrap'
+import { Row, Col, Table, Alert,Button } from 'react-bootstrap'
 import NodeInfoAPI from '../../scripts/nodeInfo'
 import ModalBlockInfo from '../Modals/ModalBlockInfo'
 import ModalTransactionInfo from '../Modals/ModalTransactionInfo'
 import { PacmanLoader } from 'react-spinners'
 import { withRouter } from 'react-router-dom';
+import FormCustomControl from '../FormControls/FormCustomControl'
 
 class TableBlockTransactions extends Component {
     constructor(props) {
@@ -77,10 +78,11 @@ class TableBlockTransactions extends Component {
 
     renderBlocksTableBody() {
         if (this.state.blocksProduced.length > 0) {
+            let blocks = this.state.blocksProduced.filter(val=>val.transactions.length>0);
             let body =
                 <tbody>
                     {
-                        this.state.blocksProduced.map((val, i) => {
+                        blocks.map((val, i) => {
                             return (
                                 <tr key={i}>
                                     <td>
@@ -180,33 +182,43 @@ class TableBlockTransactions extends Component {
         const { pathname } = this.props.location;
         const renderBlocks = () => {
             return (
-                <Row>
-                    <Col xs={12}>
-                        <h2>Blocks</h2>
-                        <h6>Last 30 blocks produced</h6>
-                        <div className="tableContainer">
-                            <Table responsive>
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Producer</th>
-                                        <th>Timestamp</th>
-                                        <th>Trx</th>
-                                    </tr>
-                                </thead>
-                                {this.renderBlocksTableBody()}
-                            </Table>
-                            <div className="loadingContainer">
-                                <h4>{this.state.isLoading ? "Loading blocks..." : ""}</h4>
-                                <PacmanLoader
-                                    margin="0px 0px 0px 45px"
-                                    color="#DF4D31"
-                                    loading={this.state.isLoading}
-                                />
+                <div>
+                    <Row>
+                        <Col sm={3}>
+                            <h2>Blocks</h2>
+                            <h6>Last 30 blocks produced</h6>
+                        </Col>
+                        <Col sm={7}>
+                        </Col>
+                        <Col sm={2}>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12}>
+                            <div className="tableContainer">
+                                <Table responsive>
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Producer</th>
+                                            <th>Timestamp</th>
+                                            <th>Trx</th>
+                                        </tr>
+                                    </thead>
+                                    {this.renderBlocksTableBody()}
+                                </Table>
+                                <div className="loadingContainer">
+                                    <h4>{this.state.isLoading ? "Loading blocks..." : ""}</h4>
+                                    <PacmanLoader
+                                        margin="0px 0px 0px 45px"
+                                        color="#DF4D31"
+                                        loading={this.state.isLoading}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    </Col>
-                </Row>
+                        </Col>
+                    </Row>
+                </div>
             );
         };
 
