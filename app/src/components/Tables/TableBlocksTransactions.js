@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Table, Alert,Button } from 'react-bootstrap'
+import { Row, Col, Table, Alert, Button } from 'react-bootstrap'
 import NodeInfoAPI from '../../scripts/nodeInfo'
 import ModalBlockInfo from '../Modals/ModalBlockInfo'
 import ModalTransactionInfo from '../Modals/ModalTransactionInfo'
@@ -49,9 +49,9 @@ class TableBlockTransactions extends Component {
             let block = await NodeInfoAPI.getBlockInfo(blockNum);
             if (block != null) {
                 if (arrBlocksProduced.length < this.maxTableItems) {
-                    arrBlocksProduced.push(block);
-
-                    if (block.transactions) {
+                    
+                    if (block.transactions.length>0) {
+                        arrBlocksProduced.push(block);
                         let trx = block.transactions;
                         for (let i = 0; i < trx.length; i++) {
                             let tr = trx[i];
@@ -78,13 +78,14 @@ class TableBlockTransactions extends Component {
 
     renderBlocksTableBody() {
         if (this.state.blocksProduced.length > 0) {
-            let blocks = this.state.blocksProduced.filter(val=>val.transactions.length>0);
+            // let blocks = this.state.blocksProduced.filter(val => val.transactions.length > 0);
             let body =
                 <tbody>
                     {
-                        blocks.map((val, i) => {
+                        this.state.blocksProduced.map((val, i) => {
                             return (
                                 <tr key={i}>
+                                    <td>{i + 1}</td>
                                     <td>
                                         <a href="#"
                                             onClick={(e) => {
@@ -200,6 +201,7 @@ class TableBlockTransactions extends Component {
                                     <thead>
                                         <tr>
                                             <th>#</th>
+                                            <th>Block id</th>
                                             <th>Producer</th>
                                             <th>Timestamp</th>
                                             <th>Trx</th>
