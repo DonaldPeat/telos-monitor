@@ -3,7 +3,7 @@ import '../../styles/tableproducers.css'
 import { Table, Alert } from 'react-bootstrap'
 import ModalProducerInfo from '../Modals/ModalProducerInfo'
 import nodeInfoAPI from '../../scripts/nodeInfo'
-import getHummanTime from '../../scripts/timeHelper'
+import getHumanTime from '../../scripts/timeHelper'
 import serverAPI from '../../scripts/serverAPI';
 
 class TableProducers extends Component {
@@ -85,13 +85,14 @@ class TableProducers extends Component {
         }
     }
 
-    getLasTimeBlockProduced(bpBlockTime) {
+    getLastTimeBlockProduced(bpBlockTime) {
         let bTime = new Date(bpBlockTime);
-        bTime.setHours(bTime.getHours() - 7);
         bTime = Number(bTime);
-        let now = Number(new Date());
+        let now = new Date();
+        let utc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+        now = Number(utc);
 
-        let lastTimeProduced = getHummanTime(Math.floor(now - bTime) / 1000);
+        let lastTimeProduced = getHumanTime(Math.floor(now - bTime) / 1000);
 
         return lastTimeProduced;
     }
@@ -150,8 +151,8 @@ class TableProducers extends Component {
                                     <td>{this.state.producersLatency[i]} ms</td>
                                     <td>{val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i] > 0 ? this.state.blocksProduced[i] : "-"} </td>
                                     <td>{val.owner === this.state.activeProducerName ?
-                                        "producing block..." :
-                                        this.getLasTimeBlockProduced(this.state.lastTimeProduced[i])}
+                                        "producing blocks..." :
+                                        this.getLastTimeBlockProduced(this.state.lastTimeProduced[i])}
                                     </td>
                                     {/* <td>organization</td> */}
                                     <td>{this.getProducerPercentage(val) + "%"}</td>
