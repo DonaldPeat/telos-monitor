@@ -28,7 +28,8 @@ class TableProducers extends Component {
     componentWillMount() {
         serverAPI.getAllAccounts(async (res) => {
             this.setState({
-                accounts: res.data
+                accounts: res.data,
+                
             });
             if (await this.getProducersInfo()) {
                 await this.updateProducersInfo();

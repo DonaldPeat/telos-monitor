@@ -25,8 +25,10 @@ class ProducerMap extends Component {
 			ip_locations: []
 		};
 	}
-
-	componentDidMount(){
+componentWillUpdate(){
+	console.log("2");
+}
+	componentDidMount(){ console.log("here")
 		console.log(this.props.accounts);
 		const httpAddresses = this.props.accounts.map(acct => acct.httpServerAddress == '' ? acct.httpsServerAddress : acct.httpServerAddress);
 		console.log(httpAddresses);
@@ -45,13 +47,16 @@ class ProducerMap extends Component {
 		});
 	}
 
-	/*
-	shouldComponentUpdate(nextProps, nextState){
-		const {accounts} = this.props;
+
+	shouldComponentUpdate(nextProps, nextState){ 
 		const {ip_locations} = this.state;
 		//if we have all the stuff, don't update
-		if(nextProps.accounts.length === accounts.length && ip_locations.length === nextState.ip_locations.length) return false;
-	}*/
+		if(ip_locations.length  !== 0){ 
+			console.log("1")
+			this.setState({ip_locations: ip_locations});
+			return false;
+	} 
+}
 
 	render(){
 		const {ip_locations} = this.state;
