@@ -5,6 +5,7 @@ import ModalProducerInfo from '../Modals/ModalProducerInfo'
 import nodeInfoAPI from '../../scripts/nodeInfo'
 import getHumanTime from '../../scripts/timeHelper'
 import serverAPI from '../../scripts/serverAPI';
+import FormTextboxButton from '../FormControls/FormTextboxButton'
 
 class TableProducers extends Component {
     constructor(props) {
@@ -20,7 +21,8 @@ class TableProducers extends Component {
             lastTimeProduced: [],
             producersLatency: [],
             showModalProducerInfo: false,
-            producerSelected: ''
+            producerSelected: '',
+            producerFilter: ''
         }
     }
 
@@ -132,7 +134,9 @@ class TableProducers extends Component {
 
     renderTableBody() {
         if (this.state.producers.length > 0) {
-            let prods = this.state.producers.filter(val=>val.is_active === 1);
+            let prods; 
+            if(this.state.producerFilter==="") prods = this.state.producers.filter(val => val.is_active === 1);
+            else prods = this.state.producers.filter(val => val.is_active === 1 && val.owner.includes(this.state.producerFilter));
             let body =
                 <tbody>
                     {
@@ -165,33 +169,53 @@ class TableProducers extends Component {
         } else return (<div></div>);
     }
 
+    onProducerFilterChange(arg) {
+        let value = arg.target.value.trim();
+        this.setState({ producerFilter: value });
+    }
+
     render() {
         if (this.state.producers.length > 0) {
             return (
-                <Row>
-                    <Col sm={12}>
-                        <h2>Producers</h2>
-                    </Col>
-                    <Col sm={12}>
-                        <div className="tableContainer">
-                            <Table responsive>
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Latency</th>
-                                        <th>Last block</th>
-                                        <th>Last time produced</th>
-                                        {/* <th>Organization</th> */}
-                                        <th>Votes</th>
-                                    </tr>
-                                </thead>
-                                {this.renderTableBody()}
-                            </Table>
-                        </div>
-                    </Col>
-                    <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo('')} producername={this.state.producerSelected} />
-                </Row>
+                <div>
+                    <Row>
+                        <Col sm={7}>
+                            <h2>Producers</h2>
+                        </Col>
+                        <Col sm={5}>
+                            <FormTextboxButton
+                                id="txtbProducerName"
+                                buttonname="Search"
+                                type="text"
+                                hasbutton={false}
+                                value={this.state.producerFilter}
+                                onChange={(arg) => this.onProducerFilterChange(arg)}
+                                placeHolder="Filter by producer name"
+                            />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col sm={12}>
+                            <div className="tableContainer">
+                                <Table responsive>
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Latency</th>
+                                            <th>Last block</th>
+                                            <th>Last time produced</th>
+                                            {/* <th>Organization</th> */}
+                                            <th>Votes</th>
+                                        </tr>
+                                    </thead>
+                                    {this.renderTableBody()}
+                                </Table>
+                            </div>
+                        </Col>
+                        <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo('')} producername={this.state.producerSelected} />
+                    </Row>
+                </div>
             );
         } else return (
             <Alert bsStyle="warning">

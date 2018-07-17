@@ -180,15 +180,15 @@ class TableBlockTransactions extends Component {
     }
     onBlockSearchChange(arg) {
         var value = arg.target.value.trim();
-        
+
         if (!isNaN(value)) this.setState({ blockNumberSearch: value });
     }
 
     onSearchButtonClicked() {
         NodeInfoAPI.getBlockInfo(this.state.blockNumberSearch).then(b => {
-            if(b)this.showHideModalBlockInfo(b);
+            if (b) this.showHideModalBlockInfo(b);
             else alert("block not found");
-        }).catch(err=>alert(err));
+        }).catch(err => alert(err));
     }
 
     render() {
@@ -205,8 +205,8 @@ class TableBlockTransactions extends Component {
                             <FormTextboxButton
                                 id="txtbBlockId"
                                 buttonname="Search"
-                                label="Block id"
                                 type="text"
+                                hasbutton={true}
                                 placeHolder="Type a block id"
                                 value={this.state.blockNumberSearch}
                                 buttonclicked={() => this.onSearchButtonClicked()}
