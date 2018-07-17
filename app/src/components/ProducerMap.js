@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
-import marker_icon from '../img/location-pointer.png';
+import marker_icon from '../img/orange_marker.png';
 
 const MAPS_API_KEY = 'AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo';
 
@@ -34,7 +34,6 @@ const ProducerMap = (props) => {
 
 	return (
 		<div>
-			<h2>Node Map</h2>
 			<div style={mapContainerStyle}>
 				<Map google={props.google} zoom={2} style={mapStyle}>
 					{get_markers}

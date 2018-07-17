@@ -79,7 +79,9 @@ export default class InfoBar extends Component {
 				{...this.props}
        			bsSize="large"
         		aria-labelledby="contained-modal-title-lg">
-	          <Modal.Header closeButton></Modal.Header>
+	          <Modal.Header closeButton>
+	          	<h2>Node Map</h2>
+	          </Modal.Header>
 	          <Modal.Body>
 	          	{this.state.ip_locations.length > 0 ? <ProducerMap ip_locations={this.state.ip_locations} /> : <div>Getting Nodes...</div>}
 	          </Modal.Body>
