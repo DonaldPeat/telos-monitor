@@ -133,7 +133,7 @@ class TableProducers extends Component {
 
     renderTableBody() {
         if (this.state.producers.length > 0) {
-            let prods = this.state.producers.filter(val=>val.is_active === 1);
+            let prods = this.state.producers.filter(val => val.is_active === 1);
             let body =
                 <tbody>
                     {
@@ -169,11 +169,10 @@ class TableProducers extends Component {
     render() {
         if (this.state.producers.length > 0) {
             return (
-                <Row>
-                    <Col sm={12}>
+
+                <div>
+                    <Row>
                         <h2>Producers</h2>
-                    </Col>
-                    <Col sm={12}>
                         <div className="tableContainer">
                             <Table responsive>
                                 <thead>
@@ -190,9 +189,10 @@ class TableProducers extends Component {
                                 {this.renderTableBody()}
                             </Table>
                         </div>
-                    </Col>
-                    <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo('')} producername={this.state.producerSelected} />
-                </Row>
+                        <ProducerMap accounts={this.state.accounts} />
+                        <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo('')} producername={this.state.producerSelected} />
+                    </Row>
+                </div>
             );
         } else return (
             <Alert bsStyle="warning">
