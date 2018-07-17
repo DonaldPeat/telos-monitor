@@ -6,15 +6,25 @@ class FormTextboxButton extends Component {
         super(props);
         this.state = {}
     }
-    render() {
-        return (
-            <FormGroup style={{ "marginTop": "1em" }}>
+
+    renderControl() {
+        if (this.props.hasbutton) {
+            return (
                 <InputGroup>
-                    <FormControl type="text" {...this.props}/>
+                    <FormControl type="text" {...this.props} />
                     <InputGroup.Button>
                         <Button onClick={this.props.buttonclicked}>{this.props.buttonname}</Button>
                     </InputGroup.Button>
                 </InputGroup>
+            );
+        } else return (<FormControl type="text" {...this.props} />);
+
+    }
+
+    render() {
+        return (
+            <FormGroup style={{ "marginTop": "1em" }}>
+                {this.renderControl()}
             </FormGroup >
         );
     }

@@ -20,7 +20,8 @@ class TableBlockTransactions extends Component {
             showModalBlockInfo: false,
             showModalTxInfo: false,
             isFindingBlocks: true,
-            blockNumberSearch: ""
+            blockNumberSearch: "",
+            txIdBlckNumberFilter: ""
         }
 
         this.maxTableItems = 30;
@@ -122,15 +123,25 @@ class TableBlockTransactions extends Component {
 
     renderTransactionsTableBody() {
         if (this.state.transactions.length > 0) {
+            let tx;
+
+            if (this.state.txIdBlckNumberFilter === "") tx = this.state.transactions;
+            else {
+                tx = isNaN(this.state.txIdBlckNumberFilter) ?
+                this.state.transactions.filter(val => val.trx.id === this.state.txIdBlckNumberFilter)
+                :
+                this.state.transactions.filter(val => val.blockId == this.state.txIdBlckNumberFilter)
+            }
+
             let body =
                 <tbody>
                     {
-                        this.state.transactions.map((val, i) => {
+                        tx.map((val, i) => {
                             return (
                                 <tr key={i}>
                                     <td>
                                         <div style={{ whiteSpace: "noWrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                            <a onClick={() => this.showHideModalTransactionInfo(val)}>{val.trx.id}</a>
+                                            <a href="#" onClick={() => this.showHideModalTransactionInfo(val)}>{val.trx.id}</a>
                                         </div>
                                     </td>
                                     <td>{val.blockId}</td>
@@ -181,15 +192,32 @@ class TableBlockTransactions extends Component {
     }
     onBlockSearchChange(arg) {
         var value = arg.target.value.trim();
-        
+
         if (!isNaN(value)) this.setState({ blockNumberSearch: value });
     }
 
     onSearchButtonClicked() {
         NodeInfoAPI.getBlockInfo(this.state.blockNumberSearch).then(b => {
-            if(b)this.showHideModalBlockInfo(b);
+            if (b) this.showHideModalBlockInfo(b);
             else alert("block not found");
-        }).catch(err=>alert(err));
+        }).catch(err => alert(err));
+    }
+
+    onTxIdBlockIdChange(arg) {
+        let value = arg.target.value.trim();
+
+        this.setState({ txIdBlckNumberFilter: value });
+    }
+
+    onTxIdBlckIdSearch() {
+        if (isNaN(this.state.txIdBlckNumberFilter)) {
+            NodeInfoAPI.getTransactionInfo(this.state.txIdBlckNumberFilter).then(tx => {
+                console.log(tx);
+                // if (tx) this.showHideModalTransactionInfo(tx);
+                // else alert("tx not found");
+            }).catch(err => alert(err));
+        }
+
     }
 
     render() {
@@ -206,9 +234,9 @@ class TableBlockTransactions extends Component {
                             <FormTextboxButton
                                 id="txtbBlockId"
                                 buttonname="Search"
-                                label="Block id"
                                 type="text"
-                                placeHolder="Type a block id"
+                                hasbutton={true}
+                                placeHolder="Filter by block id"
                                 value={this.state.blockNumberSearch}
                                 buttonclicked={() => this.onSearchButtonClicked()}
                                 onChange={(arg) => this.onBlockSearchChange(arg)}
@@ -247,33 +275,51 @@ class TableBlockTransactions extends Component {
 
         const renderTransactions = () => {
             return (
-                <Row>
-                    <Col xs={12}>
-                        <h2>Transactions</h2>
-                        <h6>Last 30 transactions</h6>
-                        <div className="tableContainer">
-                            <Table responsive>
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>BlockId</th>
-                                        <th>Expiration</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                {this.renderTransactionsTableBody()}
-                            </Table>
-                            <div className="loadingContainer">
-                                <h4>{this.state.isLoading ? "Loading transactions..." : ""}</h4>
-                                <PacmanLoader
-                                    margin="0px 0px 0px 45px"
-                                    color="#DF4D31"
-                                    loading={this.state.isLoading}
-                                />
+                <div>
+                    <Row>
+                        <Col xs={7}>
+                            <h2>Transactions</h2>
+                            <h6>Last 30 transactions</h6>
+                        </Col>
+                        <Col xs={5}>
+                            <FormTextboxButton
+                                id="txtbTxIdBlckId"
+                                buttonname="Search"
+                                type="text"
+                                hasbutton={true}
+                                value={this.state.txIdBlckNumberFilter}
+                                onChange={(arg) => this.onTxIdBlockIdChange(arg)}
+                                buttonclicked={() => this.onTxIdBlckIdSearch()}
+                                placeHolder="Filter by tx id or block number"
+                            />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12}>
+                            <div className="tableContainer">
+                                <Table responsive>
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>BlockId</th>
+                                            <th>Expiration</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    {this.renderTransactionsTableBody()}
+                                </Table>
+                                <div className="loadingContainer">
+                                    <h4>{this.state.isLoading ? "Loading transactions..." : ""}</h4>
+                                    <PacmanLoader
+                                        margin="0px 0px 0px 45px"
+                                        color="#DF4D31"
+                                        loading={this.state.isLoading}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    </Col>
-                </Row>
+                        </Col>
+                    </Row>
+                </div>
             );
         };
 
