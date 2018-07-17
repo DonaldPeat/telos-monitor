@@ -32,7 +32,6 @@ export default class InfoBar extends Component {
 		const ipLocations = window.localStorage.getItem('telos_testnet_ip_locations');
 		if(ipLocations){
 			this.setState({ip_locations: JSON.parse(ipLocations)});
-			console.log('this works');
 			return;
 		}
 
