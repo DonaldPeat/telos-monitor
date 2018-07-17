@@ -28,8 +28,7 @@ class TableProducers extends Component {
     componentWillMount() {
         serverAPI.getAllAccounts(async (res) => {
             this.setState({
-                accounts: res.data,
-                
+                accounts: res.data
             });
             if (await this.getProducersInfo()) {
                 await this.updateProducersInfo();
@@ -185,7 +184,6 @@ class TableProducers extends Component {
                             {this.renderTableBody()}
                         </Table>
                     </div>
-                    <ProducerMap accounts = {this.state.accounts} />
                     <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo('')} producername={this.state.producerSelected} />
                 </div>
             );

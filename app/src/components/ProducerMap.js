@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import axios from 'axios';
+import serverAPI from '../scripts/serverAPI';
+
+import marker_icon from '../img/location-pointer.png';
 
 const MAPS_API_KEY = 'AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo';
 const IP_API_ENDPOINT = 'http://ip-api.com/json/';
-
-const ipRegex = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$/g);
 
 const mapStyle = {
 	position: 'relative',
@@ -25,13 +26,22 @@ class ProducerMap extends Component {
 			ip_locations: []
 		};
 	}
-componentWillUpdate(){
-	console.log("2");
-}
-	componentDidMount(){ console.log("here")
-		console.log(this.props.accounts);
-		const httpAddresses = this.props.accounts.map(acct => acct.httpServerAddress == '' ? acct.httpsServerAddress : acct.httpServerAddress);
-		console.log(httpAddresses);
+
+	componentDidMount(){
+        serverAPI.getAllAccounts(async (res) => {
+            this.setState({
+                accounts: res.data
+            });
+            this.getLatAndLong();
+        });		
+	}
+
+	componentWillMount() {
+
+    }
+
+    getLatAndLong(){
+		const httpAddresses = this.state.accounts.map(acct => acct.httpServerAddress == '' ? acct.httpsServerAddress : acct.httpServerAddress);
 		const filteredIps = httpAddresses.map(ip => ip.slice(0, ip.indexOf(':')))
 								 		 .filter(ip => ip != '0.0.0.0');
 
@@ -45,18 +55,8 @@ componentWillUpdate(){
 			})
 			.catch(err => console.log(err));
 		});
-	}
+    }
 
-
-	shouldComponentUpdate(nextProps, nextState){ 
-		const {ip_locations} = this.state;
-		//if we have all the stuff, don't update
-		if(ip_locations.length  !== 0){ 
-			console.log("1")
-			this.setState({ip_locations: ip_locations});
-			return false;
-	} 
-}
 
 	render(){
 		const {ip_locations} = this.state;
@@ -64,7 +64,8 @@ componentWillUpdate(){
 			return (
 				<Marker
 					key={i}
-					position={{lat: loc.lat, lng: loc.lon}} />
+					position={{lat: loc.lat, lng: loc.lon}}
+					icon={marker_icon} />
 			);
 		});
 

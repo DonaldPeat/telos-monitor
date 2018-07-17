@@ -7,7 +7,7 @@ import TelosInfo from './TelosInfo'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-import NodeInfo from './NodeInfo';
+import InfoBar from './InfoBar';
 
 class App extends Component {
   constructor(props) {
@@ -22,7 +22,7 @@ class App extends Component {
         <div className='site_wrapper'>
           <Header />
           <Grid>
-            <NodeInfo />
+            <InfoBar />
             <Switch>
               <Route path='/info' component={TelosInfo} />
               <Route path='/blocks' component={TableBlocksTransactions} />
