@@ -1,6 +1,10 @@
 .tableContainer {
+    position: relative;
+}
+
+.table-responsive {
     height: 35em;
-    overflow-y: auto
+    overflow: auto;
 }
 
 .loadingContainer {

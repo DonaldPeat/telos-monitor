@@ -6,6 +6,7 @@ import ModalTransactionInfo from '../Modals/ModalTransactionInfo'
 import { PacmanLoader } from 'react-spinners'
 import { withRouter } from 'react-router-dom';
 import FormTextboxButton from '../FormControls/FormTextboxButton'
+import '../../styles/tableproducers.css'
 
 class TableBlockTransactions extends Component {
     constructor(props) {
