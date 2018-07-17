@@ -88,15 +88,13 @@ class TableProducers extends Component {
         }
     }
 
-    getLastTimeBlockProduced(bpBlockTime) {
-        let bTime = new Date(bpBlockTime);
-        bTime = Number(bTime);
-        let now = new Date();
-        let utc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-        now = Number(utc);
+    getLastTimeBlockProduced(bpLastTimeProduced, headBlockTime) {
+        let bpTime = new Date(bpLastTimeProduced);
+        let headTime = new Date(headBlockTime);
+        bpTime = Number(bpTime);
+        headTime = Number(headTime);
 
-        let lastTimeProduced = getHumanTime(Math.floor(now - bTime) / 1000);
-
+        let lastTimeProduced = getHumanTime(Math.floor(headTime - bpTime) / 1000);
         return lastTimeProduced;
     }
 
@@ -119,7 +117,7 @@ class TableProducers extends Component {
             let pLatency = new Array(this.state.producers.length);
             pLatency = this.state.producersLatency;
             let latency = result != null ? result.latency : "-";
-            pLatency[producerIndex] = latency != "-" ? latency < 1000 ? latency : "-" : "-";
+            pLatency[producerIndex] = latency !== "-" ? latency < 1000 ? latency : "-" : "-";
             this.setState({
                 producersLatency: pLatency
             });
@@ -148,7 +146,7 @@ class TableProducers extends Component {
                                 <tr key={i} className={val.owner === this.state.activeProducerName ? "activeProducer" : ""}>
                                     <td>{i + 1}</td>
                                     <td>
-                                        <a href="#" onClick={(e) => {
+                                        <a href={`producers/${val.owner}`} onClick={(e) => {
                                             e.preventDefault();
                                             this.showProducerInfo(val.owner);
                                         }}>
@@ -159,7 +157,7 @@ class TableProducers extends Component {
                                     <td>{val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i] > 0 ? this.state.blocksProduced[i] : "-"} </td>
                                     <td>{val.owner === this.state.activeProducerName ?
                                         "producing blocks..." :
-                                        this.getLastTimeBlockProduced(this.state.lastTimeProduced[i])}
+                                        this.getLastTimeBlockProduced(this.state.lastTimeProduced[i], this.state.blockTime)}
                                     </td>
                                     {/* <td>organization</td> */}
                                     <td>{this.getProducerPercentage(val) + "%"}</td>
