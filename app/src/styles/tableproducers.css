@@ -16,3 +16,25 @@
 .offProducer {
     background: #DF4D31;
 }
+
+.copyPeersBtn {
+    padding-top: .2em;
+    margin-left: .5em;
+    background: transparent;
+    outline: none;
+    border: none;
+}
+
+.copyPeersBtn:hover {
+    color: #F5933C;
+}
+
+.copyPeersBtn>i {
+    margin-left: .5em;
+}
+
+.tooltip.right{
+    margin-left: .8em;
+    position: relative;
+    align-self: center;
+}

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Col, Table, Alert } from 'react-bootstrap'
+import { Row, Col, Table, Alert, Button } from 'react-bootstrap'
 import NodeInfoAPI from '../../scripts/nodeInfo'
 import ModalBlockInfo from '../Modals/ModalBlockInfo'
 import ModalTransactionInfo from '../Modals/ModalTransactionInfo'
 import { PacmanLoader } from 'react-spinners'
 import { withRouter } from 'react-router-dom';
+import FormTextboxButton from '../FormControls/FormTextboxButton'
 
 class TableBlockTransactions extends Component {
     constructor(props) {
@@ -17,7 +18,8 @@ class TableBlockTransactions extends Component {
             isLoading: true,
             showModalBlockInfo: false,
             showModalTxInfo: false,
-            isFindingBlocks: true
+            isFindingBlocks: true,
+            blockNumberSearch: ""
         }
 
         this.maxTableItems = 30;
@@ -48,9 +50,9 @@ class TableBlockTransactions extends Component {
             let block = await NodeInfoAPI.getBlockInfo(blockNum);
             if (block != null) {
                 if (arrBlocksProduced.length < this.maxTableItems) {
-                    arrBlocksProduced.push(block);
 
-                    if (block.transactions) {
+                    if (block.transactions.length > 0) {
+                        arrBlocksProduced.push(block);
                         let trx = block.transactions;
                         for (let i = 0; i < trx.length; i++) {
                             let tr = trx[i];
@@ -83,6 +85,7 @@ class TableBlockTransactions extends Component {
                         this.state.blocksProduced.map((val, i) => {
                             return (
                                 <tr key={i}>
+                                    <td>{i + 1}</td>
                                     <td>
                                         <a href="#"
                                             onClick={(e) => {
@@ -175,67 +178,101 @@ class TableBlockTransactions extends Component {
             });
         })
     }
+    onBlockSearchChange(arg) {
+        var value = arg.target.value.trim();
+        
+        if (!isNaN(value)) this.setState({ blockNumberSearch: value });
+    }
+
+    onSearchButtonClicked() {
+        NodeInfoAPI.getBlockInfo(this.state.blockNumberSearch).then(b => {
+            if(b)this.showHideModalBlockInfo(b);
+            else alert("block not found");
+        }).catch(err=>alert(err));
+    }
 
     render() {
         const { pathname } = this.props.location;
         const renderBlocks = () => {
             return (
-                <Col xs={12}>
-                    <h2>Blocks</h2>
-                    <h6>Last 30 blocks produced</h6>
-                    <div className="tableContainer">
-                        <Table responsive>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Producer</th>
-                                    <th>Timestamp</th>
-                                    <th>Trx</th>
-                                </tr>
-                            </thead>
-                            {this.renderBlocksTableBody()}
-                        </Table>
-                        <div className="loadingContainer">
-                            <h4>{this.state.isLoading ? "Loading blocks..." : ""}</h4>
-                            <PacmanLoader
-                                margin="0px 0px 0px 45px"
-                                color="#DF4D31"
-                                loading={this.state.isLoading}
+                <div>
+                    <Row>
+                        <Col sm={7}>
+                            <h2>Blocks</h2>
+                            <h6>Last 30 blocks produced</h6>
+                        </Col>
+                        <Col sm={5}>
+                            <FormTextboxButton
+                                id="txtbBlockId"
+                                buttonname="Search"
+                                label="Block id"
+                                type="text"
+                                placeHolder="Type a block id"
+                                value={this.state.blockNumberSearch}
+                                buttonclicked={() => this.onSearchButtonClicked()}
+                                onChange={(arg) => this.onBlockSearchChange(arg)}
                             />
-                        </div>
-                    </div>
-                </Col>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12}>
+                            <div className="tableContainer">
+                                <Table responsive>
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Block id</th>
+                                            <th>Producer</th>
+                                            <th>Timestamp</th>
+                                            <th>Trx</th>
+                                        </tr>
+                                    </thead>
+                                    {this.renderBlocksTableBody()}
+                                </Table>
+                                <div className="loadingContainer">
+                                    <h4>{this.state.isLoading ? "Loading blocks..." : ""}</h4>
+                                    <PacmanLoader
+                                        margin="0px 0px 0px 45px"
+                                        color="#DF4D31"
+                                        loading={this.state.isLoading}
+                                    />
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
+                </div>
             );
         };
 
         const renderTransactions = () => {
             return (
-                <Col xs={12}>
-                    <h2>Transactions</h2>
-                    <h6>Last 30 transactions</h6>
-                    <div className="tableContainer">
-                        <Table responsive>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>BlockId</th>
-                                    <th>Expiration</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            {this.renderTransactionsTableBody()}
-                        </Table>
-                        <div className="loadingContainer">
-                            <h4>{this.state.isLoading ? "Loading transactions..." : ""}</h4>
-                            <PacmanLoader
-                                margin="0px 0px 0px 45px"
-                                color="#DF4D31"
-                                loading={this.state.isLoading}
-                            />
+                <Row>
+                    <Col xs={12}>
+                        <h2>Transactions</h2>
+                        <h6>Last 30 transactions</h6>
+                        <div className="tableContainer">
+                            <Table responsive>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>BlockId</th>
+                                        <th>Expiration</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                {this.renderTransactionsTableBody()}
+                            </Table>
+                            <div className="loadingContainer">
+                                <h4>{this.state.isLoading ? "Loading transactions..." : ""}</h4>
+                                <PacmanLoader
+                                    margin="0px 0px 0px 45px"
+                                    color="#DF4D31"
+                                    loading={this.state.isLoading}
+                                />
+                            </div>
                         </div>
-                    </div>
-                </Col>
-
+                    </Col>
+                </Row>
             );
         };
 
