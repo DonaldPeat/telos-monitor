@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '../../styles/tableproducers.css'
-import { Table, Alert } from 'react-bootstrap'
+import { Row, Col, Table, Alert } from 'react-bootstrap'
 import ModalProducerInfo from '../Modals/ModalProducerInfo'
 import nodeInfoAPI from '../../scripts/nodeInfo'
 import getHumanTime from '../../scripts/timeHelper'
@@ -130,13 +130,13 @@ class TableProducers extends Component {
 
     renderTableBody() {
         if (this.state.producers.length > 0) {
+            let prods = this.state.producers.filter(val=>val.is_active === 1);
             let body =
                 <tbody>
                     {
-                        this.state.producers.map((val, i) => {
+                        prods.map((val, i) => {
                             return (
-                                <tr key={i} className={val.owner === this.state.activeProducerName ? "activeProducer" :
-                                    val.is_active === 1 ? "" : "offProducer"}>
+                                <tr key={i} className={val.owner === this.state.activeProducerName ? "activeProducer" : ""}>
                                     <td>{i + 1}</td>
                                     <td>
                                         <a href={`producers/${val.owner}`} onClick={(e) => {
@@ -166,26 +166,30 @@ class TableProducers extends Component {
     render() {
         if (this.state.producers.length > 0) {
             return (
-                <div>
-                    <h2>Producers</h2>
-                    <div className="tableContainer">
-                        <Table responsive>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Latency</th>
-                                    <th>Last block</th>
-                                    <th>Last time produced</th>
-                                    {/* <th>Organization</th> */}
-                                    <th>Votes</th>
-                                </tr>
-                            </thead>
-                            {this.renderTableBody()}
-                        </Table>
-                    </div>
+                <Row>
+                    <Col sm={12}>
+                        <h2>Producers</h2>
+                    </Col>
+                    <Col sm={12}>
+                        <div className="tableContainer">
+                            <Table responsive>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Latency</th>
+                                        <th>Last block</th>
+                                        <th>Last time produced</th>
+                                        {/* <th>Organization</th> */}
+                                        <th>Votes</th>
+                                    </tr>
+                                </thead>
+                                {this.renderTableBody()}
+                            </Table>
+                        </div>
+                    </Col>
                     <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo('')} producername={this.state.producerSelected} />
-                </div>
+                </Row>
             );
         } else return (
             <Alert bsStyle="warning">
