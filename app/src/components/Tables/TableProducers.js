@@ -5,6 +5,7 @@ import ModalProducerInfo from '../Modals/ModalProducerInfo'
 import nodeInfoAPI from '../../scripts/nodeInfo'
 import getHumanTime from '../../scripts/timeHelper'
 import serverAPI from '../../scripts/serverAPI';
+import ProducerMap from '../ProducerMap';
 import FormTextboxButton from '../FormControls/FormTextboxButton'
 
 class TableProducers extends Component {
@@ -135,9 +136,11 @@ class TableProducers extends Component {
     renderTableBody() {
         if (this.state.producers.length > 0) {
             let prods; 
-            if(this.state.producerFilter==="") prods = this.state.producers.filter(val => val.is_active === 1);
-            else prods = this.state.producers.filter(val => val.is_active === 1 && val.owner.includes(this.state.producerFilter));
-            let body =
+            
+          if(this.state.producerFilter==="") prods = this.state.producers.filter(val => val.is_active === 1);
+          else prods = this.state.producers.filter(val => val.is_active === 1 && val.owner.includes(this.state.producerFilter));
+            
+          let body =
                 <tbody>
                     {
                         prods.map((val, i) => {

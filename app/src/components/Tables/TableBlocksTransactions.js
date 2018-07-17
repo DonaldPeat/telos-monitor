@@ -6,7 +6,7 @@ import ModalTransactionInfo from '../Modals/ModalTransactionInfo'
 import { PacmanLoader } from 'react-spinners'
 import { withRouter } from 'react-router-dom';
 import FormTextboxButton from '../FormControls/FormTextboxButton'
-import nodeInfo from '../../scripts/nodeInfo';
+import '../../styles/tableproducers.css'
 
 class TableBlockTransactions extends Component {
     constructor(props) {
@@ -211,7 +211,7 @@ class TableBlockTransactions extends Component {
 
     onTxIdBlckIdSearch() {
         if (isNaN(this.state.txIdBlckNumberFilter)) {
-            nodeInfo.getTransactionInfo(this.state.txIdBlckNumberFilter).then(tx => {
+            NodeInfoAPI.getTransactionInfo(this.state.txIdBlckNumberFilter).then(tx => {
                 console.log(tx);
                 // if (tx) this.showHideModalTransactionInfo(tx);
                 // else alert("tx not found");
