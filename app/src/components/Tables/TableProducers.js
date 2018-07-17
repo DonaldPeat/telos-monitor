@@ -189,7 +189,7 @@ class TableProducers extends Component {
                                 {this.renderTableBody()}
                             </Table>
                         </div>
-                        <ProducerMap accounts={this.state.accounts} />
+                        {/*<ProducerMap />*/}
                         <ModalProducerInfo show={this.state.showModalProducerInfo} onHide={() => this.showProducerInfo('')} producername={this.state.producerSelected} />
                     </Row>
                 </div>
