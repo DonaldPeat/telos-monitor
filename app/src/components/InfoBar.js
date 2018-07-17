@@ -83,7 +83,7 @@ export default class InfoBar extends Component {
 	          <Modal.Body>
 	          	{this.state.ip_locations.length > 0 ? <ProducerMap ip_locations={this.state.ip_locations} /> : <div>Getting Nodes...</div>}
 	          </Modal.Body>
-	          <Modal.Footer>
+	          <Modal.Footer style={{marginTop: '50px'}}>
 	            <Button onClick={() => this.setState({show: false})}>Close</Button>
 	          </Modal.Footer>
 	        </Modal>
