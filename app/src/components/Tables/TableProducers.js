@@ -177,13 +177,13 @@ class TableProducers extends Component {
                             <Table responsive>
                                 <thead>
                                     <tr>
-                                        <th><span className='th_text'>#</span></th>
-                                        <th><span className='th_text'>Name</span></th>
-                                        <th><span className='th_text'>Latency</span></th>
-                                        <th><span className='th_text'>Last block</span></th>
-                                        <th><span className='th_text'>Last time produced</span></th>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Latency</th>
+                                        <th>Last block</th>
+                                        <th>Last time produced</th>
                                         {/* <th>Organization</th> */}
-                                        <th><span className='th_text'>Votes</span></th>
+                                        <th>Votes</th>
                                     </tr>
                                 </thead>
                                 {this.renderTableBody()}
