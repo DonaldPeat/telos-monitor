@@ -181,11 +181,11 @@ class TableProducers extends Component {
                     <Row>
                         <Col sm={7}>
                             <h2>Producers</h2>
+                            <a href="#">See on map</a>
                         </Col>
                         <Col sm={5}>
                             <FormTextboxButton
                                 id="txtbProducerName"
-                                buttonname="Search"
                                 type="text"
                                 hasbutton={false}
                                 value={this.state.producerFilter}
