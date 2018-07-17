@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Row, Col, Modal, Button} from 'react-bootstrap';
 import NodeInfo from './NodeInfo';
+import ProducerMap from './ProducerMap';
 
 export default class InfoBar extends Component {
 	constructor(props, context){
@@ -28,8 +29,8 @@ export default class InfoBar extends Component {
 	        		<NodeInfo />
 	        	</Col>
 	        	<Col sm={6}>
-			        <Button bsStyle="primary" bsSize="large" onClick={this.handleShow}>
-			          Launch demo modal
+			        <Button bsStyle="default" className='pull-right' onClick={this.handleShow}>
+			          Node Map
 			        </Button>
 	        	</Col>
 	        </Row>
@@ -38,26 +39,9 @@ export default class InfoBar extends Component {
 				{...this.props}
        			bsSize="large"
         		aria-labelledby="contained-modal-title-lg">
-	          <Modal.Header closeButton>
-	            <Modal.Title>Modal heading</Modal.Title>
-	          </Modal.Header>
+	          <Modal.Header closeButton></Modal.Header>
 	          <Modal.Body>
-	
-
-	            <hr />
-
-	            <h4>Overflowing text to show scroll behavior</h4>
-
-	            <p>
-	              Praesent commodo cursus magna, vel scelerisque nisl consectetur
-	              et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor
-	              auctor.
-	            </p>
-	            <p>
-	              Aenean lacinia bibendum nulla sed consectetur. Praesent commodo
-	              cursus magna, vel scelerisque nisl consectetur et. Donec sed odio
-	              dui. Donec ullamcorper nulla non metus auctor fringilla.
-	            </p>
+	          	<ProducerMap />
 	          </Modal.Body>
 	          <Modal.Footer>
 	            <Button onClick={this.handleClose}>Close</Button>
