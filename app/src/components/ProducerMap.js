@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {withScriptjs, withGoogleMap, GoogleMap, Marker} from 'react-google-maps';
 import mapStyles from '../mapStyles/telosStyle.json';
-import marker_icon from '../img/marker_gif2.gif';
+import marker_icon from '../img/marker_gif3.gif';
 
 class ProducerMap extends Component {
 
