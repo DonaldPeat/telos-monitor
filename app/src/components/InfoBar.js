@@ -83,9 +83,18 @@ export default class InfoBar extends Component {
 	          	<h2>Node Map</h2>
 	          </Modal.Header>
 	          <Modal.Body>
-	          	{this.state.ip_locations.length > 0 ? <ProducerMap ip_locations={this.state.ip_locations} /> : <div>Getting Nodes...</div>}
+	          	{this.state.ip_locations.length > 0 ? 
+	          		<ProducerMap 
+	          			loadingElement={<div style={{ height: `100%` }} />}
+	          			containerElement={<div style={{ height: `600px` }} />}
+	          			mapElement={<div style={{ height: `100%` }} />}
+	          			googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyDpg9fCzBc2OhkJNycjtE6xNY_tuHOfqrY"
+	          			ip_locations={this.state.ip_locations} /> 
+	          		: 
+	          		<div>Getting Nodes...</div>
+	          	}
 	          </Modal.Body>
-	          <Modal.Footer style={{marginTop: '50px'}}>
+	          <Modal.Footer>
 	            <Button onClick={() => this.setState({show: false})}>Close</Button>
 	          </Modal.Footer>
 	        </Modal>
