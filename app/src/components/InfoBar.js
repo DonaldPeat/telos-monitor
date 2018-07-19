@@ -88,7 +88,7 @@ export default class InfoBar extends Component {
 	          			loadingElement={<div style={{ height: `100%` }} />}
 	          			containerElement={<div style={{ height: `600px` }} />}
 	          			mapElement={<div style={{ height: `100%` }} />}
-	          			googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyDpg9fCzBc2OhkJNycjtE6xNY_tuHOfqrY"
+	          			googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places"
 	          			ip_locations={this.state.ip_locations} /> 
 	          		: 
 	          		<div>Getting Nodes...</div>
