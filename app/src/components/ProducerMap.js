@@ -20,7 +20,10 @@ class ProducerMap extends Component {
 			<GoogleMap
 				defaultZoom={2}
 				defaultCenter={{lat: 13.491665, lng: -92.508646}}
-				defaultOptions={{styles: mapStyles}}>
+				defaultOptions={{
+					styles: mapStyles,
+					disableDefaultUI: true
+				}}>
 				{get_markers}
 			</GoogleMap>
 		);
