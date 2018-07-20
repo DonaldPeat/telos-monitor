@@ -1,0 +1,33 @@
+.status_page {
+	padding-top: 50px;
+}
+
+.status_page .nav-pills {
+	margin-bottom: 25px;
+}
+
+.status_page .nav-pills>li.active>a,
+.status_page .nav-pills>li.active>a:focus,
+.status_page .nav-pills>li.active>a:hover {
+	background-color: #625a51;
+}
+
+.testnet_status_btn.btn.btn-default,
+.testnet_status_btn.btn.btn-default:focus,
+.testnet_status_btn.btn.btn-default:hover,
+.testnet_status_btn.btn.btn-default:active {
+	background-color: #625a51;
+	background-image: none;
+	border: none;
+	box-shadow: none;
+	text-shadow: none;
+	color: #ffffff;
+}
+
+.stage_status {
+	margin-bottom: 25px;
+}
+
+.stage_status p {
+	font-size: 16px;
+}

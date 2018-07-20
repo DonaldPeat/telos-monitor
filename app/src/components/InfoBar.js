@@ -5,6 +5,8 @@ import ProducerMap from './ProducerMap';
 import serverAPI from '../scripts/serverAPI';
 import axios from 'axios';
 
+import {MAPS_API_KEY} from '../config/mapsConfig';
+
 const IP_API_ENDPOINT = 'http://api.ipstack.com/';
 const IP_API_KEY = 'a7343db90e25aaf2690677dd4437fea3';
 
@@ -78,11 +80,22 @@ export default class InfoBar extends Component {
 				{...this.props}
        			bsSize="large"
         		aria-labelledby="contained-modal-title-lg">
-	          <Modal.Header closeButton></Modal.Header>
+	          <Modal.Header closeButton>
+	          	<h2>Node Map</h2>
+	          </Modal.Header>
 	          <Modal.Body>
-	          	{this.state.ip_locations.length > 0 ? <ProducerMap ip_locations={this.state.ip_locations} /> : <div>Getting Nodes...</div>}
+	          	{this.state.ip_locations.length > 0 ? 
+	          		<ProducerMap 
+	          			loadingElement={<div style={{ height: `100%` }} />}
+	          			containerElement={<div style={{ height: `600px` }} />}
+	          			mapElement={<div style={{ height: `100%` }} />}
+	          			googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${MAPS_API_KEY}`}
+	          			ip_locations={this.state.ip_locations} /> 
+	          		: 
+	          		<div>Getting Nodes...</div>
+	          	}
 	          </Modal.Body>
-	          <Modal.Footer style={{marginTop: '50px'}}>
+	          <Modal.Footer>
 	            <Button onClick={() => this.setState({show: false})}>Close</Button>
 	          </Modal.Footer>
 	        </Modal>
