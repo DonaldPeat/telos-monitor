@@ -5,6 +5,8 @@ import ProducerMap from './ProducerMap';
 import serverAPI from '../scripts/serverAPI';
 import axios from 'axios';
 
+import {MAPS_API_KEY} from '../config/mapsConfig';
+
 const IP_API_ENDPOINT = 'http://api.ipstack.com/';
 const IP_API_KEY = 'a7343db90e25aaf2690677dd4437fea3';
 
@@ -88,7 +90,7 @@ export default class InfoBar extends Component {
 	          			loadingElement={<div style={{ height: `100%` }} />}
 	          			containerElement={<div style={{ height: `600px` }} />}
 	          			mapElement={<div style={{ height: `100%` }} />}
-	          			googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places"
+	          			googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${MAPS_API_KEY}`}
 	          			ip_locations={this.state.ip_locations} /> 
 	          		: 
 	          		<div>Getting Nodes...</div>
