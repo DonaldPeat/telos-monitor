@@ -32,6 +32,7 @@ export default class InfoBar extends Component {
 	getLatAndLong(){
 		//get from local storage to prevent lots of api calls
 		const ipLocations = window.localStorage.getItem('telos_testnet_ip_locations');
+		console.log(ipLocations);
 		if(ipLocations){
 			this.setState({ip_locations: JSON.parse(ipLocations)});
 			console.log('this works');
@@ -88,7 +89,7 @@ export default class InfoBar extends Component {
 	          	{this.state.ip_locations.length > 0 ? 
 	          		<ProducerMap 
 	          			loadingElement={<div style={{ height: `100%` }} />}
-	          			containerElement={<div style={{ height: `600px` }} />}
+	          			containerElement={<div style={{ height: `800px` }} />}
 	          			mapElement={<div style={{ height: `100%` }} />}
 	          			googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${MAPS_API_KEY}`}
 	          			ip_locations={this.state.ip_locations} /> 
@@ -96,9 +97,6 @@ export default class InfoBar extends Component {
 	          		<div>Getting Nodes...</div>
 	          	}
 	          </Modal.Body>
-	          <Modal.Footer>
-	            <Button onClick={() => this.setState({show: false})}>Close</Button>
-	          </Modal.Footer>
 	        </Modal>
 	      </div>
       );
