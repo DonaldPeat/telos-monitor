@@ -135,6 +135,21 @@ a:active {
 	margin-left: 3em;
 }
 
+.testnet_status_btn.btn.btn-primary,
+.testnet_status_btn.btn.btn-primary:focus,
+.testnet_status_btn.btn.btn-primary:active {
+	background-color: #625a51;
+	background-image: none;
+	border-color: #544b42;
+	box-shadow: none;
+	text-shadow: none;
+	color: #ffffff;
+}
+
+.testnet_status_btn.btn.btn-primary:hover {
+	background-color: #544b42;
+}
+
 /* footer */
 .main_footer {
 	background-size: 100% 100%;

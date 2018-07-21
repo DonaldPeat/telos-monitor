@@ -182,7 +182,6 @@ class TableProducers extends Component {
                     <Row>
                         <Col sm={7}>
                             <h2>Producers</h2>
-                            <a href="#">See on map</a>
                         </Col>
                         <Col sm={5}>
                             <FormTextboxButton

@@ -1,0 +1,22 @@
+.stages_page {
+	padding-top: 50px;
+}
+
+.stages_page .nav-pills {
+	margin-bottom: 25px;
+}
+
+.stages_page .nav-pills>li.active>a,
+.stages_page .nav-pills>li.active>a:focus,
+.stages_page .nav-pills>li.active>a:hover {
+	background-color: #625a51;
+}
+
+.stage_status {
+	margin-bottom: 25px;
+	min-height: 30em;
+}
+
+.stage_status p {
+	font-size: 16px;
+}

@@ -9,6 +9,7 @@
     "express": "^4.16.3",
     "google-maps-react": "^2.0.2",
     "mongoose": "^5.1.7",
+    "node-cron": "^1.2.1",
     "nodemailer": "^4.6.7",
     "nodemon": "^1.17.5",
     "ping": "^0.2.2",
@@ -16,9 +17,11 @@
     "react-bootstrap": "^0.32.1",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.4.1",
+    "react-google-maps": "^9.4.5",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4",
     "react-spinners": "^0.3.2",
+    "remarkable": "^1.7.1",
     "shelljs": "^0.8.2"
   },
   "scripts": {
