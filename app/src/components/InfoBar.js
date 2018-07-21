@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {Row, Col, Modal, Button} from 'react-bootstrap';
+import {Row, Col, Modal, Button, ButtonToolbar} from 'react-bootstrap';
 import NodeInfo from './NodeInfo';
 import ProducerMap from './ProducerMap';
 import serverAPI from '../scripts/serverAPI';
 import axios from 'axios';
+import ModalStatus from './Modals/ModalStatus';
 
 import {MAPS_API_KEY} from '../config/mapsConfig';
 
@@ -16,11 +17,16 @@ export default class InfoBar extends Component {
 
 		this.state = { 
 			show: false,
+			showStatus: false,
 			accounts: [],
 			ip_locations: []
 		};
 	}
 	componentDidMount(){
+		axios.get('/api/v1/geolocate')
+		.then(res => console.log(res.data))
+		.catch(err => console.log(err));
+		
         serverAPI.getAllAccounts(async (res) => {
             this.setState({
                 accounts: res.data
@@ -72,12 +78,17 @@ export default class InfoBar extends Component {
 	        		<NodeInfo />
 	        	</Col>
 	        	<Col sm={6}>
-			        <Button bsStyle="default" className='pull-right' onClick={() => this.setState({show: true})}>
-			          Node Map
-			        </Button>
+	        		<ButtonToolbar style={{float: 'right'}}>
+		        		<Button className='testnet_status_btn' bsStyle="primary" onClick={() => this.setState({showStatus: true})}>
+		        			Testnet Status
+		        		</Button>
+				        <Button bsStyle="default" onClick={() => this.setState({show: true})}>
+				          Node Map
+				        </Button>
+			        </ButtonToolbar>
 	        	</Col>
 	        </Row>
-
+	        <ModalStatus show={this.state.showStatus} onHide={() => this.setState({showStatus: false})} />
 	        <Modal show={this.state.show} onHide={() => this.setState({show: false})}         
 				{...this.props}
        			bsSize="large"

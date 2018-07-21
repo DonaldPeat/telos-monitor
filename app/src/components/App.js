@@ -8,7 +8,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import InfoBar from './InfoBar';
-import StatusPage from './StatusPage';
+import StagesPage from './StagesPage';
 
 class App extends Component {
   constructor(props) {
@@ -29,7 +29,7 @@ class App extends Component {
               <Route path='/blocks' component={TableBlocksTransactions} />
               <Route path='/transactions' component={TableBlocksTransactions} />
               <Route path='/p2plist' component={TableP2Ps} />
-              <Route path='/status' component={StatusPage} />
+              <Route path='/stages' component={StagesPage} />
               <Route path='/' component={TableProducers} />
             </Switch>
           </Grid>
