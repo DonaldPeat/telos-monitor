@@ -1,32 +1,29 @@
 import React from 'react';
 import {Row, Col, Nav, NavItem, Button} from 'react-bootstrap';
 import {Switch, Route, withRouter} from 'react-router-dom';
-import '../styles/status.css';
+import '../styles/stages.css';
 
-const StatusPage = (props) => {
+const StagesPage = (props) => {
 	return (
-		<div className='status_page'>
+		<div className='stages_page'>
 		  <Nav bsStyle="pills" activeKey={props.location.pathname}>
-		    <NavItem eventKey={'/status/stage-1'} onClick={() => props.history.push('/status/stage-1')}>
+		    <NavItem eventKey={'/stages/stage-1'} onClick={() => props.history.push('/stages/stage-1')}>
 		      Stage 1
 		    </NavItem>
-		    <NavItem eventKey={'/status/stage-2'} onClick={() => props.history.push('/status/stage-2')}>
+		    <NavItem eventKey={'/stages/stage-2'} onClick={() => props.history.push('/stages/stage-2')}>
 		      Stage 2
 		    </NavItem>
-		    <NavItem eventKey={'/status/stage-3'} onClick={() => props.history.push('/status/stage-3')}>
+		    <NavItem eventKey={'/stages/stage-3'} onClick={() => props.history.push('/stages/stage-3')}>
 		      Stage 3
 		    </NavItem>
 		  </Nav>
 		  <Row>
 		  	<Col sm={12}>
 		  		<Switch>
-		  			<Route path='/status/stage-1' component={FirstStage} />
-		  			<Route path='/status/stage-2' component={SecondStage} />
-		  			<Route path='/status/stage-3' component={ThirdStage} />
+		  			<Route path='/stages/stage-1' component={FirstStage} />
+		  			<Route path='/stages/stage-2' component={SecondStage} />
+		  			<Route path='/stages/stage-3' component={ThirdStage} />
 		  		</Switch>
-		  	</Col>
-		  	<Col sm={12} className='text-left'>
-		  		<Button href='/resources/statuslog.txt' className='testnet_status_btn' target='_blank' rel='noopener noreferrer'>View Testnet Status</Button>
 		  	</Col>
 		  </Row>
 		</div>
@@ -60,4 +57,4 @@ const ThirdStage = () => {
 	);
 };
 
-export default withRouter(StatusPage);
+export default withRouter(StagesPage);

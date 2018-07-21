@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {Row, Col, Modal, Button} from 'react-bootstrap';
+import {Row, Col, Modal, Button, ButtonToolbar} from 'react-bootstrap';
 import NodeInfo from './NodeInfo';
 import ProducerMap from './ProducerMap';
 import serverAPI from '../scripts/serverAPI';
 import axios from 'axios';
+import ModalStatus from './Modals/ModalStatus';
 
 import {MAPS_API_KEY} from '../config/mapsConfig';
 
@@ -16,11 +17,16 @@ export default class InfoBar extends Component {
 
 		this.state = { 
 			show: false,
+			showStatus: false,
 			accounts: [],
 			ip_locations: []
 		};
 	}
 	componentDidMount(){
+		axios.get('/api/v1/geolocate')
+		.then(res => console.log(res.data))
+		.catch(err => console.log(err));
+		
         serverAPI.getAllAccounts(async (res) => {
             this.setState({
                 accounts: res.data
@@ -32,6 +38,7 @@ export default class InfoBar extends Component {
 	getLatAndLong(){
 		//get from local storage to prevent lots of api calls
 		const ipLocations = window.localStorage.getItem('telos_testnet_ip_locations');
+		console.log(ipLocations);
 		if(ipLocations){
 			this.setState({ip_locations: JSON.parse(ipLocations)});
 			return;
@@ -70,12 +77,17 @@ export default class InfoBar extends Component {
 	        		<NodeInfo />
 	        	</Col>
 	        	<Col sm={6}>
-			        <Button bsStyle="default" className='pull-right' onClick={() => this.setState({show: true})}>
-			          Node Map
-			        </Button>
+	        		<ButtonToolbar style={{float: 'right'}}>
+		        		<Button className='testnet_status_btn' bsStyle="primary" onClick={() => this.setState({showStatus: true})}>
+		        			Testnet Status
+		        		</Button>
+				        <Button bsStyle="default" onClick={() => this.setState({show: true})}>
+				          Node Map
+				        </Button>
+			        </ButtonToolbar>
 	        	</Col>
 	        </Row>
-
+	        <ModalStatus show={this.state.showStatus} onHide={() => this.setState({showStatus: false})} />
 	        <Modal show={this.state.show} onHide={() => this.setState({show: false})}         
 				{...this.props}
        			bsSize="large"
@@ -87,7 +99,7 @@ export default class InfoBar extends Component {
 	          	{this.state.ip_locations.length > 0 ? 
 	          		<ProducerMap 
 	          			loadingElement={<div style={{ height: `100%` }} />}
-	          			containerElement={<div style={{ height: `600px` }} />}
+	          			containerElement={<div style={{ height: `800px` }} />}
 	          			mapElement={<div style={{ height: `100%` }} />}
 	          			googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${MAPS_API_KEY}`}
 	          			ip_locations={this.state.ip_locations} /> 
@@ -95,9 +107,6 @@ export default class InfoBar extends Component {
 	          		<div>Getting Nodes...</div>
 	          	}
 	          </Modal.Body>
-	          <Modal.Footer>
-	            <Button onClick={() => this.setState({show: false})}>Close</Button>
-	          </Modal.Footer>
 	        </Modal>
 	      </div>
       );
