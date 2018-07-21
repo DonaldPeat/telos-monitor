@@ -140,7 +140,7 @@ a:active {
 .testnet_status_btn.btn.btn-primary:active {
 	background-color: #625a51;
 	background-image: none;
-	border: none;
+	border-color: #544b42;
 	box-shadow: none;
 	text-shadow: none;
 	color: #ffffff;
