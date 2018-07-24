@@ -3,13 +3,9 @@ import {Row, Col, Modal, Button, ButtonToolbar} from 'react-bootstrap';
 import NodeInfo from './NodeInfo';
 import ProducerMap from './ProducerMap';
 import serverAPI from '../scripts/serverAPI';
-import axios from 'axios';
 import ModalStatus from './Modals/ModalStatus';
 
 import {MAPS_API_KEY} from '../config/mapsConfig';
-
-//might need to change this
-const GEOLOCATE_ENDPOINT = 'http://localhost:4200/api/v1/geolocate';
 
 export default class InfoBar extends Component {
 	constructor(props, context){
@@ -22,9 +18,9 @@ export default class InfoBar extends Component {
 		};
 	}
 	componentDidMount(){
-		axios.get(GEOLOCATE_ENDPOINT)
-		.then(res => this.setState({ip_locations: res.data }))
-		.catch(err => console.log(err));
+		serverAPI.getIpLocations((res) => {
+			this.setState({ip_locations: res.data});
+		});
 	}
 
 	render(){
