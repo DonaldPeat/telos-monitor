@@ -112,15 +112,17 @@ class TableProducers extends Component {
         if (this.state.producers.length > 0 && this.state.accounts.length > 0) {
             let producerName = this.state.producers[producerIndex].owner;
             let matchedProducer = this.state.accounts.find((item) => item.name === producerName);
-            let url = matchedProducer.p2pServerAddress;
-            let result = await serverAPI.getEndpointLatency(url);
-            let pLatency = new Array(this.state.producers.length);
-            pLatency = this.state.producersLatency;
-            let latency = result != null ? result.latency : "-";
-            pLatency[producerIndex] = latency !== "-" ? latency < 1000 ? latency : "-" : "-";
-            this.setState({
-                producersLatency: pLatency
-            });
+            if(matchedProducer){
+                let url = matchedProducer.p2pServerAddress;
+                let result = await serverAPI.getEndpointLatency(url);
+                let pLatency = new Array(this.state.producers.length);
+                pLatency = this.state.producersLatency;
+                let latency = result != null ? result.latency : "-";
+                pLatency[producerIndex] = latency != "-" ? latency < 1000 ? latency : "-" : "-";
+                this.setState({
+                    producersLatency: pLatency
+                });    
+            }
         }
     }
 

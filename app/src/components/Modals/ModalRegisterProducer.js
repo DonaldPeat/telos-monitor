@@ -143,7 +143,7 @@ class ModalRegisterProducer extends Component {
     }
 
     addAccount(producer){
-        serverAPI.getAccount(producer.producerPublicKey, (resAccount) => { console.log(resAccount)
+        serverAPI.getAccount(producer.producerPublicKey, (resAccount) => {
             if (resAccount.data.error === "") {
                 serverAPI.registerProducerNode(producer, (res) => {
                     let response = res.data;
