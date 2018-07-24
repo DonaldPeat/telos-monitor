@@ -32,5 +32,11 @@ export default {
                 cb(value)
             })
             .catch((err) => console.error(err));
+    },
+
+    getIpLocations: (cb) => {
+        axios.get(netConfig.apiEndpoint + 'api/v1/geolocate')
+            .then(value => cb(value))
+            .catch(err => console.error(err));
     }
 }

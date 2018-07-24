@@ -18,10 +18,16 @@ mongoose.connect(_mongoURL)
         process.exit(1);
     });
 
+//ip cron task
+var Tasks = require('./tasks/index');
+Tasks.getLatAndLong();
+Tasks.scheduleGeoTasks();
+
 var accountRouter = require('./routes/accountRouter');
 var emailRouter = require('./routes/emailRouter');
 var latencyRouter = require('./routes/latencyRouter');
 var producerRouter = require('./routes/producerRouter');
+var geoRouter = require('./routes/geoRouter');
 
 // Use middlewares to set view engine and post json data to the server
 app.use(express.static('public'));
@@ -33,6 +39,7 @@ app.use('/', accountRouter);
 app.use('/emailserver', emailRouter);
 app.use('/api/v1/latency', latencyRouter);
 app.use('/api/v1/producer', producerRouter);
+app.use('/api/v1/geolocate', geoRouter);
 
 app.listen(_port, () => {
     console.log('server listening...');
