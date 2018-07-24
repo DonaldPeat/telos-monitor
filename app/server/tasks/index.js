@@ -5,10 +5,10 @@ const GeolocateModel = require('../db/models/geolocateModel');
 const ProducerModel = require('../db/models/producerModel');
 
 const IP_API_ENDPOINT = 'http://api.ipstack.com/';
-const IP_API_KEY = '';
+const IP_API_KEY = process.env.IP_API_KEY;
 
 const GEOCODE_ENDPOINT = 'https://api.opencagedata.com/geocode/v1/json';
-const GEOCODE_API_KEY = '';
+const GEOCODE_API_KEY = process.env.GEOCODE_API_KEY;
 
 module.exports = {
 	scheduleGeoTasks: function(){
