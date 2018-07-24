@@ -32,7 +32,7 @@ export default class ModalStatus extends Component {
                 aria-labelledby="contained-modal-title-lg"
             >
             	<Modal.Header closeButton>
-            		<h2>Telos Testnet Status Log</h2>
+            		<h2>Telos testnet status log</h2>
             	</Modal.Header>
             	<Modal.Body>
             		<div dangerouslySetInnerHTML={{ __html: md.render(status) }} />
