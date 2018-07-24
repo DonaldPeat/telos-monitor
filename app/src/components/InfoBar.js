@@ -15,14 +15,14 @@ export default class InfoBar extends Component {
 			ip_locations: []
 		};
 	}
+  
 	componentDidMount(){
 		serverAPI.getIpLocations((res) => {
 			this.setState({ip_locations: res.data});
-		});
-	}
+	});
+}
 
 	render(){
-		console.log(this.state.ip_locations);
     	return (
 			<div>
 				<Row>
