@@ -7,7 +7,7 @@ var app = express();
 const _port = 4200;
 
 // Mongoose connection with mongodb
-const _mongoURL = '';
+const _mongoURL = 'mongodb://edHOM:1qa2ws3ed@ds018538.mlab.com:18538/telos-monitor-test';
 mongoose.Promise = require('bluebird');
 mongoose.connect(_mongoURL)
     .then(() => {
