@@ -53,7 +53,7 @@ class TelosInfo extends Component {
  http-server-address = 0.0.0.0:[http port]
  p2p-listen-endpoint = 0.0.0.0:[p2p port]
  p2p-server-address = [external IP address]:[p2p port]
- p2p-peer-address = stage1_1.telosfoundation.io:8888
+ p2p-peer-address = stage1_1.telosfoundation.io:9876
 
 `}</pre>
                         <p className="pInfo2"><strong>e.</strong>  Determine your Plugins. The only required plugin is producer_plugin, but other plugins add extended functionality to your nodes.</p>
