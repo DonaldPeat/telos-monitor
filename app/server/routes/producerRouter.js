@@ -18,7 +18,7 @@ producerRouter.route('/').post((req, res) => {
     pModel.save()
         .then(acc => {
             var producer = req.body;
-            axios.post('http://66.42.66.39:5500/api/v1/teclos', producer)
+            axios.post('http://localhost:5500/api/v1/teclos', producer)
                 .then(resp => {
                     let data = resp.data;
                     let msg = { 
