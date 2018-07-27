@@ -42,3 +42,7 @@
     position: relative;
     align-self: center;
 }
+
+.progress-bar-success{
+    background-color: #F69A3C;
+}
