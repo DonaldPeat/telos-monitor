@@ -26,7 +26,7 @@ class TableProducers extends Component {
       showModalProducerInfo: false,
       producerSelected: '',
       producerFilter: '',
-      percentageVoteStaked: 0
+      percentageVoteStaked: ''
     }
 
     this.totalTLOS = 190473249.0000;
@@ -54,6 +54,7 @@ class TableProducers extends Component {
     let data = await nodeInfoAPI.getProducers();
     if (data != null) {
       let producers = data.rows;
+        console.log(data);
       this.setState({
         producers: producers,
         totalVotesWheight: data.total_producer_vote_weight
@@ -70,7 +71,7 @@ class TableProducers extends Component {
 
     if (totalVoteStaked !== 0) {
         let percentage = (totalVoteStaked * 100) / this.totalTLOS;
-      this.setState({percentageVoteStaked: percentage});
+      this.setState({percentageVoteStaked: percentage.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]});
     }
 
 
@@ -119,6 +120,7 @@ class TableProducers extends Component {
     if (parseFloat(bp.total_votes) > 0) {
       let producerPercentage = (parseFloat(bp.total_votes * 100)) /
           parseFloat(this.state.totalVotesWheight);
+          console.log(this.state.totalVotesWheight);
       let strProducerPercentage =
           producerPercentage.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
 
@@ -227,7 +229,7 @@ class TableProducers extends Component {
                         </Col>
                         <Col sm={10}>
                             <ProgressBar active now={this.state.percentageVoteStaked} bsStyle="success" 
-                                label={this.state.percentageVoteStaked <= 0 ? "": `${this.state.percentageVoteStaked}%`} />
+                                label={this.state.percentageVoteStaked == "" ? "": `${this.state.percentageVoteStaked}%`} />
                         </Col>
                     </Row>
                     <Row>
