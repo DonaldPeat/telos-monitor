@@ -17,7 +17,7 @@ class TableProducers extends Component {
       accounts: [],
       producers: [],
       activeProducerName: '',
-      totalVotesWheight: 0,
+      //   totalVotesWheight: 0,
       currentBlockNumber: 0,
       blocksProduced: [],
       blockTime: 0,
@@ -26,11 +26,11 @@ class TableProducers extends Component {
       showModalProducerInfo: false,
       producerSelected: '',
       producerFilter: '',
-      percentageVoteStaked: ''
+      percentageVoteStaked: '',
+      totalVotesStaked: 0
     }
 
     this.totalTLOS = 190473249.0000;
-    
   }
 
   componentWillMount() {
@@ -54,10 +54,10 @@ class TableProducers extends Component {
     let data = await nodeInfoAPI.getProducers();
     if (data != null) {
       let producers = data.rows;
-        console.log(data);
+      console.log(data);
       this.setState({
         producers: producers,
-        totalVotesWheight: data.total_producer_vote_weight
+        // totalVotesWheight: data.total_producer_vote_weight
       });
       return true;
     } else
@@ -66,12 +66,17 @@ class TableProducers extends Component {
 
   async updateProducersInfo() {
     let data = await nodeInfoAPI.getGlobalState();
-    let totalVoteStaked = data.rows[0].total_activated_stake/10000;
+    let totalVoteStaked = data.rows[0].total_activated_stake / 10000;
+
     console.log('total Vote Staked: ', totalVoteStaked);
 
     if (totalVoteStaked !== 0) {
-        let percentage = (totalVoteStaked * 100) / this.totalTLOS;
-      this.setState({percentageVoteStaked: percentage.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]});
+      let percentage = (totalVoteStaked * 100) / this.totalTLOS;
+      this.setState({
+        totalVotesStaked: totalVoteStaked,
+        percentageVoteStaked:
+            percentage.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]
+      });
     }
 
 
@@ -117,19 +122,16 @@ class TableProducers extends Component {
   }
 
   getProducerPercentage(bp) {
-    if (parseFloat(bp.total_votes) > 0) {
-      let producerPercentage = (parseFloat(bp.total_votes * 100)) /
-          parseFloat(this.state.totalVotesWheight);
-          console.log(this.state.totalVotesWheight);
-      let strProducerPercentage =
-          producerPercentage.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
+    if (parseFloat(bp.total_votes) > 0 && this.state.totalVotesStaked > 0) {
+      let producerPercentage = (parseFloat(bp.total_votes / 100)) / parseFloat(this.state.totalVotesStaked);
+      let strProducerPercentage = producerPercentage.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
 
-      return strProducerPercentage;
+       return strProducerPercentage;
       }
-    else
+    else{
       return 0;
     }
-
+  }
   async getProducerLatency(producerIndex) {
     if (this.state.producers.length > 0 && this.state.accounts.length > 0) {
       let producerName = this.state.producers[producerIndex].owner;
@@ -153,10 +155,7 @@ class TableProducers extends Component {
       producerSelected: producerSelected,
     });
     this.forceUpdate(() => {
-        console.log("here", this.state.producerSelected )
-        this.setState({
-            showModalProducerInfo: !this.state.showModalProducerInfo
-        });
+      this.setState({showModalProducerInfo: !this.state.showModalProducerInfo});
     });
   }
 
@@ -177,7 +176,8 @@ class TableProducers extends Component {
                                 <tr key={i} className={val.owner === this.state.activeProducerName ? 'activeProducer' : ''}>
                                     <td>{i + 1}</td>
                                     <td>
-                                        <a href={`producers/${val.owner}`} onClick={(e) => {
+                                        <a href={`producers/${
+            val.owner}`} onClick={(e) => {
                                             e.preventDefault();
                                             this.showProducerInfo(val.owner);
                                         }}>
