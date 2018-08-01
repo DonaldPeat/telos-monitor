@@ -206,13 +206,17 @@ class TableProducers extends Component {
                                         </a>
                                     </td>
                                     <td>{this.state.producersLatency[i]} ms</td>
-                                    <td>{val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i] > 0 ? this.state.blocksProduced[i] : "-"} </td>
-                                    <td>{val.owner === this.state.activeProducerName ?
-                                        "producing blocks..." :
-                                        this.getLastTimeBlockProduced(this.state.lastTimeProduced[i], this.state.blockTime)}
+                                    <td>{i < 21 ? 
+                                          val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i] > 0 ? this.state.blocksProduced[i] : "-" 
+                                        : '-'} </td>
+                                    <td>{i < 21 ? 
+                                          val.owner === this.state.activeProducerName ?
+                                          "producing blocks..." :
+                                          this.getLastTimeBlockProduced(this.state.lastTimeProduced[i], this.state.blockTime)
+                                        : '0 sec'}
                                     </td>
                                     {/* <td>organization</td> */}
-                                    <td>{this.getProducerPercentage(val) + "%"}</td>
+                                    <td>{i < 21 ? this.getProducerPercentage(val) + "%" : '0.00%'}</td>
                                 </tr>
                             )
                         })
