@@ -1,3 +1,6 @@
+const dotenv = require('dotenv');
+dotenv.config({path: '../.env'});
+
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
@@ -7,9 +10,10 @@ var app = express();
 const _port = 4200;
 
 // Mongoose connection with mongodb
-const _mongoURL = '';
+console.log(process.env.MONGO_ENDPOINT);
+const _mongoURL = process.env.MONGO_ENDPOINT;
 mongoose.Promise = require('bluebird');
-mongoose.connect(_mongoURL)
+mongoose.connect(_mongoURL, {useNewUrlParser:true})
     .then(() => {
         console.log('Start listening to mongo...');
     })

@@ -8,6 +8,7 @@ class ProducerMap extends Component {
 	render(){
 		const {ip_locations} = this.props;
 		const get_markers = ip_locations.map((loc, i) => {
+			if(typeof loc.latitude != 'number') return;
 			return (
 				<Marker
 					key={i}
@@ -21,8 +22,7 @@ class ProducerMap extends Component {
 				defaultZoom={2}
 				defaultCenter={{lat: 13.491665, lng: -92.508646}}
 				defaultOptions={{
-					styles: mapStyles,
-					disableDefaultUI: true
+					styles: mapStyles
 				}}>
 				{get_markers}
 			</GoogleMap>
