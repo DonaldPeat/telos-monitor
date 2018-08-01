@@ -59,7 +59,6 @@ class TableProducers extends Component {
     let newProd = [];
     const {producers} = this.state;
     const newProdData = await nodeInfoAPI.getProducers();
-    console.log(newProdData);
     if(newProdData != null){
       for(let i = 0; i < newProdData.rows.length; i++){
         const thisOwner = newProdData.rows[i].owner;
