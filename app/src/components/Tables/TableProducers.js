@@ -31,6 +31,7 @@ class TableProducers extends Component {
     }
 
     this.totalTLOS = 190473249.0000;
+    this.updateProducersOrder = this.updateProducersOrder.bind(this);
   }
 
   componentWillMount() {
@@ -48,7 +49,27 @@ class TableProducers extends Component {
       await this.getProducerLatency(producerIndex);
       if (++producerIndex > this.state.producers.length - 1) producerIndex = 0;
     }, 1000);
+
+    //update producers every 5 minutes
+    setInterval(this.updateProducersOrder, 300000);
+  }
+
+  //gets producers, reorders them
+  async updateProducersOrder(){
+    let newProd = [];
+    const {producers} = this.state;
+    const newProdData = await nodeInfoAPI.getProducers();
+    console.log(newProdData);
+    if(newProdData != null){
+      for(let i = 0; i < newProdData.rows.length; i++){
+        const thisOwner = newProdData.rows[i].owner;
+        const thisRow = producers.find(row => row.owner === thisOwner);
+        newProd[i] = thisRow;
+      }
+      //set state, remove empty values if they exist
+      this.setState({producers: newProd.filter(el => el.owner)});
     }
+  }
 
   async getProducersInfo() {
     let data = await nodeInfoAPI.getProducers();
