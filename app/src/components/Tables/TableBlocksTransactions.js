@@ -29,12 +29,12 @@ class TableBlockTransactions extends Component {
 
     async componentWillMount() {
         if (this.updateBlocksAndTransactions()) {
-            setTimeout(() => this.updateBlocksAndTransactions(), 30000);
+            setInterval(() => this.updateBlocksAndTransactions(), 10000);
         }
     }
 
     async updateBlocksAndTransactions() {
-        let nodeInfo = await NodeInfoAPI.getInfo();
+        let nodeInfo = await NodeInfoAPI.getInfo(); console.log("****head: ", nodeInfo.head_block_num);
         if (!nodeInfo) {
             this.setState({
                 isLoading: false,
@@ -43,20 +43,24 @@ class TableBlockTransactions extends Component {
             return false;
         }
 
-        let blockNum = nodeInfo.head_block_num;
+        let blockNumStartSearch = nodeInfo.head_block_num;
+        let blockNumEndSearch = blockNumStartSearch - 30;
 
         let arrBlocksProduced = new Array(0);
         let arrTransactions = new Array(0);
 
-        while (arrBlocksProduced.length < this.maxTableItems || arrTransactions.length < this.maxTableItems) {
-            let block = await NodeInfoAPI.getBlockInfo(blockNum);
+        while ((arrBlocksProduced.length < this.maxTableItems || arrTransactions.length < this.maxTableItems) && blockNumStartSearch > blockNumEndSearch) { 
+            console.log("start: ", blockNumStartSearch);
+            console.log("end: ", blockNumEndSearch);
+            // if(blockNumStartSearch < blockNumEndSearch) break;
+            let block = await NodeInfoAPI.getBlockInfo(blockNumStartSearch);
             if (block != null) {
                 if (arrBlocksProduced.length < this.maxTableItems) {
 
                     if (block.transactions.length > 0) {
                         arrBlocksProduced.push(block);
                         let trx = block.transactions;
-                        for (let i = 0; i < trx.length; i++) {
+                        for (let i = 0; i < trx.length; i++) { console.log("hey")
                             let tr = trx[i];
                             if (tr.trx.transaction) {
                                 tr.blockId = block.block_num;
@@ -64,7 +68,7 @@ class TableBlockTransactions extends Component {
                             }
                         }
                     }
-                    blockNum--;
+                    blockNumStartSearch--;
                     this.setState({
                         blocksProduced: arrBlocksProduced,
                         transactions: arrTransactions,
@@ -76,6 +80,9 @@ class TableBlockTransactions extends Component {
                     isLoading: false
                 });
             }
+        }
+        if(arrBlocksProduced.length == 0){
+            this.setState({isLoading: true});
         }
     }
 
@@ -190,6 +197,7 @@ class TableBlockTransactions extends Component {
             });
         })
     }
+    
     onBlockSearchChange(arg) {
         var value = arg.target.value.trim();
 
