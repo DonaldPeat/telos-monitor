@@ -1,19 +1,33 @@
 import React, {Component} from 'react';
-import {withScriptjs, withGoogleMap, GoogleMap, Marker} from 'react-google-maps';
+import {
+	withScriptjs, 
+	withGoogleMap, 
+	GoogleMap, 
+	Marker,
+	InfoBox,
+	InfoWindow } from 'react-google-maps';
 import mapStyles from '../mapStyles/telosStyle.json';
 import marker_icon from '../img/marker_gif3.gif';
 
 class ProducerMap extends Component {
+	constructor(){
+		super();
+		this.state = {
+			open: false
+		};
+	}
 
 	render(){
-		const {ip_locations} = this.props;
+		const {ip_locations, producers} = this.props;
+		
 		const get_markers = ip_locations.map((loc, i) => {
 			if(typeof loc.latitude != 'number') return;
 			return (
 				<Marker
 					key={i}
 					position={{lat: loc.latitude, lng: loc.longitude}}
-					icon={marker_icon} />
+					icon={marker_icon}>
+				</Marker>
 			);
 		});
 
