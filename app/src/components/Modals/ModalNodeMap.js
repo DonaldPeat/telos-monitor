@@ -21,7 +21,8 @@ export default class ModalNodeMap extends Component {
 			  </Modal.Header>
 			  <Modal.Body>
 			  	{this.props.ip_locations.length > 0 ? 
-			  		<ProducerMap 
+			  		<ProducerMap
+			  			producers={this.props.producers}
 			  			loadingElement={<div style={{ height: `100%` }} />}
 			  			containerElement={<div style={{ height: `800px` }} />}
 			  			mapElement={<div style={{ height: `100%` }} />}

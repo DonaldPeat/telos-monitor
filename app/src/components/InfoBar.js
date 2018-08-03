@@ -12,17 +12,24 @@ export default class InfoBar extends Component {
 		this.state = { 
 			show: false,
 			showStatus: false,
-			ip_locations: []
+			ip_locations: [],
+			producers: []
 		};
 	}
   
 	componentDidMount(){
 		serverAPI.getIpLocations((res) => {
+			console.log({myData: res.data});
 			this.setState({ip_locations: res.data});
+		
+		serverAPI.getAllAccounts(res => {
+			this.setState({producers: res.data});
+		});
 	});
 }
 
 	render(){
+		const {producers} = this.state;
     	return (
 			<div>
 				<Row>
@@ -41,7 +48,7 @@ export default class InfoBar extends Component {
 					</Col>
 				</Row>
 				<ModalStatus show={this.state.showStatus} onHide={() => this.setState({showStatus: false})} />
-				<ModalNodeMap ip_locations={this.state.ip_locations} show={this.state.show} onHide={() => this.setState({show: false})} />
+				<ModalNodeMap producers={producers} ip_locations={this.state.ip_locations} show={this.state.show} onHide={() => this.setState({show: false})} />
 			</div>
      	);
 	}
