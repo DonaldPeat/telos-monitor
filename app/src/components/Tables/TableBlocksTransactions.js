@@ -25,12 +25,18 @@ class TableBlockTransactions extends Component {
         }
 
         this.maxTableItems = 30;
+
+        this.timer = null;
     }
 
     async componentWillMount() {
         if (this.updateBlocksAndTransactions()) {
-            setInterval(() => this.updateBlocksAndTransactions(), 10000);
+           this.timer= setInterval(() => this.updateBlocksAndTransactions(), 10000);
         }
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.timer);
     }
 
     async updateBlocksAndTransactions() {
