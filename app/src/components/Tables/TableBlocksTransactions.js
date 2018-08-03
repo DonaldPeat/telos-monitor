@@ -40,8 +40,8 @@ class TableBlockTransactions extends Component {
     }
 
     async updateBlocksAndTransactions() {
-        let nodeInfo = await NodeInfoAPI.getInfo(); console.log("****head: ", nodeInfo.head_block_num);
-        if (!nodeInfo) {
+        let nodeInfo = await NodeInfoAPI.getInfo();
+        if (nodeInfo == null) {
             this.setState({
                 isLoading: false,
                 isFindingBlocks: false
@@ -123,7 +123,7 @@ class TableBlockTransactions extends Component {
             return (
                 <tbody>
                     <tr>
-                        <td colSpan={4}>
+                        <td colSpan={5}>
                             <Alert bsStyle="warning">
                                 <strong>Warning:</strong> Blocks not found
                         </Alert>
