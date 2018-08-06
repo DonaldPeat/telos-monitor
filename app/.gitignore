@@ -8,3 +8,5 @@ yarn-error.log*
 package-lock.json
 
 src/config/mapsConfig.js
+
+.env
