@@ -25,6 +25,7 @@ class TableProducers extends Component {
             producerSelected: '',
             producerFilter: ''
         }
+        this.updateProducersOrder = this.updateProducersOrder.bind(this);
     }
 
     componentWillMount() {
