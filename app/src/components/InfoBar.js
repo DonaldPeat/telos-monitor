@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
 import {Row, Col, Modal, Button, ButtonToolbar} from 'react-bootstrap';
 import NodeInfo from './NodeInfo';
-import ProducerMap from './ProducerMap';
 import serverAPI from '../scripts/serverAPI';
 import ModalStatus from './Modals/ModalStatus';
-
-import {MAPS_API_KEY} from '../config/mapsConfig';
+import ModalNodeMap from './Modals/ModalNodeMap';
 
 export default class InfoBar extends Component {
 	constructor(props, context){
@@ -14,17 +12,24 @@ export default class InfoBar extends Component {
 		this.state = { 
 			show: false,
 			showStatus: false,
-			ip_locations: []
+			ip_locations: [],
+			producers: []
 		};
 	}
   
 	componentDidMount(){
 		serverAPI.getIpLocations((res) => {
+			console.log({myData: res.data});
 			this.setState({ip_locations: res.data});
+		
+		serverAPI.getAllAccounts(res => {
+			this.setState({producers: res.data});
+		});
 	});
 }
 
 	render(){
+		const {producers} = this.state;
     	return (
 			<div>
 				<Row>
@@ -43,26 +48,7 @@ export default class InfoBar extends Component {
 					</Col>
 				</Row>
 				<ModalStatus show={this.state.showStatus} onHide={() => this.setState({showStatus: false})} />
-				<Modal show={this.state.show} onHide={() => this.setState({show: false})}         
-					{...this.props}
-						bsSize="large"
-					aria-labelledby="contained-modal-title-lg">
-				  <Modal.Header closeButton>
-				  	<h2>Node Map</h2>
-				  </Modal.Header>
-				  <Modal.Body>
-				  	{this.state.ip_locations.length > 0 ? 
-				  		<ProducerMap 
-				  			loadingElement={<div style={{ height: `100%` }} />}
-				  			containerElement={<div style={{ height: `800px` }} />}
-				  			mapElement={<div style={{ height: `100%` }} />}
-				  			googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${MAPS_API_KEY}`}
-				  			ip_locations={this.state.ip_locations} /> 
-				  		: 
-				  		<div>Getting Nodes...</div>
-				  	}
-				  </Modal.Body>
-				</Modal>
+				<ModalNodeMap producers={producers} ip_locations={this.state.ip_locations} show={this.state.show} onHide={() => this.setState({show: false})} />
 			</div>
      	);
 	}

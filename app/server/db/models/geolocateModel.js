@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const GeolocateModel = new Schema({
 	ip: {type: String},
 	latitude: {type: Number},
-	longitude: {type: Number}
+	longitude: {type: Number},
+	name: {type: String}
 },{
 	collection: 'geolocations'
 });

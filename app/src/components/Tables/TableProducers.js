@@ -44,7 +44,26 @@ class TableProducers extends Component {
             await this.getProducerLatency(producerIndex);
             if (++producerIndex > this.state.producers.length - 1) producerIndex = 0;
         }, 1000);
+
+        //update producers every 5 minutes
+        setInterval(this.updateProducersOrder, 300000);       
     }
+
+    //gets producers, reorders them
+    async updateProducersOrder(){
+        let newProd = [];
+        const {producers} = this.state;
+        const newProdData = await nodeInfoAPI.getProducers();
+        if(newProdData != null){
+          for(let i = 0; i < newProdData.rows.length; i++){
+            const thisOwner = newProdData.rows[i].owner;
+            const thisRow = producers.find(row => row.owner === thisOwner);
+            newProd[i] = thisRow;
+          }
+          //set state, remove empty values if they exist
+          this.setState({producers: newProd.filter(el => el.owner)});
+        }
+    }    
 
     async getProducersInfo() {
         let data = await nodeInfoAPI.getProducers();
@@ -145,10 +164,11 @@ class TableProducers extends Component {
                     {
                         prods.map((val, i) => {
                             return (
-                                <tr key={i} className={val.owner === this.state.activeProducerName ? "activeProducer" : ""}>
+                                <tr key={i} className={val.owner === this.state.activeProducerName ? 'activeProducer' : ''}>
                                     <td>{i + 1}</td>
                                     <td>
-                                        <a href={`producers/${val.owner}`} onClick={(e) => {
+                                        <a href={`producers/${
+            val.owner}`} onClick={(e) => {
                                             e.preventDefault();
                                             this.showProducerInfo(val.owner);
                                         }}>
@@ -156,13 +176,17 @@ class TableProducers extends Component {
                                         </a>
                                     </td>
                                     <td>{this.state.producersLatency[i]} ms</td>
-                                    <td>{val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i] > 0 ? this.state.blocksProduced[i] : "-"} </td>
-                                    <td>{val.owner === this.state.activeProducerName ?
-                                        "producing blocks..." :
-                                        this.getLastTimeBlockProduced(this.state.lastTimeProduced[i], this.state.blockTime)}
+                                    <td>{i < 21 ? 
+                                          val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i] > 0 ? this.state.blocksProduced[i] : "-" 
+                                        : '-'} </td>
+                                    <td>{i < 21 ? 
+                                          val.owner === this.state.activeProducerName ?
+                                          "producing blocks..." :
+                                          this.getLastTimeBlockProduced(this.state.lastTimeProduced[i], this.state.blockTime)
+                                        : '0 sec'}
                                     </td>
                                     {/* <td>organization</td> */}
-                                    <td>{this.getProducerPercentage(val) + "%"}</td>
+                                    <td>{i < 21 ? this.getProducerPercentage(val) + "%" : '0.00%'}</td>
                                 </tr>
                             )
                         })
