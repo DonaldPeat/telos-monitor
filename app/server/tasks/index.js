@@ -13,7 +13,7 @@ const GEOCODE_API_KEY = process.env.GEOCODE_API_KEY;
 module.exports = {
 	scheduleGeoTasks: function(){
 		cron.schedule('*/15 * * * *', () => {
-			getLatAndLong();
+			this.getLatAndLong();
 		});
 	},
 	getLatAndLong: function(){
@@ -26,11 +26,13 @@ module.exports = {
 						if(acct.httpServerAddress == ''){
 							return {
 								serverLocation: acct.serverLocation,
+								name: acct.name,
 								url: acct.httpsServerAddress.slice(0, acct.httpsServerAddress.indexOf(':'))
 							};
 						}else{
 							return {
 								serverLocation: acct.serverLocation,
+								name: acct.name,
 								url: acct.httpServerAddress.slice(0, acct.httpServerAddress.indexOf(':'))
 							};
 						}
@@ -61,6 +63,7 @@ module.exports = {
 					.then(res => {
 						const geoModel = new GeolocateModel({
 							ip: res.data.ip,
+							name: ip.name,
 							longitude: res.data.longitude,
 							latitude: res.data.latitude
 						});
@@ -79,6 +82,7 @@ module.exports = {
 						if(res.data.status.code == 200){
 							const geoModel = new GeolocateModel({
 								ip: ip.serverLocation,
+								name: ip.name,
 								longitude: res.data.results[0].geometry.lng,
 								latitude: res.data.results[0].geometry.lat
 							});
