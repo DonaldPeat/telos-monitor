@@ -11,13 +11,12 @@ class ProducerMap extends Component {
 		};
 	}
 	render(){
-		const {ip_locations, producers} = this.props; console.log(producers);
+		const {ip_locations, producers} = this.props; 
 		
 		const get_markers = ip_locations.map((loc, i) => {
 			
 			if(typeof loc.latitude != 'number') return;
 
-			console.log("hi")
 			const thisProd = producers.find(prod => prod.name === loc.name);
 
 			return (<MarkerWithInfo key={i} loc={loc} producer={thisProd} />);

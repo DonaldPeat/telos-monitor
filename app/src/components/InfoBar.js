@@ -27,7 +27,7 @@ export default class InfoBar extends Component {
   }
 
   render() {
-    const {producers} = this.state; console.log(producers)
+    const {producers} = this.state;
         return (
 			<div>
 				<Row>
