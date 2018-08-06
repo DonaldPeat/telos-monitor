@@ -26,7 +26,8 @@ export default class ModalNodeMap extends Component {
 			  			containerElement={<div style={{ height: `800px` }} />}
 			  			mapElement={<div style={{ height: `100%` }} />}
 			  			googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${MAPS_API_KEY}`}
-			  			ip_locations={this.props.ip_locations} /> 
+			  			ip_locations={this.props.ip_locations} 
+						producers={this.props.producers}/> 
 			  		: 
 			  		<div>Getting Nodes...</div>
 			  	}
