@@ -31,6 +31,7 @@ class TableProducers extends Component {
     }
 
     this.totalTLOS = 190473249.0000;
+                     
     this.updateProducersOrder = this.updateProducersOrder.bind(this);
   }
 
@@ -60,6 +61,7 @@ class TableProducers extends Component {
     const {producers} = this.state;
     const newProdData = await nodeInfoAPI.getProducers();
     if(newProdData != null){
+        console.log("data error:",newProdData);
       for(let i = 0; i < newProdData.rows.length; i++){
         const thisOwner = newProdData.rows[i].owner;
         const thisRow = producers.find(row => row.owner === thisOwner);
@@ -86,6 +88,7 @@ class TableProducers extends Component {
 
   async updateProducersInfo() {
     let data = await nodeInfoAPI.getGlobalState();
+    //10000 decimals
     let totalVoteStaked = data.rows[0].total_activated_stake / 10000;
 
     console.log('total Vote Staked: ', totalVoteStaked);
@@ -143,7 +146,9 @@ class TableProducers extends Component {
 
   getProducerPercentage(bp) {
     if (parseFloat(bp.total_votes) > 0 && this.state.totalVotesStaked > 0) {
-      let producerPercentage = (parseFloat(bp.total_votes / 100)) / parseFloat(this.state.totalVotesStaked);
+      console.log(bp.owner, bp.total_votes/10000);
+      let bpVote = bp.total_votes / 10000;
+      let producerPercentage = (bpVote * 100) / this.state.totalVotesStaked;
       let strProducerPercentage = producerPercentage.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
 
        return strProducerPercentage;
