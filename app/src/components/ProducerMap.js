@@ -1,39 +1,72 @@
 import React, {Component} from 'react';
-import {withScriptjs, withGoogleMap, GoogleMap,Marker, InfoBox, InfoWindow } from 'react-google-maps';
+import {withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow} from 'react-google-maps';
+import MarkerClusterer from 'react-google-maps/lib/components/addons/MarkerClusterer';
 import mapStyles from '../mapStyles/telosStyle.json';
 import marker_icon from '../img/marker_gif3.gif';
+import cluster_icon from '../img/cluster_icon.png';
 
-class ProducerMap extends Component {
-	constructor(props){
-		super(props);
-		this.state = {
-			open: false
-		};
+const clusterStyle = [
+	{ 
+		textColor: 'white', 
+		height: 53, 
+		url: cluster_icon, 
+		width: 53,
+		anchorText: [-9.75, -10.25]
+	}, 
+	{ 
+		textColor: 'white', 
+		height: 56, 
+		url: cluster_icon, 
+		width: 56,
+		anchorText: [-9.75, -10.25] 
+	}, 
+	{ 
+		textColor: 'white', 
+		height: 66, 
+		url: cluster_icon, 
+		width: 66,
+		anchorText: [-9.75, -10.25]
+	}, 
+	{ 
+		textColor: 'white', 
+		height: 78, 
+		url: cluster_icon, 
+		width: 78, 
+		anchorText: [-9.75, -10.25]
+	}, 
+	{ 
+		textColor: 'white', 
+		height: 90, 
+		url: cluster_icon, 
+		width: 90, 
+		anchorText: [-9.75, -10.25]
 	}
-	render(){
-		const {ip_locations, producers} = this.props; 
-		
-		const get_markers = ip_locations.map((loc, i) => {
-			
-			if(typeof loc.latitude != 'number') return;
+];
 
-			const thisProd = producers.find(prod => prod.name === loc.name);
-
-			return (<MarkerWithInfo key={i} loc={loc} producer={thisProd} />);
-		});
-
-		return (
-			<GoogleMap
-				defaultZoom={2}
-				defaultCenter={{lat: 13.491665, lng: -92.508646}}
-				defaultOptions={{
-					styles: mapStyles
-				}}>
-				{get_markers}
-			</GoogleMap>
-		);
-	}
-}
+const ProducerMap = ({ip_locations, producers}) => {
+	const get_markers = ip_locations.map((loc, i) => {
+		if(typeof loc.latitude != 'number') return;
+		const thisProd = producers.find(prod => prod.name === loc.name);
+		return (<MarkerWithInfo key={i} loc={loc} producer={thisProd} />);
+	});
+	return (
+		<GoogleMap
+			defaultZoom={2}
+			defaultCenter={{lat: 13.491665, lng: -92.508646}}
+			defaultOptions={{
+				styles: mapStyles
+			}}>
+			    <MarkerClusterer
+			      styles={clusterStyle}
+			      averageCenter
+			      enableRetinaIcons
+			      gridSize={15}
+			    >
+					{get_markers}
+				</MarkerClusterer>
+		</GoogleMap>
+	);
+};
 
 class MarkerWithInfo extends Component {
 	constructor(props){
