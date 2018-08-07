@@ -59,10 +59,6 @@ class MarkerWithInfo extends Component {
 				    	<h5>{producer.organization}</h5>
 				    	<table className='map_info_table'>
 				    		<tr>
-				    			<td>Server Location: </td>
-				    			<td> {producer.serverLocation}</td>
-				    		</tr>
-				    		<tr>
 				    			<td>Server Address:</td>
 				    			<td> {producer.httpServerAddress ? producer.httpServerAddress : producer.httpsServerAddress}</td>
 				    		</tr>
