@@ -187,7 +187,7 @@ class TableProducers extends Component {
                                         : '0 sec'}
                                     </td>
                                     {/* <td>organization</td> */}
-                                    <td>{i < 21 ? this.getProducerPercentage(val) + "%" : '0.00%'}</td>
+                                    <td>{this.getProducerPercentage(val) + "%"}</td>
                                 </tr>
                             )
                         })
