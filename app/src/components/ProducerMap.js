@@ -1,45 +1,80 @@
 import React, {Component} from 'react';
-import {withScriptjs, withGoogleMap, GoogleMap,Marker, InfoBox, InfoWindow } from 'react-google-maps';
+import {withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow} from 'react-google-maps';
+import MarkerClusterer from 'react-google-maps/lib/components/addons/MarkerClusterer';
 import mapStyles from '../mapStyles/telosStyle.json';
 import marker_icon from '../img/marker_gif3.gif';
+import cluster_icon from '../img/cluster_icon.png';
 
-class ProducerMap extends Component {
-	constructor(props){
-		super(props);
-		this.state = {
-			open: false
-		};
+const clusterStyle = [
+	{ 
+		textColor: 'white', 
+		height: 53, 
+		url: cluster_icon, 
+		width: 53,
+		anchorText: [-9.75, -10.25]
+	}, 
+	{ 
+		textColor: 'white', 
+		height: 56, 
+		url: cluster_icon, 
+		width: 56,
+		anchorText: [-9.75, -10.25] 
+	}, 
+	{ 
+		textColor: 'white', 
+		height: 66, 
+		url: cluster_icon, 
+		width: 66,
+		anchorText: [-9.75, -10.25]
+	}, 
+	{ 
+		textColor: 'white', 
+		height: 78, 
+		url: cluster_icon, 
+		width: 78, 
+		anchorText: [-9.75, -10.25]
+	}, 
+	{ 
+		textColor: 'white', 
+		height: 90, 
+		url: cluster_icon, 
+		width: 90, 
+		anchorText: [-9.75, -10.25]
 	}
-	render(){
-		const {ip_locations, producers} = this.props; 
-		
-		const get_markers = ip_locations.map((loc, i) => {
-			
-			if(typeof loc.latitude != 'number') return;
+];
 
-			const thisProd = producers.find(prod => prod.name === loc.name);
-
-			return (<MarkerWithInfo key={i} loc={loc} producer={thisProd} />);
-		});
-
-		return (
-			<GoogleMap
-				defaultZoom={2}
-				defaultCenter={{lat: 13.491665, lng: -92.508646}}
-				defaultOptions={{
-					styles: mapStyles
-				}}>
-				{get_markers}
-			</GoogleMap>
-		);
-	}
-}
+const ProducerMap = ({ip_locations, producers}) => {
+	const get_markers = ip_locations.map((loc, i) => {
+		if(typeof loc.latitude != 'number') return;
+		const thisProd = producers.find(prod => prod.name === loc.name);
+		return (<MarkerWithInfo key={i} loc={loc} producer={thisProd} />);
+	});
+	return (
+		<GoogleMap
+			onClick={e => console.log(e)}
+			defaultZoom={2}
+			defaultCenter={{lat: 13.491665, lng: -92.508646}}
+			defaultOptions={{
+				styles: mapStyles
+			}}>
+			    <MarkerClusterer
+			      styles={clusterStyle}
+			      averageCenter
+			      enableRetinaIcons
+			      gridSize={15}
+			    >
+					{get_markers}
+				</MarkerClusterer>
+		</GoogleMap>
+	);
+};
 
 class MarkerWithInfo extends Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			open: false
+			open: false,
+			infoBoxOpen: false
 		};
 	}
 	render(){
@@ -54,32 +89,44 @@ class MarkerWithInfo extends Component {
  				{this.state.open && 
 				<InfoWindow position={{lat: this.props.loc.latitude, lng: this.props.loc.longitude}}
 			                onCloseClick={() => this.setState({open: false})}>
-				    <div>
+				    <div style={{position: 'relative'}}>
 				    	<h4>{producer.name}</h4>
 				    	<h5>{producer.organization}</h5>
 				    	<table className='map_info_table'>
-				    		<tr>
-				    			<td>Server Location: </td>
-				    			<td> {producer.serverLocation}</td>
-				    		</tr>
-				    		<tr>
-				    			<td>Server Address:</td>
-				    			<td> {producer.httpServerAddress ? producer.httpServerAddress : producer.httpsServerAddress}</td>
-				    		</tr>
-				    		{producer.url ? 
-				    			<tr>
-					    			<td>URL:</td>
-					    			<td> {producer.url}</td>
-					    		</tr>
-				    			: ''
-				    		}
-				    		{producer.p2pServerAddress ?
+				    		<tbody>
 					    		<tr>
-					    			<td>Peer Server Address:</td>
-					    			<td>{producer.p2pServerAddress ? producer.p2pServerAddress : ''}</td>
-					    		</tr>	
-				    			: ''
-				    		}
+					    			<td>Server Address:</td>
+					    			<td> 
+					    				{producer.httpServerAddress ? producer.httpServerAddress : producer.httpsServerAddress}&nbsp; 
+					    				<i 
+					    					className='fa fa-info-circle' 
+					    					onClick={(e) => {
+					    						const iconRect = e.target.getBoundingClientRect();
+					    						this.setState({infoBoxOpen: !this.state.infoBoxOpen});
+					    					}}
+					    				></i>
+										{this.state.infoBoxOpen &&
+											<span> 
+												<br /><p>Location info from block producer registration</p>
+											</span>
+										}
+					    			</td>
+					    		</tr>
+					    		{producer.url ? 
+					    			<tr>
+						    			<td>URL:</td>
+						    			<td><a href={producer.url} target="_blanket">{producer.url}</a> </td>
+						    		</tr>
+					    			: ''
+					    		}
+					    		{producer.p2pServerAddress ?
+						    		<tr>
+						    			<td>Peer Server Address:</td>
+						    			<td>{producer.p2pServerAddress ? producer.p2pServerAddress : ''}</td>
+						    		</tr>	
+					    			: ''
+					    		}
+				    		</tbody>
 				    	</table>
  				    </div>
 			    </InfoWindow>}
