@@ -115,7 +115,7 @@ class MarkerWithInfo extends Component {
 					    		{producer.url ? 
 					    			<tr>
 						    			<td>URL:</td>
-						    			<td> {producer.url}</td>
+						    			<td><a href={producer.url} target="_blanket">{producer.url}</a> </td>
 						    		</tr>
 					    			: ''
 					    		}
