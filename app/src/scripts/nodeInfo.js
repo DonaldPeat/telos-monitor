@@ -69,7 +69,7 @@ export default {
             'scope': 'eosio',
             'table': 'global'
           }));
-          return response.data;
+      return response.data;
     } catch (error) {
       console.error(error);
       return null;

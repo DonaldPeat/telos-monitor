@@ -55,23 +55,22 @@ class TableProducers extends Component {
     setInterval(this.updateProducersOrder, 300000);
   }
 
-  //gets producers, reorders them
+//gets producers, reorders them
   async updateProducersOrder(){
-    let newProd = [];
-    const {producers} = this.state;
-    const newProdData = await nodeInfoAPI.getProducers();
-    if(newProdData != null){
-        console.log("data error:",newProdData);
-      for(let i = 0; i < newProdData.rows.length; i++){
-        const thisOwner = newProdData.rows[i].owner;
-        const thisRow = producers.find(row => row.owner === thisOwner);
-        newProd[i] = thisRow;
+      let newProd = [];
+      const {producers} = this.state;
+      const newProdData = await nodeInfoAPI.getProducers();
+      if(newProdData != null){
+        for(let i = 0; i < newProdData.rows.length; i++){
+          const thisOwner = newProdData.rows[i].owner;
+          const thisRow = producers.find(row => row.owner === thisOwner);
+          newProd[i] = thisRow;
+        }
+        //set state, remove empty values if they exist
+        this.setState({producers: newProd.filter(el => el.owner)});
       }
-      //set state, remove empty values if they exist
-      this.setState({producers: newProd.filter(el => el.owner)});
-    }
-  }
-
+  }    
+  
   async getProducersInfo() {
     let data = await nodeInfoAPI.getProducers();
     if (data != null) {
@@ -82,9 +81,8 @@ class TableProducers extends Component {
         // totalVotesWheight: data.total_producer_vote_weight
       });
       return true;
-    } else
-      return false;
-    }
+    } else return false;
+ }
 
   async updateProducersInfo() {
     let data = await nodeInfoAPI.getGlobalState();
@@ -100,8 +98,6 @@ class TableProducers extends Component {
         percentageVoteStaked:
             percentage.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]
       });
-    }
-
 
 
     if (this.state.producers.length > 0) {
@@ -153,10 +149,9 @@ class TableProducers extends Component {
 
        return strProducerPercentage;
       }
-    else{
-      return 0;
-    }
+    else return 0;
   }
+    
   async getProducerLatency(producerIndex) {
     if (this.state.producers.length > 0 && this.state.accounts.length > 0) {
       let producerName = this.state.producers[producerIndex].owner;
