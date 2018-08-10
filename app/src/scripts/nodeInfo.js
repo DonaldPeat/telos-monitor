@@ -74,5 +74,21 @@ export default {
       console.error(error);
       return null;
     }
+  },
+
+  getProducersRotation: async() => {
+    try {
+      var response = await axios.post(
+          config.endPoint + 'v1/chain/get_table_rows', JSON.stringify({
+            'code': 'eosio',
+            'json': true,
+            'scope': 'eosio',
+            'table': 'rotations'
+          }));
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
 }

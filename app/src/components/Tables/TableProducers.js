@@ -52,7 +52,7 @@ class TableProducers extends Component {
     }, 1000);
 
     // update producers every 5 minutes
-    setInterval(this.updateProducersOrder, 300000);
+    setInterval(this.updateProducersOrder, 2000);
     }
 
   // gets producers, reorders them
@@ -65,10 +65,21 @@ class TableProducers extends Component {
         const thisOwner = newProdData.rows[i].owner;
         const thisRow = producers.find(row => row.owner === thisOwner);
         newProd[i] = thisRow;
+    }
+
+      let prodsRotationData = await nodeInfoAPI.getProducersRotation();
+      let pRotation = prodsRotationData.rows[0];
+      // Rotate bps
+      if (pRotation.bp_currently_out !== '' && pRotation.sbp_currently_in !== '') {
+        if (pRotation.bp_currently_out === newProdData[pRotation.bp_out_index].owner) {
+          let bpOut = newProdData[pRotation.bp_out_index];
+          newProdData[pRotation.bp_out_index] = newProdData[pRotation.sbp_in_index];
+          newProdData[pRotation.sbp_in_index] = bpOut;
+        }
       }
       // set state, remove empty values if they exist
       this.setState({producers: newProd.filter(el => el.owner)});
-    }
+     }
     }
 
   async getProducersInfo() {
@@ -106,7 +117,7 @@ class TableProducers extends Component {
           let nodeInfo = await nodeInfoAPI.getInfo();
           if (nodeInfo != null) {
             let producerIndex = this.state.producers.findIndex(
-                (bp) => bp.owner === nodeInfo.head_block_producer);
+                bp => bp.owner === nodeInfo.head_block_producer);
             let blocksProduced = new Array(this.state.producers.length);
             let lastTimeProduced = new Array(this.state.producers.length);
 
@@ -131,7 +142,7 @@ class TableProducers extends Component {
       }
     }
   }
-  
+
   getLastTimeBlockProduced(bpLastTimeProduced, headBlockTime) {
     let bpTime = new Date(bpLastTimeProduced);
     let headTime = new Date(headBlockTime);
@@ -144,7 +155,7 @@ class TableProducers extends Component {
 
   getProducerPercentage(bp) {
     if (parseFloat(bp.total_votes) > 0 && this.state.totalVotesStaked > 0) {
-      console.log(bp.owner, bp.total_votes / 10000);
+      //   console.log(bp.owner, bp.total_votes / 10000);
       let bpVote = bp.total_votes / 10000;
       let producerPercentage = (bpVote * 100) / this.state.totalVotesStaked;
       let strProducerPercentage =
@@ -219,7 +230,7 @@ class TableProducers extends Component {
                                         : '0 sec'}
                                     </td>
                                     {/* <td>organization</td> */}
-                                    <td>{i < 21 ? this.getProducerPercentage(val) + "%" : '0.00%'}</td>
+                                    <td>{this.getProducerPercentage(val) + "%"}</td>
                                 </tr>
                             )
                         })
