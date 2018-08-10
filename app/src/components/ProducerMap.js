@@ -77,6 +77,7 @@ class MarkerWithInfo extends Component {
 			infoBoxOpen: false
 		};
 	}
+  
 	render(){
 		const {producer, loc} = this.props;
  		return (

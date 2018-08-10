@@ -20,6 +20,7 @@ export default class InfoBar extends Component {
 	componentDidMount(){
 		serverAPI.getIpLocations((res) => {
 			console.log({myData: res.data});
+
 			this.setState({ip_locations: seperateIdenticalCoords(res.data)});
 		
 		serverAPI.getAllAccounts(res => {
