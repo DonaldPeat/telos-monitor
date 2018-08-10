@@ -30,8 +30,8 @@ class TableProducers extends Component {
       totalVotesStaked: 0
     }
 
-    this.totalTLOS = 190473249.0000;
-                     
+                 this.totalTLOS = 190473249.0000;
+
     this.updateProducersOrder = this.updateProducersOrder.bind(this);
   }
 
@@ -51,26 +51,26 @@ class TableProducers extends Component {
       if (++producerIndex > this.state.producers.length - 1) producerIndex = 0;
     }, 1000);
 
-    //update producers every 5 minutes
+    // update producers every 5 minutes
     setInterval(this.updateProducersOrder, 300000);
-  }
+    }
 
-//gets producers, reorders them
-  async updateProducersOrder(){
-      let newProd = [];
-      const {producers} = this.state;
-      const newProdData = await nodeInfoAPI.getProducers();
-      if(newProdData != null){
-        for(let i = 0; i < newProdData.rows.length; i++){
-          const thisOwner = newProdData.rows[i].owner;
-          const thisRow = producers.find(row => row.owner === thisOwner);
-          newProd[i] = thisRow;
-        }
-        //set state, remove empty values if they exist
-        this.setState({producers: newProd.filter(el => el.owner)});
+  // gets producers, reorders them
+  async updateProducersOrder() {
+    let newProd = [];
+    const {producers} = this.state;
+    const newProdData = await nodeInfoAPI.getProducers();
+    if (newProdData != null) {
+      for (let i = 0; i < newProdData.rows.length; i++) {
+        const thisOwner = newProdData.rows[i].owner;
+        const thisRow = producers.find(row => row.owner === thisOwner);
+        newProd[i] = thisRow;
       }
-  }    
-  
+      // set state, remove empty values if they exist
+      this.setState({producers: newProd.filter(el => el.owner)});
+    }
+    }
+
   async getProducersInfo() {
     let data = await nodeInfoAPI.getProducers();
     if (data != null) {
@@ -81,12 +81,13 @@ class TableProducers extends Component {
         // totalVotesWheight: data.total_producer_vote_weight
       });
       return true;
-    } else return false;
- }
+    } else
+      return false;
+    }
 
   async updateProducersInfo() {
     let data = await nodeInfoAPI.getGlobalState();
-    //10000 decimals
+    // 10000 decimals
     let totalVoteStaked = data.rows[0].total_activated_stake / 10000;
 
     console.log('total Vote Staked: ', totalVoteStaked);
@@ -100,36 +101,37 @@ class TableProducers extends Component {
       });
 
 
-    if (this.state.producers.length > 0) {
-      setInterval(async() => {
-        let nodeInfo = await nodeInfoAPI.getInfo();
-        if (nodeInfo != null) {
-          let producerIndex = this.state.producers.findIndex(
-              (bp) => bp.owner === nodeInfo.head_block_producer);
-          let blocksProduced = new Array(this.state.producers.length);
-          let lastTimeProduced = new Array(this.state.producers.length);
+      if (this.state.producers.length > 0) {
+        setInterval(async() => {
+          let nodeInfo = await nodeInfoAPI.getInfo();
+          if (nodeInfo != null) {
+            let producerIndex = this.state.producers.findIndex(
+                (bp) => bp.owner === nodeInfo.head_block_producer);
+            let blocksProduced = new Array(this.state.producers.length);
+            let lastTimeProduced = new Array(this.state.producers.length);
 
-          if (producerIndex > -1) {
-            blocksProduced = this.state.blocksProduced;
-            blocksProduced[producerIndex] = nodeInfo.head_block_num;
+            if (producerIndex > -1) {
+              blocksProduced = this.state.blocksProduced;
+              blocksProduced[producerIndex] = nodeInfo.head_block_num;
 
-            lastTimeProduced = this.state.lastTimeProduced;
-            lastTimeProduced[producerIndex] = nodeInfo.head_block_time;
+              lastTimeProduced = this.state.lastTimeProduced;
+              lastTimeProduced[producerIndex] = nodeInfo.head_block_time;
 
-            await this.getProducerLatency(producerIndex);
+              await this.getProducerLatency(producerIndex);
+            }
+
+            this.setState({
+              activeProducerName: nodeInfo.head_block_producer,
+              currentBlockNumber: nodeInfo.head_block_num,
+              blockTime: nodeInfo.head_block_time,
+              blocksProduced: blocksProduced
+            });
           }
-
-          this.setState({
-            activeProducerName: nodeInfo.head_block_producer,
-            currentBlockNumber: nodeInfo.head_block_num,
-            blockTime: nodeInfo.head_block_time,
-            blocksProduced: blocksProduced
-          });
-        }
-      }, 1000);
+        }, 1000);
+      }
     }
   }
-
+  
   getLastTimeBlockProduced(bpLastTimeProduced, headBlockTime) {
     let bpTime = new Date(bpLastTimeProduced);
     let headTime = new Date(headBlockTime);
@@ -142,16 +144,18 @@ class TableProducers extends Component {
 
   getProducerPercentage(bp) {
     if (parseFloat(bp.total_votes) > 0 && this.state.totalVotesStaked > 0) {
-      console.log(bp.owner, bp.total_votes/10000);
+      console.log(bp.owner, bp.total_votes / 10000);
       let bpVote = bp.total_votes / 10000;
       let producerPercentage = (bpVote * 100) / this.state.totalVotesStaked;
-      let strProducerPercentage = producerPercentage.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
+      let strProducerPercentage =
+          producerPercentage.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
 
-       return strProducerPercentage;
+      return strProducerPercentage;
       }
-    else return 0;
-  }
-    
+    else
+      return 0;
+    }
+
   async getProducerLatency(producerIndex) {
     if (this.state.producers.length > 0 && this.state.accounts.length > 0) {
       let producerName = this.state.producers[producerIndex].owner;
