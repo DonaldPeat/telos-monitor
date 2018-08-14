@@ -19,10 +19,11 @@ export default class InfoBar extends Component {
   
 	componentDidMount(){
 		serverAPI.getIpLocations((res) => {
-			console.log({myData: res.data});
+			//console.log({myData: removeDuplicates(res.data)});
 			this.setState({ip_locations: seperateIdenticalCoords(res.data)});
 		
 		serverAPI.getAllAccounts(res => {
+			//console.log({producers: res.data.filter(item => )});
 			this.setState({producers: res.data});
 		});
 	});
@@ -66,8 +67,8 @@ function seperateIdenticalCoords(ip_locations){
 			//if coords are identical...
 			if( thisIp.longitude === otherIp.longitude &&
 				thisIp.latitude === otherIp.latitude){
-				thisIp.longitude += 0.00001;
-				thisIp.latitude += 0.00001;
+				thisIp.longitude += 0.00002 * Math.random();
+				thisIp.latitude += 0.00002 * Math.random();
 				break;
 			}
 		}

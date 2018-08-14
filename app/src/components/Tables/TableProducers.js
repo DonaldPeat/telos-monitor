@@ -47,7 +47,7 @@ class TableProducers extends Component {
         }, 1000);
 
         //update producers every 5 minutes
-        setInterval(this.updateProducersOrder, 300000);       
+        setInterval(()=>this.updateProducersOrder(), 2000);       
     }
 
     //gets producers, reorders them
@@ -55,6 +55,7 @@ class TableProducers extends Component {
         let newProd = [];
         const {producers} = this.state;
         const newProdData = await nodeInfoAPI.getProducers();
+        console.log(newProdData.rows);
         if(newProdData != null){
           for(let i = 0; i < newProdData.rows.length; i++){
             const thisOwner = newProdData.rows[i].owner;
@@ -70,6 +71,7 @@ class TableProducers extends Component {
         let data = await nodeInfoAPI.getProducers();
         if (data != null) {
             let producers = data.rows;
+            console.log({producers: producers});
             this.setState({
                 producers: producers,
                 totalVotesWheight: data.total_producer_vote_weight
