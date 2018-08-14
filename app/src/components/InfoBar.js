@@ -20,7 +20,7 @@ export default class InfoBar extends Component {
 	componentDidMount(){
 		serverAPI.getIpLocations((res) => {
 			console.log({myData: res.data});
-			this.setState({ip_locations: res.data});
+			this.setState({ip_locations: seperateIdenticalCoords(res.data)});
 		
 		serverAPI.getAllAccounts(res => {
 			this.setState({producers: res.data});
@@ -52,4 +52,27 @@ export default class InfoBar extends Component {
 			</div>
      	);
 	}
+}
+
+//need to seperate nodes that have the same coordinates
+function seperateIdenticalCoords(ip_locations){
+	const N = ip_locations.length;
+	const newIp_locations = [];
+	for(let i = 0; i < N - 1; i++){
+		const thisIp = ip_locations[i];
+		for(let j = i + 1; j < N; j++){
+			const otherIp = ip_locations[j];
+			
+			//if coords are identical...
+			if( thisIp.longitude === otherIp.longitude &&
+				thisIp.latitude === otherIp.latitude){
+				thisIp.longitude += 0.00001;
+				thisIp.latitude += 0.00001;
+				break;
+			}
+		}
+		newIp_locations.push(thisIp);
+	}
+	newIp_locations.push(ip_locations[N - 1]);
+	return newIp_locations;
 }
