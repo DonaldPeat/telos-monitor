@@ -71,14 +71,15 @@ class TableProducers extends Component {
       let pRotation = prodsRotationData.rows[0];
       // Rotate bps
       if (pRotation.bp_currently_out !== '' && pRotation.sbp_currently_in !== '') {
-        if (pRotation.bp_currently_out === newProdData[pRotation.bp_out_index].owner) {
-          let bpOut = newProdData[pRotation.bp_out_index];
-          newProdData[pRotation.bp_out_index] = newProdData[pRotation.sbp_in_index];
-          newProdData[pRotation.sbp_in_index] = bpOut;
+          let newProds = newProdData.rows;
+        if (pRotation.bp_currently_out === newProds[pRotation.bp_out_index].owner) {
+          let bpOut = newProds[pRotation.bp_out_index];
+          newProds[pRotation.bp_out_index] = newProds[pRotation.sbp_in_index];
+          newProds[pRotation.sbp_in_index] = bpOut;
         }
       }
       // set state, remove empty values if they exist
-      this.setState({producers: newProd.filter(el => el.owner)});
+      this.setState({producers: newProd.filter(el => el.owner !== "")});
      }
     }
 
