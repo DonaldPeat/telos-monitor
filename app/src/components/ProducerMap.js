@@ -3,6 +3,7 @@ import {withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow} from 'react-
 import MarkerClusterer from 'react-google-maps/lib/components/addons/MarkerClusterer';
 import mapStyles from '../mapStyles/telosStyle.json';
 import marker_icon from '../img/marker_gif3.gif';
+import inactive_icon from '../img/inactive_marker.png';
 import cluster_icon from '../img/cluster_icon.png';
 
 const clusterStyle = [
@@ -83,7 +84,7 @@ class MarkerWithInfo extends Component {
  		return (
 			<Marker
 				position={{lat: loc.latitude, lng: loc.longitude}}
-				icon={marker_icon}
+				icon={loc.active ? marker_icon : inactive_icon}
 				onClick={() => this.setState({open: true})}>
 				
 				{/*get data for this server above*/}

@@ -6,7 +6,8 @@ const GeolocateModel = new Schema({
 	name: {type: String},
 	latitude: {type: Number},
 	longitude: {type: Number},
-	name: {type: String}
+	name: {type: String},
+	active: {type: Boolean}
 },{
 	collection: 'geolocations'
 });

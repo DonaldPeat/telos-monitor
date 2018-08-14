@@ -27,17 +27,38 @@ module.exports = {
 							return {
 								serverLocation: acct.serverLocation,
 								name: acct.name,
-								url: acct.httpsServerAddress.slice(0, acct.httpsServerAddress.indexOf(':'))
+								url: acct.httpsServerAddress.slice(0, acct.httpsServerAddress.indexOf(':')),
+								active: true
 							};
 						}else{
 							return {
 								serverLocation: acct.serverLocation,
 								name: acct.name,
-								url: acct.httpServerAddress.slice(0, acct.httpServerAddress.indexOf(':'))
+								url: acct.httpServerAddress.slice(0, acct.httpServerAddress.indexOf(':')),
+								active: true
 							};
 						}
 					});
-					removeOldIpData(updateIpData, addresses);
+
+					const inactive = items.slice(22).map(acct => {
+						if(acct.httpServerAddress == ''){
+							return {
+								serverLocation: acct.serverLocation,
+								name: acct.name,
+								url: acct.httpsServerAddress.slice(0, acct.httpsServerAddress.indexOf(':')),
+								active: false
+							};
+						}else{
+							return {
+								serverLocation: acct.serverLocation,
+								name: acct.name,
+								url: acct.httpServerAddress.slice(0, acct.httpServerAddress.indexOf(':')),
+								active: false
+							};
+						}
+					});
+
+					removeOldIpData(updateIpData, addresses.concat(inactive));
 				}
 			});
 		};
