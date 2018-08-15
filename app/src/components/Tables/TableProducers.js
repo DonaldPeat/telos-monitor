@@ -1,14 +1,14 @@
 import '../../styles/tableproducers.css'
-
 import React, {Component} from 'react';
 import {Alert, Col, ProgressBar, Row, Table} from 'react-bootstrap'
-
 import nodeInfoAPI from '../../scripts/nodeInfo'
 import serverAPI from '../../scripts/serverAPI';
 import getHumanTime from '../../scripts/timeHelper'
 import FormTextboxButton from '../FormControls/FormTextboxButton'
 import ModalProducerInfo from '../Modals/ModalProducerInfo'
-import ProducerMap from '../ProducerMap';
+
+const SORT_BY_PROD = 'sortByProducerName';
+const SORT_BY_PROD_REV = 'sortByProducerNameReverse';
 
 class TableProducers extends Component {
   constructor(props) {
@@ -27,12 +27,15 @@ class TableProducers extends Component {
       producerSelected: '',
       producerFilter: '',
       percentageVoteStaked: '',
-      totalVotesStaked: 0
+      totalVotesStaked: 0,
+      sortBy: ''
     }
 
-                 this.totalTLOS = 190473249.0000;
+    this.totalTLOS = 190473249.0000;
 
     this.updateProducersOrder = this.updateProducersOrder.bind(this);
+    this.sortByName = this.sortByName.bind(this);
+    this.sortByNameReverse = this.sortByNameReverse.bind(this);
   }
 
   componentWillMount() {
@@ -54,55 +57,41 @@ class TableProducers extends Component {
     // update producers every 5 minutes
     setInterval(this.updateProducersOrder, 2000);
     }
-
-  // gets producers, reorders them
-  async updateProducersOrder() {
-    let newProd = [];
-    const {producers} = this.state;
-    const newProdData = await nodeInfoAPI.getProducers();
-    if (newProdData != null) {
-      for (let i = 0; i < newProdData.rows.length; i++) {
-        const thisOwner = newProdData.rows[i].owner;
-        const thisRow = producers.find(row => row.owner === thisOwner);
-        newProd[i] = thisRow;
-    }
-
-      let prodsRotationData = await nodeInfoAPI.getProducersRotation();
-      let pRotation = prodsRotationData.rows[0];
-      // Rotate bps
-      if (pRotation.bp_currently_out !== '' && pRotation.sbp_currently_in !== '') {
-          let newProds = newProdData.rows;
-        if (pRotation.bp_currently_out === newProds[pRotation.bp_out_index].owner) {
-          let bpOut = newProds[pRotation.bp_out_index];
-          newProds[pRotation.bp_out_index] = newProds[pRotation.sbp_in_index];
-          newProds[pRotation.sbp_in_index] = bpOut;
+  
+    //gets producers, reorders them
+    async updateProducersOrder(){
+        let newProd = [];
+        const {producers} = this.state;
+        const newProdData = await nodeInfoAPI.getProducers();
+        console.log(newProdData.rows);
+        if(newProdData != null){
+          for(let i = 0; i < newProdData.rows.length; i++){
+            const thisOwner = newProdData.rows[i].owner;
+            const thisRow = producers.find(row => row.owner === thisOwner);
+            newProd[i] = thisRow;
+          }
+          //set state, remove empty values if they exist
+          this.setState({producers: newProd.filter(el => el.owner)});
         }
-      }
-      // set state, remove empty values if they exist
-      this.setState({producers: newProd.filter(el => el.owner !== "")});
-     }
     }
 
-  async getProducersInfo() {
-    let data = await nodeInfoAPI.getProducers();
-    if (data != null) {
-      let producers = data.rows;
-      console.log(data);
-      this.setState({
-        producers: producers,
-        // totalVotesWheight: data.total_producer_vote_weight
-      });
-      return true;
-    } else
-      return false;
+    async getProducersInfo() {
+        let data = await nodeInfoAPI.getProducers();
+        if (data != null) {
+            let producers = data.rows;
+            console.log({producers: producers});
+            this.setState({
+                producers: producers,
+                totalVotesWheight: data.total_producer_vote_weight
+            });
+            return true;
+        } else return false;
     }
 
   async updateProducersInfo() {
     let data = await nodeInfoAPI.getGlobalState();
     // 10000 decimals
     let totalVoteStaked = data.rows[0].total_activated_stake / 10000;
-
-    console.log('total Vote Staked: ', totalVoteStaked);
 
     if (totalVoteStaked !== 0) {
       let percentage = (totalVoteStaked * 100) / this.totalTLOS;
@@ -185,7 +174,7 @@ class TableProducers extends Component {
       }
     }
   }
-
+  
   showProducerInfo(producerSelected) {
     this.setState({
       producerSelected: producerSelected,
@@ -194,23 +183,54 @@ class TableProducers extends Component {
       this.setState({showModalProducerInfo: !this.state.showModalProducerInfo});
     });
   }
+  
+sortByName(producers){
+        return producers.sort((a, b) => {
+            if(a.owner < b.owner) return -1;
+            if(a.owner > b.owner) return 1;
+            return 0;
+        });
+    }
 
-  renderTableBody() {
-    if (this.state.producers.length > 0) {
-      let prods;
+    sortByNameReverse(producers){
+        return producers.sort((a, b) => {
+            if(a.owner < b.owner) return 1;
+            if(a.owner > b.owner) return -1;
+            return 0;
+        });
+    }
 
-      if (this.state.producerFilter === '')
-        prods = this.state.producers.filter(val => val.is_active === 1);
-      else
-        prods = this.state.producers.filter(
-            val => val.is_active === 1 &&
-                val.owner.includes(this.state.producerFilter));
+    renderTableBody() {
+        const {sortBy} = this.state;
+        if (this.state.producers.length > 0) {
+            let prods; 
+            
+          if(this.state.producerFilter==="") prods = this.state.producers.filter(val => val.is_active === 1);
+          else prods = this.state.producers.filter(val => val.is_active === 1 && val.owner.includes(this.state.producerFilter));
+            
+        const prodsCopy = prods.slice();
+        //producers sort options
+        switch(sortBy){
+            case SORT_BY_PROD:
+                prods = this.sortByName(prods);
+                break;
+            case SORT_BY_PROD_REV:
+                prods = this.sortByNameReverse(prods);
+                break;
+            default:
+                //do nothing
+                break;
+        }
 
-      let body = <tbody> {
+          let body =
+                <tbody>
+                    {
                         prods.map((val, i) => {
+                            const rankPosition = prodsCopy.findIndex(item => item.owner === val.owner);
                             return (
                                 <tr key={i} className={val.owner === this.state.activeProducerName ? 'activeProducer' : ''}>
                                     <td>{i + 1}</td>
+                                    <td>{rankPosition + 1}</td>
                                     <td>
                                         <a href={`producers/${
             val.owner}`} onClick={(e) => {
@@ -220,14 +240,14 @@ class TableProducers extends Component {
                                             {val.owner}
                                         </a>
                                     </td>
-                                    <td>{this.state.producersLatency[i]} ms</td>
-                                    <td>{i < 21 ? 
-                                          val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[i] > 0 ? this.state.blocksProduced[i] : "-" 
+                                    <td>{this.state.producersLatency[rankPosition]} ms</td>
+                                    <td>{rankPosition < 21 ? 
+                                          val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[rankPosition] > 0 ? this.state.blocksProduced[rankPosition] : "-" 
                                         : '-'} </td>
                                     <td>{i < 21 ? 
                                           val.owner === this.state.activeProducerName ?
                                           "producing blocks..." :
-                                          this.getLastTimeBlockProduced(this.state.lastTimeProduced[i], this.state.blockTime)
+                                          this.getLastTimeBlockProduced(this.state.lastTimeProduced[rankPosition], this.state.blockTime)
                                         : '0 sec'}
                                     </td>
                                     {/* <td>organization</td> */}
@@ -247,6 +267,24 @@ class TableProducers extends Component {
     }
 
     render() {
+        //get sort, and classes for table headers
+        const {sortBy} = this.state;
+        const prodNameClass = () => {
+            let prodClass = 'sortable';
+            switch(sortBy){
+                case SORT_BY_PROD:
+                    prodClass = 'sortable sortByProd';
+                    break;
+                case SORT_BY_PROD_REV:
+                    prodClass = 'sortable sortByProdRev';
+                    break;
+                default:
+                    prodClass = 'sortable';
+                    break;
+            }
+            return prodClass;
+        };
+
         if (this.state.producers.length > 0) {
             return (
                 <div>
@@ -279,7 +317,20 @@ class TableProducers extends Component {
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Name</th>
+                                            <th>Rank</th>
+                                            <th
+                                                onClick={() => {
+                                                    if(sortBy === SORT_BY_PROD){
+                                                        this.setState({sortBy: SORT_BY_PROD_REV});
+                                                    }else if(sortBy === SORT_BY_PROD_REV){
+                                                        this.setState({sortBy: ''});
+                                                    }else{
+                                                        this.setState({sortBy: SORT_BY_PROD});
+                                                    }
+                                                }}
+                                                className={prodNameClass()}
+                                            >
+                                                Name</th>
                                             <th>Latency</th>
                                             <th>Last block</th>
                                             <th>Last time produced</th>
