@@ -39,7 +39,11 @@ export default class InfoBar extends Component {
 					</Col>
 					<Col sm={6}>
 						<ButtonToolbar style={{float: 'right'}}>
-				    		<Button className='testnet_status_btn' bsStyle="primary" onClick={() => this.setState({showStatus: true})}>
+				    		<Button
+				    			className='testnet_status_btn'
+				    			bsStyle="primary"
+				    			onClick={() => this.setState({showStatus: true})}
+				    			style={{boxShadow: `0px 3px 0px 0px green`}}>
 				    			Testnet Status
 				    		</Button>
 					        <Button bsStyle="default" onClick={() => this.setState({show: true})}>

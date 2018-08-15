@@ -42,3 +42,26 @@
     position: relative;
     align-self: center;
 }
+
+th.sortable {
+    position: relative;
+    cursor: pointer;
+}
+
+th.sortable::before {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    font-family: "FontAwesome";
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.sortByProd::before {
+    content: "\f0d7";
+}
+
+.sortByProdRev::before {
+    content: "\f0d8";
+}
