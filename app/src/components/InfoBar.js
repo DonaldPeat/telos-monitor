@@ -19,7 +19,6 @@ export default class InfoBar extends Component {
   
 	componentDidMount(){
 		serverAPI.getIpLocations((res) => {
-			//console.log({myData: removeDuplicates(res.data)});
 			this.setState({ip_locations: seperateIdenticalCoords(res.data)});
 		
 		serverAPI.getAllAccounts(res => {

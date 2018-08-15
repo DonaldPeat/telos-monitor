@@ -65,3 +65,7 @@ th.sortable::before {
 .sortByProdRev::before {
     content: "\f0d8";
 }
+
+.progress-bar-success{
+    background-color: #F69A3C;
+}
