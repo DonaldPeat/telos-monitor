@@ -307,16 +307,24 @@ class TableProducers extends Component {
 
     getNextRotation() {
         if(this.state.rotationData != null){
-            let timeFuture = new Date(this.state.rotationData.next_rotation_time);
-            let now = new Date();
-            let r = timeFuture - now;
-            let timer = new Date(timeFuture.getTime() - Date.now());
-            console.log(timer.getHours() ,timeFuture.getTime(), Date.now());
+            let timeFuture = new Date(this.state.rotationData.next_rotation_time); 
+            let now = new Date();            
+            now = new Date(now.toUTCString());
+            now.setHours(now.getHours() + 7);
+            
+            //Should be updated to get hours
+            //get total seconds
+            let timer = (timeFuture - now)/1000;
+
+            let minutes = Math.floor(timer / 60);
+            let seconds = Math.floor(timer - minutes * 60);
+            
+
             // if(timer.getTime() == 0){
             //get block number
             //get block header state
             // }
-            var item = <p>{`${timer.getMinutes()} min ${timer.getSeconds()} sec`}</p>;
+            var item = <p>{`${minutes} min ${seconds} sec`}</p>;
             return item;  
         } 
     }
