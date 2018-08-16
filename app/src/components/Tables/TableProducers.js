@@ -61,7 +61,6 @@ class TableProducers extends Component {
     setInterval(this.updateProducersOrder, 2000);
     // rotate bps every 6 minutes
     this.rotateBlockProducers();
-    setInterval(this.rotateBlockProducers, 360000)
     }
   
     //gets producers, reorders them
@@ -77,6 +76,10 @@ class TableProducers extends Component {
             const thisRow = producers.find(row => row.owner === thisOwner);
             newProd[i] = thisRow;
           }
+
+          this.rotateBlockProducers();
+
+
           //set state, remove empty values if they exist
           this.setState({producers: newProd.filter(el => el.owner)});
         }
@@ -85,7 +88,16 @@ class TableProducers extends Component {
     async rotateBlockProducers(){
         const rotation = await nodeInfoAPI.getProducersRotation();
         console.log(rotation);
-        this.setState({rotationData: rotation.rows[0]});
+        if(rotation){
+          if(!this.state.rotationData) this.setState({rotationData: rotation.rows[0]});
+          for(let field in rotation.rows[0]){
+            if(rotation.rows[0][field] != this.state.rotationData[field]){
+              this.setState({rotationData: rotation.rows[0]});
+              return;
+            }
+          }
+          //matches, do nothing
+        }
     }
 
     async getProducersInfo() {
@@ -224,15 +236,19 @@ class TableProducers extends Component {
         const prodsCopy = prods.slice();
 
         let bpOut = -1;
-        let bpIn = -1;
+        let sbpIn = -1;
         let rotatePopover = '';
 
         if(rotationData){
-            bpOut = prods.findIndex(item => item.owner === rotationData.bp_currently_out);
-            bpIn = prods.findIndex(item => item.owner === rotationData.sbp_currently_in);
+            const testbpOut = prods.findIndex(item => item.owner === rotationData.bp_currently_out);
+            const testsbpIn = prods.findIndex(item => item.owner === rotationData.sbp_currently_in);
+            bpOut = rotationData.bp_out_index;
+            sbpIn = rotationData.sbp_in_index;
 
+            if(bpOut != testbpOut) console.log('bp out doesn\'t match');
+            if(sbpIn != testsbpIn) console.log('sbp in doesn\'t match');
             //swap them
-            prods[bpOut] = prods.splice(bpIn, 1, prods[bpOut])[0];
+            prods[bpOut] = prods.splice(sbpIn, 1, prods[bpOut])[0];
         }
 
         //producers sort options
@@ -265,14 +281,14 @@ class TableProducers extends Component {
                                         }}>
                                             {val.owner}
                                             {bpOut === rankPosition ? <i className='bp_rotate_out fa fa-circle'></i> : ''}
-                                            {bpIn === rankPosition ? <i className='bp_rotate_in fa fa-circle'></i> : ''}
+                                            {sbpIn === rankPosition ? <i className='bp_rotate_in fa fa-circle'></i> : ''}
                                         </a>
                                     </td>
                                     <td>{this.state.producersLatency[rankPosition]} ms</td>
-                                    <td>{rankPosition < 21 || rankPosition === bpIn ? 
+                                    <td>{rankPosition < 21 || rankPosition === sbpIn ? 
                                           val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[rankPosition] > 0 ? this.state.blocksProduced[rankPosition] : "-" 
                                         : '-'} </td>
-                                    <td>{i < 21 || rankPosition === bpIn ? 
+                                    <td>{i < 21 || rankPosition === sbpIn ? 
                                           val.owner === this.state.activeProducerName ?
                                           "producing blocks..." :
                                           this.getLastTimeBlockProduced(this.state.lastTimeProduced[rankPosition], this.state.blockTime)
