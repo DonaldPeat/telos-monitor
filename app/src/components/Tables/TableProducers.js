@@ -41,13 +41,13 @@ class TableProducers extends Component {
   }
 
   async componentWillMount() {
-    //console.log(await nodeInfoAPI.getProducersRotation());
-    // serverAPI.getAllAccounts(async(res) => {
-      // this. setState({accounts: res.data});
-      if (await this.getProducersInfo()) {
+    serverAPI.getAllAccounts(async(res) => {
+      this. setState({accounts: res.data});
+    });
+
+    if (await this.getProducersInfo()) {
         await this.updateProducersInfo();
-      }
-    // });
+     }
   }
 
   componentDidMount() {
