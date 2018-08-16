@@ -1,6 +1,6 @@
 import '../../styles/tableproducers.css'
 import React, {Component} from 'react';
-import {Alert, Col, ProgressBar, Row, Table} from 'react-bootstrap'
+import {Alert, Col, ProgressBar, Row, Table, Popover} from 'react-bootstrap'
 import nodeInfoAPI from '../../scripts/nodeInfo'
 import serverAPI from '../../scripts/serverAPI';
 import getHumanTime from '../../scripts/timeHelper'
@@ -28,7 +28,8 @@ class TableProducers extends Component {
       producerFilter: '',
       percentageVoteStaked: '',
       totalVotesStaked: 0,
-      sortBy: ''
+      sortBy: '',
+      rotationData: null
     }
 
     this.totalTLOS = 190473249.0000;
@@ -36,15 +37,17 @@ class TableProducers extends Component {
     this.updateProducersOrder = this.updateProducersOrder.bind(this);
     this.sortByName = this.sortByName.bind(this);
     this.sortByNameReverse = this.sortByNameReverse.bind(this);
+    this.rotateBlockProducers = this.rotateBlockProducers.bind(this);
   }
 
-  componentWillMount() {
-    serverAPI.getAllAccounts(async(res) => {
-      this.setState({accounts: res.data});
+  async componentWillMount() {
+    //console.log(await nodeInfoAPI.getProducersRotation());
+    // serverAPI.getAllAccounts(async(res) => {
+      // this. setState({accounts: res.data});
       if (await this.getProducersInfo()) {
         await this.updateProducersInfo();
       }
-    });
+    // });
   }
 
   componentDidMount() {
@@ -54,14 +57,18 @@ class TableProducers extends Component {
       if (++producerIndex > this.state.producers.length - 1) producerIndex = 0;
     }, 1000);
 
-    // update producers every 5 minutes
+    // update producers every 2 seconds
     setInterval(this.updateProducersOrder, 2000);
+    // rotate bps every 6 minutes
+    this.rotateBlockProducers();
+    setInterval(this.rotateBlockProducers, 360000)
     }
   
     //gets producers, reorders them
     async updateProducersOrder(){
         let newProd = [];
         const {producers} = this.state;
+        if(producers.length < 1) return;
         const newProdData = await nodeInfoAPI.getProducers();
         console.log(newProdData.rows);
         if(newProdData != null){
@@ -73,6 +80,12 @@ class TableProducers extends Component {
           //set state, remove empty values if they exist
           this.setState({producers: newProd.filter(el => el.owner)});
         }
+    }
+
+    async rotateBlockProducers(){
+        const rotation = await nodeInfoAPI.getProducersRotation();
+        console.log(rotation);
+        this.setState({rotationData: rotation.rows[0]});
     }
 
     async getProducersInfo() {
@@ -184,7 +197,7 @@ class TableProducers extends Component {
     });
   }
   
-sortByName(producers){
+    sortByName(producers){
         return producers.sort((a, b) => {
             if(a.owner < b.owner) return -1;
             if(a.owner > b.owner) return 1;
@@ -201,14 +214,27 @@ sortByName(producers){
     }
 
     renderTableBody() {
-        const {sortBy} = this.state;
+        const {sortBy, rotationData} = this.state;
         if (this.state.producers.length > 0) {
             let prods; 
             
           if(this.state.producerFilter==="") prods = this.state.producers.filter(val => val.is_active === 1);
           else prods = this.state.producers.filter(val => val.is_active === 1 && val.owner.includes(this.state.producerFilter));
-            
+        
         const prodsCopy = prods.slice();
+
+        let bpOut = -1;
+        let bpIn = -1;
+        let rotatePopover = '';
+
+        if(rotationData){
+            bpOut = prods.findIndex(item => item.owner === rotationData.bp_currently_out);
+            bpIn = prods.findIndex(item => item.owner === rotationData.sbp_currently_in);
+
+            //swap them
+            prods[bpOut] = prods.splice(bpIn, 1, prods[bpOut])[0];
+        }
+
         //producers sort options
         switch(sortBy){
             case SORT_BY_PROD:
@@ -238,6 +264,8 @@ sortByName(producers){
                                             this.showProducerInfo(val.owner);
                                         }}>
                                             {val.owner}
+                                            {bpOut === rankPosition ? <i className='bp_rotate_out fa fa-circle'></i> : ''}
+                                            {bpIn === rankPosition ? <i className='bp_rotate_in fa fa-circle'></i> : ''}
                                         </a>
                                     </td>
                                     <td>{this.state.producersLatency[rankPosition]} ms</td>
