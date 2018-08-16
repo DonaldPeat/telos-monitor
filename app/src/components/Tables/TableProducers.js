@@ -269,10 +269,10 @@ class TableProducers extends Component {
                                         </a>
                                     </td>
                                     <td>{this.state.producersLatency[rankPosition]} ms</td>
-                                    <td>{rankPosition < 21 ? 
+                                    <td>{rankPosition < 21 || rankPosition === bpIn ? 
                                           val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[rankPosition] > 0 ? this.state.blocksProduced[rankPosition] : "-" 
                                         : '-'} </td>
-                                    <td>{i < 21 ? 
+                                    <td>{i < 21 || rankPosition === bpIn ? 
                                           val.owner === this.state.activeProducerName ?
                                           "producing blocks..." :
                                           this.getLastTimeBlockProduced(this.state.lastTimeProduced[rankPosition], this.state.blockTime)
