@@ -69,7 +69,7 @@ class TableProducers extends Component {
         const {producers} = this.state;
         if(producers.length < 1) return;
         const newProdData = await nodeInfoAPI.getProducers();
-        console.log(newProdData.rows);
+        // console.log(newProdData.rows);
         if(newProdData != null){
           for(let i = 0; i < newProdData.rows.length; i++){
             const thisOwner = newProdData.rows[i].owner;
@@ -87,7 +87,7 @@ class TableProducers extends Component {
 
     async rotateBlockProducers(){
         const rotation = await nodeInfoAPI.getProducersRotation();
-        console.log(rotation);
+        // console.log(rotation);
         if(rotation){
           if(!this.state.rotationData) this.setState({rotationData: rotation.rows[0]});
           for(let field in rotation.rows[0]){
@@ -104,7 +104,7 @@ class TableProducers extends Component {
         let data = await nodeInfoAPI.getProducers();
         if (data != null) {
             let producers = data.rows;
-            console.log({producers: producers});
+            // console.log({producers: producers});
             this.setState({
                 producers: producers,
                 totalVotesWheight: data.total_producer_vote_weight
@@ -185,8 +185,8 @@ class TableProducers extends Component {
   async getProducerLatency(producerIndex) {
     if (this.state.producers.length > 0 && this.state.accounts.length > 0) {
       let producerName = this.state.producers[producerIndex].owner;
-      let matchedProducer =
-          this.state.accounts.find((item) => item.name === producerName);
+      let matchedProducer = this.state.accounts.find((item) => item.name === producerName);
+      
       if (matchedProducer) {
         let url = matchedProducer.p2pServerAddress;
         let result = await serverAPI.getEndpointLatency(url);
@@ -288,7 +288,7 @@ class TableProducers extends Component {
                                     <td>{rankPosition < 21 || rankPosition === sbpIn ? 
                                           val.owner === this.state.activeProducerName ? this.state.currentBlockNumber : this.state.blocksProduced[rankPosition] > 0 ? this.state.blocksProduced[rankPosition] : "-" 
                                         : '-'} </td>
-                                    <td>{i < 21 || rankPosition === sbpIn ? 
+                                    <td>{i < 51 || rankPosition === sbpIn ? 
                                           val.owner === this.state.activeProducerName ?
                                           "producing blocks..." :
                                           this.getLastTimeBlockProduced(this.state.lastTimeProduced[rankPosition], this.state.blockTime)
@@ -303,6 +303,30 @@ class TableProducers extends Component {
                 </tbody>;
             return body;
         } else return (<div></div>);
+    }
+
+    getNextRotation() {
+        if(this.state.rotationData != null){
+            let timeFuture = new Date(this.state.rotationData.next_rotation_time);
+            let now = new Date();
+            let r = timeFuture - now;
+            let timer = new Date(timeFuture.getTime() - Date.now());
+            console.log(timer.getHours() ,timeFuture.getTime(), Date.now());
+            // if(timer.getTime() == 0){
+            //get block number
+            //get block header state
+            // }
+            var item = <p>{`${timer.getMinutes()} min ${timer.getSeconds()} sec`}</p>;
+            return item;  
+        } 
+    }
+
+    getLastTimeBPsRotated() {
+        if(this.state.rotationData != null) {
+            let time = new Date(this.state.rotationData.last_rotation_time);
+            let item= <p>{`UTC ${time.toLocaleString()}`}</p>;
+            return item;
+        }
     }
 
     onProducerFilterChange(arg) {
@@ -352,6 +376,18 @@ class TableProducers extends Component {
                         <Col sm={10}>
                             <ProgressBar active now={this.state.percentageVoteStaked} bsStyle="success" 
                                 label={this.state.percentageVoteStaked == "" ? "": `${this.state.percentageVoteStaked}%`} />
+                        </Col>
+                        <Col sm={2}>
+                            <p>Last time rotated:</p>
+                        </Col>
+                        <Col sm={10}>
+                            {this.getLastTimeBPsRotated()}
+                        </Col>
+                        <Col sm={2}>
+                            <p>Next rotation:</p>
+                        </Col>
+                        <Col sm={10}>
+                            {this.getNextRotation()}
                         </Col>
                     </Row>
                     <Row>
