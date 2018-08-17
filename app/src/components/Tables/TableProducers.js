@@ -10,6 +10,14 @@ import ModalProducerInfo from '../Modals/ModalProducerInfo'
 const SORT_BY_PROD = 'sortByProducerName';
 const SORT_BY_PROD_REV = 'sortByProducerNameReverse';
 
+const EMPTY_ROTATION_TABLE = 'emptyRotationTable';
+const COUNTDOWN_EXPIRED = 'countdownExpired';
+const NO_ROTATION = 'noRotation';
+const WAITING_FOR_PROPOSAL = 'waitingForProposal';
+const HAVE_PROPOSAL = 'haveProposal';
+const SCHEDULE_PENDING = 'schedulePending';
+const ROTATION_ACTIVE = 'rotationActive';
+
 class TableProducers extends Component {
   constructor(props) {
     super(props);
@@ -29,7 +37,10 @@ class TableProducers extends Component {
       percentageVoteStaked: '',
       totalVotesStaked: 0,
       sortBy: '',
-      rotationData: null
+      rotationTable: null,
+      scheduleVersion: 0,
+      lastRotationTime: null,
+      rotationStatus: ''
     }
 
     this.totalTLOS = 190473249.0000;
@@ -61,6 +72,17 @@ class TableProducers extends Component {
     setInterval(this.updateProducersOrder, 2000);
     // rotate bps every 6 minutes
     this.rotateBlockProducers();
+    this.getScheduleVersion();
+    this.setLastRotationTime();
+
+    setTimeout(()=>{
+      var proposalStatus;
+      var t = this.checkForProposal();//.then(res => proposalStatus = res);
+        // console.log(proposalStatus)
+        var x = Promise.resolve(t);
+        console.log(x);
+        console.log(x.resolved);
+    },1500);
     }
   
     //gets producers, reorders them
@@ -85,19 +107,48 @@ class TableProducers extends Component {
         }
     }
 
+    async getScheduleVersion(){
+      const producerInfo = await nodeInfoAPI.getInfo();
+      const currentBlockNumber = producerInfo.head_block_num;
+
+      if(currentBlockNumber === 0) console.log('problem! block number is zero!');
+      const blockHeaderState = await nodeInfoAPI.getBlockHeaderState(currentBlockNumber);
+      this.setState({scheduleVersion: blockHeaderState.header.schedule_version});
+    }
+
+    async getRotationSchedule(){
+      const {currentBlockNumber} = this.state;
+      if(currentBlockNumber === 0) console.log('problem! block number is zero!');
+      const blockHeaderState = await nodeInfoAPI.getBlockHeaderState(currentBlockNumber);
+      return blockHeaderState;
+    }
+
     async rotateBlockProducers(){
         const rotation = await nodeInfoAPI.getProducersRotation();
         // console.log(rotation);
         if(rotation){
-          if(!this.state.rotationData) this.setState({rotationData: rotation.rows[0]});
+          if(!this.state.rotationTable) this.setState({rotationTable: rotation.rows[0]});
           for(let field in rotation.rows[0]){
-            if(rotation.rows[0][field] != this.state.rotationData[field]){
-              this.setState({rotationData: rotation.rows[0]});
+            if(rotation.rows[0][field] != this.state.rotationTable[field]){
+              this.setState({rotationTable: rotation.rows[0]});
               return;
             }
           }
           //matches, do nothing
         }
+    }
+
+    async getRotationTable(){
+      const rotation = await nodeInfoAPI.getProducersRotation();
+      if(rotation) return rotation.rows[0];
+      return null;
+    }
+
+    async setLastRotationTime(){
+      const rt = await this.getRotationTable();
+      if(rt){
+        this.setState({lastRotationTime: rt.last_rotation_time});
+      }
     }
 
     async getProducersInfo() {
@@ -226,7 +277,7 @@ class TableProducers extends Component {
     }
 
     renderTableBody() {
-        const {sortBy, rotationData} = this.state;
+        const {sortBy, rotationTable} = this.state;
         if (this.state.producers.length > 0) {
             let prods; 
             
@@ -239,11 +290,11 @@ class TableProducers extends Component {
         let sbpIn = -1;
         let rotatePopover = '';
 
-        if(rotationData){
-            const testbpOut = prods.findIndex(item => item.owner === rotationData.bp_currently_out);
-            const testsbpIn = prods.findIndex(item => item.owner === rotationData.sbp_currently_in);
-            bpOut = rotationData.bp_out_index;
-            sbpIn = rotationData.sbp_in_index;
+        if(rotationTable){
+            const testbpOut = prods.findIndex(item => item.owner === rotationTable.bp_currently_out);
+            const testsbpIn = prods.findIndex(item => item.owner === rotationTable.sbp_currently_in);
+            bpOut = rotationTable.bp_out_index;
+            sbpIn = rotationTable.sbp_in_index;
 
             if(bpOut != testbpOut) console.log('bp out doesn\'t match');
             if(sbpIn != testsbpIn) console.log('sbp in doesn\'t match');
@@ -306,32 +357,97 @@ class TableProducers extends Component {
     }
 
     getNextRotation() {
-        if(this.state.rotationData != null){
-            let timeFuture = new Date(this.state.rotationData.next_rotation_time); 
-            let now = new Date();            
-            now = new Date(now.toUTCString());
-            now.setHours(now.getHours() + 7);
-            
-            //Should be updated to get hours
-            //get total seconds
-            let timer = (timeFuture - now)/1000;
+      const {rotationTable, rotationStatus} = this.state;
+        if(rotationTable != null){
 
-            let minutes = Math.floor(timer / 60);
-            let seconds = Math.floor(timer - minutes * 60);
-            
+          if(!rotationTable.bp_currently_out && !rotationTable.sbp_currently_in) return EMPTY_ROTATION_TABLE;
 
-            // if(timer.getTime() == 0){
-            //get block number
-            //get block header state
-            // }
-            var item = <p>{`${minutes} min ${seconds} sec`}</p>;
-            return item;  
-        } 
+          if(rotationStatus != ROTATION_ACTIVE) this.setState({rotationStatus: ROTATION_ACTIVE});
+
+          let timeFuture = new Date(rotationTable.next_rotation_time); 
+          let now = new Date();            
+          now = new Date(now.toUTCString());
+          now.setHours(now.getHours() + 7);
+          
+          //Should be updated to get hours
+          //get total seconds
+          let timer = (timeFuture - now)/1000;
+
+          let minutes = Math.floor(timer / 60);
+          let seconds = Math.floor(timer - minutes * 60);
+          
+
+          // if(timer.getTime() == 0){
+          //get block number
+          //get block header state
+          // }
+          if(timer <= 0){
+            return COUNTDOWN_EXPIRED;
+          }
+          var item = <p>{`${minutes} min ${seconds} sec`}</p>;
+          return item;
+        }
+        //no rotation yet
+        return NO_ROTATION;
+    }
+
+    async checkForProposal(){
+      const {lastRotationTime, rotationTable, scheduleVersion, rotationStatus} = this.state;
+      if(
+        new Date(lastRotationTime) < new Date(rotationTable.last_rotation_time) ||
+        rotationStatus === SCHEDULE_PENDING ||
+        rotationStatus === HAVE_PROPOSAL
+      ){
+        //have new rotation table
+        //check for new schedule version
+        const rotationSchedule = await this.getRotationSchedule();
+        if(
+          rotationSchedule.pendingSchedule.version > scheduleVersion ||
+          rotationStatus === SCHEDULE_PENDING
+        ){
+          //we have a pending schedule
+          this.setState({
+            scheduleVersion: rotationSchedule.pendingSchedule,
+            rotationStatus: SCHEDULE_PENDING
+          });
+          return SCHEDULE_PENDING;
+        }else{
+          //we have a proposal
+          this.setState({
+            lastRotationTime: rotationTable.last_rotation_time,
+            rotationStatus: HAVE_PROPOSAL
+          });
+          return HAVE_PROPOSAL;
+        }
+
+      }else{
+        //don't have a new rotation table yet
+        return WAITING_FOR_PROPOSAL;
+      }
+    }
+
+    getRotationStatus(){
+      const nextRotation = this.getNextRotation();
+      if(nextRotation === EMPTY_ROTATION_TABLE) return 'No rotation pending or activated.  Maybe fewer than 21 producers.';
+      if(nextRotation === NO_ROTATION) return `<p>No rotation yet...</p>`;
+      if(nextRotation === COUNTDOWN_EXPIRED){
+
+        let proposalStatus = WAITING_FOR_PROPOSAL;
+        var t = this.checkForProposal().then(res => proposalStatus = res);
+        // console.log(proposalStatus)
+        var x = Promise.resolve(t);
+        console.log(x);
+        if(proposalStatus === WAITING_FOR_PROPOSAL) return 'Waiting for a proposal';
+        if(proposalStatus === SCHEDULE_PENDING) return 'Schedule is pending';
+        if(proposalStatus === HAVE_PROPOSAL) return 'We have a proposal';
+        return 'proposal status not working';
+      }
+      return nextRotation;
     }
 
     getLastTimeBPsRotated() {
-        if(this.state.rotationData != null) {
-            let time = new Date(this.state.rotationData.last_rotation_time);
+        if(this.state.rotationTable != null) {
+            let time = new Date(this.state.rotationTable.last_rotation_time);
             let item= <p>{`UTC ${time.toLocaleString()}`}</p>;
             return item;
         }
@@ -395,7 +511,7 @@ class TableProducers extends Component {
                             <p>Next rotation:</p>
                         </Col>
                         <Col sm={10}>
-                            {this.getNextRotation()}
+                            {this.getRotationStatus()}
                         </Col>
                     </Row>
                     <Row>
