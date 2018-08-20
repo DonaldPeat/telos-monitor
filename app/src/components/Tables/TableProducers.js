@@ -434,7 +434,7 @@ class TableProducers extends Component {
           let timeFuture = new Date(rotationTable.next_rotation_time); 
           let now = new Date();            
           now = new Date(now.toUTCString());
-          now.setHours(now.getHours() + 7);
+          now.setHours(now.getHours() + timeFuture.getUTCHours());
           
           //Should be updated to get hours
           //get total seconds
