@@ -138,14 +138,24 @@ class TableProducers extends Component {
         this.setState({lastRotationTime: rotationTable.last_rotation_time});
 
         const pendingScheduleVersion = rotationSchedule.pending_schedule.version;
-        const activeScheduleVersion = rotationSchedule.active_schedule.version;
-        console.log(`pending: ${pendingScheduleVersion}, active: ${activeScheduleVersion}`);
+        const headerScheduleVersion = rotationSchedule.header.version;
+        console.log(`pending: ${pendingScheduleVersion}, active: ${headerScheduleVersion}`);
         //pending schedule is greater than current schedule version
         if(
           pendingScheduleVersion > scheduleVersion ||
           rotationStatus === SCHEDULE_PENDING
         ){
-          if(activeScheduleVersion === pendingScheduleVersion){
+          if(headerScheduleVersion === pendingScheduleVersion){
+            let activeProducers = rotationSchedule.active_schedule.producers;
+            if(activeProducers){
+                if(rotationTable){
+                    let sbpIn = rotationTable.sbp_currently_in;
+                    if(activeProducers.findIndex(bp => bp.producer_name == sbpIn) > -1) {
+                        // update the state and rotate bps.
+                    }
+                }
+            }
+
             //we have active schedule
             this.setState({
               rotationStatus: WAITING_FOR_PROPOSAL,
@@ -434,7 +444,8 @@ class TableProducers extends Component {
           let timeFuture = new Date(rotationTable.next_rotation_time); 
           let now = new Date();            
           now = new Date(now.toUTCString());
-          now.setHours(now.getHours() + timeFuture.getUTCHours());
+        //   console.log(now.getHours(), timeFuture.getHours(),timeFuture.getHours() - now.getHours());
+          now.setHours(timeFuture.getHours());
           
           //Should be updated to get hours
           //get total seconds
@@ -443,15 +454,10 @@ class TableProducers extends Component {
           let minutes = Math.floor(timer / 60);
           let seconds = Math.floor(timer - minutes * 60);
 
-          // if(timer.getTime() == 0){
-          //get block number
-          //get block header state
-          // }
-          if(timer <= 0){
+          if(timer <= 0) {
             return COUNTDOWN_EXPIRED;
           }
-          //if(rotationStatus != ROTATION_ACTIVE) this.setState({rotationStatus: ROTATION_ACTIVE});
-          //var item = <p>{`${minutes} min ${seconds} sec`}</p>;
+       
           return `${minutes} min ${seconds} sec`;
         }
         //no rotation yet
