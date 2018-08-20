@@ -213,6 +213,10 @@ class TableProducers extends Component {
     async rotateBlockProducers(){
         const rotation = await nodeInfoAPI.getProducersRotation();
         if(rotation){
+          
+        //bps out of index
+          if(rotation.bp_out_index >= 21 && rotation.sbp_in_index >= 51) return;
+          
           if(!this.state.rotationTable) this.setState({rotationTable: rotation.rows[0]});
           for(let field in rotation.rows[0]){
             if(rotation.rows[0][field] != this.state.rotationTable[field]){
@@ -375,10 +379,13 @@ class TableProducers extends Component {
             bpOut = rotationTable.bp_out_index;
             sbpIn = rotationTable.sbp_in_index;
 
-            if(bpOut != testbpOut) console.log('bp out doesn\'t match');
-            if(sbpIn != testsbpIn) console.log('sbp in doesn\'t match');
-            //swap them
-            prods[bpOut] = prods.splice(sbpIn, 1, prods[bpOut])[0];
+            // if(bpOut != testbpOut) console.log('bp out doesn\'t match');
+            // if(sbpIn != testsbpIn) console.log('sbp in doesn\'t match');
+            
+            if(bpOut == testbpOut && sbpIn == testsbpIn){
+                //swap them
+                prods[bpOut] = prods.splice(sbpIn, 1, prods[bpOut])[0];
+            }
         }
 
         //producers sort options
@@ -398,7 +405,7 @@ class TableProducers extends Component {
                 <tbody>
                     {
                         prods.map((val, i) => {
-                            const rankPosition = prodsCopy.findIndex(item => item.owner === val.owner);
+                           const rankPosition = prodsCopy.findIndex(item => item.owner === val.owner);
                             return (
                                 <tr key={i} className={val.owner === this.state.activeProducerName ? 'activeProducer' : ''}>
                                     <td>{i + 1}</td>
