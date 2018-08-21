@@ -610,7 +610,7 @@ class TableProducers extends Component {
           rotationMessage = 'Schedule is pending';
           break;
         case nodeFlag.EMPTY_ROTATION_TABLE:
-          rotationMessage = producers.length < 21 ? `No rotation, there are ${producers.length} producers.` : `The network is inactive`;
+          rotationMessage = producers.length < 22 ? `No rotation, there are ${producers.length} producers.` : `The network is inactive`;
           break;
         case nodeFlag.NO_ROTATION:
           rotationMessage = nextRotation;
