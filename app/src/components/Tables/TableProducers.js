@@ -41,6 +41,7 @@ class TableProducers extends Component {
       percentageVoteStaked: '',
       totalVotesStaked: 0,
       sortBy: '',
+      previousRotationTable: null,
       rotationTable: null,
       scheduleVersion: 0,
       lastRotationTime: null,
@@ -111,7 +112,10 @@ class TableProducers extends Component {
       //state
       const {lastRotationTime, rotationTable, scheduleVersion, rotationStatus} = this.state;
 
+      let expiredAndActive = false;
       if(nextRotation === COUNTDOWN_EXPIRED && rotationStatus === ROTATION_ACTIVE){
+        expiredAndActive = true;
+        console.log('Switched from active, countdown expired');
         this.setState({rotationStatus: WAITING_FOR_PROPOSAL});
       }
 
@@ -130,11 +134,10 @@ class TableProducers extends Component {
       if(
         new Date(lastRotationTime) < new Date(rotationTable.last_rotation_time) ||
         rotationStatus === SCHEDULE_PENDING ||
-        rotationStatus === ROTATION_ACTIVE
+        rotationStatus === ROTATION_ACTIVE 
       ){
 
         const rs = await this.getRotationSchedule();
-
         //no rotation schedule
         if(!rs){
           console.log('No rotation schedule found');
@@ -171,6 +174,14 @@ class TableProducers extends Component {
         return;
 
       }else{
+        const rs = await this.getRotationSchedule();
+        if(rs){
+          if(rs.pending_schedule.version > rs.header.schedule_version){
+            this.setState({rotationStatus: SCHEDULE_PENDING});
+            return;
+          }
+        }
+
         //either active rotation, or waiting for proposal.
         if(rotationStatus != WAITING_FOR_PROPOSAL) this.setState({rotationStatus: WAITING_FOR_PROPOSAL});
         return;
@@ -191,8 +202,12 @@ class TableProducers extends Component {
         });
       }
 
+      let nextRotationTime = new Date(this.state.rotationTable.next_rotation_time);
+      nextRotationTime = nextRotationTime.setHours(nextRotationTime.getHours() - 7);
       
-      console.log(new Date(this.state.rotationTable.next_rotation_time));
+      //get time until next rotation
+      const timeDiff = ((new Date(nextRotationTime) - new Date()) / 1000 ) / 60; //minutes until next rotation
+      console.log(timeDiff);
 
       const rs = await this.getRotationSchedule();
       const rsHeaderVersion = rs.header.schedule_version;
@@ -200,6 +215,7 @@ class TableProducers extends Component {
       if(rsPendingVersion > rsHeaderVersion){
         this.setState({rotationStatus: SCHEDULE_PENDING});
       }else{
+        if(timeDiff < 0) return; //rotation table is not current.  Will reset in update fairly soon
         const {sbp_currently_in} = this.state.rotationTable;
         //check if in active producers array
         const activeProducers = rs.active_schedule.producers;
@@ -210,6 +226,13 @@ class TableProducers extends Component {
 
       console.log(this.state.rotationTable);
       console.log(rs.active_schedule.producers)
+    }
+
+    isRotateInFuture(testTime){
+      const adjustedTime = testTime.setHours(testTime.getHours() - 7);
+      const timeDiff = ((new Date(testTime) - new Date()) / 1000) / 60;
+      console.log('time diff: ' + timeDiff);
+      return timeDiff > 0;
     }
 
     async getRotationSchedule(){
@@ -233,7 +256,12 @@ class TableProducers extends Component {
           if(!this.state.rotationTable) this.setState({rotationTable: rotation.rows[0]});
           for(let field in rotation.rows[0]){
             if(rotation.rows[0][field] != this.state.rotationTable[field]){
-              this.setState({rotationTable: rotation.rows[0]});
+              console.log(`new table at: ${new Date()}`);
+              const prevRotationTable = this.state.rotationTable;
+              this.setState({
+                rotationTable: rotation.rows[0],
+                previousRotationTable: prevRotationTable
+              });
               return;
             }
           }
@@ -373,7 +401,15 @@ class TableProducers extends Component {
     }
 
     renderTableBody() {
-        const {sortBy, rotationTable, rotationStatus} = this.state;
+        const {sortBy, rotationTable, previousRotationTable, rotationStatus} = this.state;
+        let displayRotationTable;
+        //If rotation is active or no previous, show current rotation table
+        if(!previousRotationTable || rotationStatus === ROTATION_ACTIVE){
+          displayRotationTable = rotationTable;
+        }else{
+          displayRotationTable = previousRotationTable;
+        }
+
         if (this.state.producers.length > 0) {
             let prods; 
             
@@ -385,11 +421,11 @@ class TableProducers extends Component {
         let bpOut = -1;
         let sbpIn = -1;
 
-        if(rotationTable && rotationStatus === ROTATION_ACTIVE){
-            const testbpOut = prods.findIndex(item => item.owner === rotationTable.bp_currently_out);
-            const testsbpIn = prods.findIndex(item => item.owner === rotationTable.sbp_currently_in);
-            bpOut = rotationTable.bp_out_index;
-            sbpIn = rotationTable.sbp_in_index;
+        if(displayRotationTable){
+            const testbpOut = prods.findIndex(item => item.owner === displayRotationTable.bp_currently_out);
+            const testsbpIn = prods.findIndex(item => item.owner === displayRotationTable.sbp_currently_in);
+            bpOut = displayRotationTable.bp_out_index;
+            sbpIn = displayRotationTable.sbp_in_index;
 
             // if(bpOut != testbpOut) console.log('bp out doesn\'t match');
             // if(sbpIn != testsbpIn) console.log('sbp in doesn\'t match');
@@ -429,8 +465,8 @@ class TableProducers extends Component {
                                             this.showProducerInfo(val.owner);
                                         }}>
                                             {val.owner}
-                                            {bpOut === rankPosition && rotationStatus === ROTATION_ACTIVE ? <i className='bp_rotate_out fa fa-circle'></i> : ''}
-                                            {sbpIn === rankPosition && rotationStatus === ROTATION_ACTIVE ? <i className='bp_rotate_in fa fa-circle'></i> : ''}
+                                            {bpOut === rankPosition ? <i className='bp_rotate_out fa fa-circle'></i> : ''}
+                                            {sbpIn === rankPosition ? <i className='bp_rotate_in fa fa-circle'></i> : ''}
                                         </a>
                                     </td>
                                     <td>{this.state.producersLatency[rankPosition]} ms</td>
