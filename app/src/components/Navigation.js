@@ -3,6 +3,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import logo from '../img/Telos_MarketingSite_TelosLogo_500px.png';
 import ModalRegisterProducer from './Modals/ModalRegisterProducer';
+import ModalCreateAccount from './Modals/ModalCreateAccount';
 
 class Navigation extends Component {
 	constructor(props) {
@@ -15,6 +16,13 @@ class Navigation extends Component {
 			showModalRegisterProd: !this.state.showModalRegisterProd
 		});
 	}
+
+	showModalCreateAccount() { console.log("hi")
+		this.setState({
+			showModalCreateAccount: !this.state.showModalCreateAccount
+		});
+	}
+
 
 	render() {
 		return (
@@ -37,9 +45,11 @@ class Navigation extends Component {
 							<NavItem onClick={() => this.props.history.push('/p2plist')}>P2P LIST</NavItem>
 							{/* <NavItem onClick={() => this.props.history.push('/stages/stage-1')}>STAGES</NavItem> */}
 							<NavItem onClick={() => this.showModalRegisterProducer()}>REGISTER</NavItem>
+							<NavItem onClick={() => this.showModalCreateAccount()} >CREATE ACCOUNT</NavItem>
 						</Nav>
 					</Navbar.Collapse>
 				</Navbar>
+				<ModalCreateAccount show={this.state.showModalCreateAccount} onHide={() => this.showModalCreateAccount()} />
 				<ModalRegisterProducer show={this.state.showModalRegisterProd} onHide={() => this.showModalRegisterProducer()} />
 			</div>
 		);
