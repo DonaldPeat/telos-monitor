@@ -46,6 +46,7 @@
 th.sortable {
     position: relative;
     cursor: pointer;
+    text-decoration: underline;
 }
 
 th.sortable::before {

@@ -1,7 +1,6 @@
 import '../../styles/tableproducers.css'
 import React, {Component} from 'react';
 import {Alert, Col, ProgressBar, Row, Table, Popover} from 'react-bootstrap'
-import Promise from 'bluebird';
 import nodeInfoAPI from '../../scripts/nodeInfo'
 import serverAPI from '../../scripts/serverAPI';
 import getHumanTime from '../../scripts/timeHelper'
@@ -94,11 +93,11 @@ class TableProducers extends Component {
       //  console.log(testRotationTable);
       //timer
       const nextRotation = this.getNextRotation();
-      console.log(nextRotation);
+      //console.log(nextRotation);
       //state
       const {lastRotationTime, rotationTable, scheduleVersion, rotationStatus} = this.state;
       if(nextRotation === nodeFlag.COUNTDOWN_EXPIRED){
-        console.log('countdown expired');
+        //console.log('countdown expired');
         this.setState({rotationStatus: nodeFlag.WAITING_FOR_PROPOSAL});
         //TODO: update the ui
       }
@@ -131,7 +130,7 @@ class TableProducers extends Component {
         nextRotation != nodeFlag.COUNTDOWN_EXPIRED ||
         rotationStatus === nodeFlag.SCHEDULE_PENDING
       ){
-        console.log('not waiting.  Conditions met.');
+        //console.log('not waiting.  Conditions met.');
         const rs = await this.getRotationSchedule();
         //no rotation schedule
         if(!rs){
@@ -168,12 +167,12 @@ class TableProducers extends Component {
           }
           else if(activeProducers.findIndex(bp=> bp.producer_name === sbp_currently_in) > -1)
           {
-            console.log('rotation active in update');
+            //console.log('rotation active in update');
             this.setState({rotationStatus: nodeFlag.ROTATION_ACTIVE});
             this.rotateBlockProducers();
           } else{
             this.setState({rotationStatus: nodeFlag.SCHEDULE_PENDING});
-            console.log('countdown started, but sbp not in pending or active');
+            //console.log('countdown started, but sbp not in pending or active');
           }
           
           // if(activeProducers){
@@ -657,8 +656,6 @@ class TableProducers extends Component {
         if (this.state.producers.length > 0) {
             return (
                 <div>
-                  <h1>{this.state.rotationStatus}</h1>
-                  <h2>{this.getNextRotation()}</h2>
                     <Row>
                         <Col sm={7}>
                             <h2>Producers</h2>
