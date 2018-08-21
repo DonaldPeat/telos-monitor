@@ -5,14 +5,26 @@ var express = require('express');
 var app = express();
 var teclosRouter = express.Router();
 
+function validateTLOSKey(key) {
+  const tlosKeyRegex = /TLOS[a-zA-Z0-9_]{50}/;
+  var regex = new RegExp(tlosKeyRegex);
+  var regexResult = regex.test(key);
+  return regexResult;
+}
+
+function accountExists(pubKey) {
+    const verifyAccountsCMD = `teclos get accounts ${pubKey}`
+    var resultAccountsCMDJSON = shell.exec(verifyAccountsCMD);
+    var result = JSON.parse(resultAccountsCMDJSON);
+
+    return result.account_names.length > 0;
+}
+
 teclosRouter.route('/:prodKey').get((req, res) => {
     var prodKey = req.params.prodKey;
     if (prodKey) {
         try {
-            const tlosProdKeyRegex = /TLOS[a-zA-Z0-9_]{50}/;
-            var regex = new RegExp(tlosProdKeyRegex);
-            var regexResult = regex.test(prodKey);
-            if(!regexResult) throw new Error("invalid producer key");
+            if(!validateTLOSKey(prodKey)) throw new Error("invalid producer key");
 
             const verifyAccountsCMD = `teclos get accounts ${prodKey}`
             shell.echo("---START ECHO---");
@@ -24,8 +36,8 @@ teclosRouter.route('/:prodKey').get((req, res) => {
             shell.echo("result:");
             shell.echo(resultAccountsCMDJSON);
             var result = JSON.parse(resultAccountsCMDJSON)
-            shell.echo("---END EXEC---");
 
+            shell.echo("---END EXEC---");
             res.json({
                 "error": "",
                 "accounts": result.account_names,
@@ -49,7 +61,6 @@ teclosRouter.route('/:prodKey').get((req, res) => {
     }
 });
 
-
 teclosRouter.route('/').post((req, res) => {
     const SYMBOL = "TLOS";
     const MEMO = "Regiter producer account.";
@@ -59,8 +70,7 @@ teclosRouter.route('/').post((req, res) => {
     const AMOUNT = "1000";
 
     var producer = req.body.producer;
-    console.log("req body: ", producer);
-
+    
     if (producer) {
         var accountName = producer.name;
         var ownerPubKey = producer.ownerPublicKey;
@@ -97,5 +107,56 @@ teclosRouter.route('/').post((req, res) => {
     }
 
 });
+
+teclosRouter.route('/createaccount').post((req, res)=>{
+    const SYMBOL = "TLOS";
+    const CPU = "1000";
+    const NET = "1000";
+    const RAM = "1000";
+    const AMOUNT = "1000";
+
+    var account = req.body;
+   
+    var execMessage = "";
+
+    // console.log(account != null); return;
+    if (account != null) {
+      try {
+        var accName = account.name;
+        var accPubKey = account.pubKey;
+  
+        const createAccountCMD = `teclos system newaccount eosio ${accName} ${accPubKey} --stake-net "${NET}.0000 ${SYMBOL}" --stake-cpu "${CPU}.0000 ${SYMBOL}" --buy-ram "${RAM}.0000 ${SYMBOL}"`;
+        var accPubKey = account.pubKey;
+        
+        if(!validateTLOSKey(accPubKey)) throw new Error("invalid producer key");
+
+        if(!accountExists(accPubKey)) throw new Error("account already exists");
+
+        shell.echo("---------START CREATING ACCOUNT---------");
+        execMessage = shell.exec(createAccountCMD);
+        shell.echo(execMessage);
+
+        shell.echo("---------END CREATING ACCOUNT---------");
+        res.json({
+            "account_created":true,
+            "msg": execMessage
+        });
+      } catch (error) {
+        shell.echo("---------ERROR CREATING ACCOUNT---------");
+        shell.echo(execMessage, error);
+        shell.echo("---------ERROR CREATING ACCOUNT---------");
+        res.json({
+            "account_created":false,
+            "msg": execMessage
+        });
+      }
+    } else {
+        res.json({
+            "account_created":false,
+            "msg": execMessage
+        });
+    }
+
+})
 
 module.exports = teclosRouter;
