@@ -110,23 +110,18 @@ class TableProducers extends Component {
       //console.log(nextRotation);
       //state
       const {lastRotationTime, rotationTable, scheduleVersion, rotationStatus} = this.state;
+      
       if(nextRotation === nodeFlag.COUNTDOWN_EXPIRED){
         this.setState({rotationStatus: nodeFlag.WAITING_FOR_PROPOSAL});
         return;
       }
       
-      if(!this.state.rotationTable){
-        // console.log('No rotation table found');
-        return;
-      }
-
       //check for no rotation
-      if(rotationTable.next_rotation_time != rotationTable.last_rotation_time){
+      if(rotationTable.next_rotation_time == rotationTable.last_rotation_time){
         if(rotationTable.sbp_currently_in === '' && rotationTable.bp_currently_out === ''){
           this.setState({rotationStatus: nodeFlag.EMPTY_ROTATION_TABLE});
-          return
+          return;
         }
-      }else{
         this.setState({rotationStatus: nodeFlag.EMPTY_ROTATION_TABLE});
         return;
       }
@@ -140,15 +135,15 @@ class TableProducers extends Component {
       //compare timestamp of last rotation.  If newer, we have a proposal
       if(
         new Date(lastRotationTime) < new Date(rotationTable.last_rotation_time) ||
-        nextRotation != nodeFlag.COUNTDOWN_EXPIRED ||
+        nextRotation == nodeFlag.WAITING_FOR_PROPOSAL ||
         rotationStatus === nodeFlag.SCHEDULE_PENDING
       ){
         //console.log('not waiting.  Conditions met.');
         const rs = await this.getRotationSchedule();
         //no rotation schedule
         if(!rs){
-          console.log('No rotation schedule found');
-          this.setState({rotationStatus: nodeFlag.WAITING_FOR_PROPOSAL});
+          console.log('No rotation schedule found', rs);
+          this.setState({rotationStatus: nodeFlag.SCHEDULE_PENDING});
           return;
         }
 
@@ -158,7 +153,7 @@ class TableProducers extends Component {
 
         if(rsHeaderVersion === rsPendingVersion === rsActiveVersion){
           // console.log('all versions equal');
-          this.setState({rotationStatus: nodeFlag.WAITING_FOR_PROPOSAL});
+          this.setState({rotationStatus: nodeFlag.SCHEDULE_PENDING});
           return;
         }
 
@@ -204,11 +199,11 @@ class TableProducers extends Component {
         }
 
         //either active rotation, or waiting for proposal.
-        if(rotationStatus != nodeFlag.WAITING_FOR_PROPOSAL){ 
-          // console.log('no new rotation table, not pending');
-          this.setState({rotationStatus: nodeFlag.WAITING_FOR_PROPOSAL});
-        }
-        return;
+        // if(rotationStatus != nodeFlag.WAITING_FOR_PROPOSAL){ 
+        //   // console.log('no new rotation table, not pending');
+        //   this.setState({rotationStatus: nodeFlag.WAITING_FOR_PROPOSAL});
+        // }
+        // return;
       }
     }
 
@@ -223,7 +218,6 @@ class TableProducers extends Component {
         }
       }
 
-      
       const rotation = await nodeInfoAPI.getProducersRotation();
 
       if(rotation == null) return;
@@ -274,7 +268,8 @@ class TableProducers extends Component {
         const producerInfo = await nodeInfoAPI.getInfo();
         currentBlockNumber = producerInfo.head_block_num;
       }
-      if(currentBlockNumber === 0) {
+      if(currentBlockNumber === 0) return undefined;
+      else{
         const blockHeaderState = await nodeInfoAPI.getBlockHeaderState(currentBlockNumber);
         return blockHeaderState;
       }
@@ -287,18 +282,19 @@ class TableProducers extends Component {
         const rotation = await nodeInfoAPI.getProducersRotation();
         if(rotation){
           // console.log('rotationTable set in rotateBlockProducers');
-          this.setState({rotationTable: rotation.rows[0]}); //not sure this is actually necessary
+          this.setState({rotationTable: rotation.rows[0]}); 
+          //not sure this is actually necessary
           
         //bps out of index
-        if(rotation.bp_out_index >= 21 && rotation.sbp_in_index >= 51) return;
-        } else{
-          this.setState({rotationStatus: nodeFlag.NO_ROTATION});
-        }
+    
+       this.setState({rotationStatus: nodeFlag.NO_ROTATION});
+
     }
+  }
 
     async checkForNewRotationTable(){
       const {rotationTable, rotationStatus} = this.state;
-      if(rotationStatus != nodeFlag.WAITING_FOR_PROPOSAL) return;
+      if(rotationStatus != nodeFlag.ROTATION_ACTIVE) return;
       const rotation = await nodeInfoAPI.getProducersRotation();
       
       if(rotation != null && rotationTable != null){
@@ -310,6 +306,7 @@ class TableProducers extends Component {
             rotationTable: newRotationTable,
             previousRotationTable: rotationTable
           });
+          this.setState({rotationStatus: nodeFlag.NO_ROTATION});
         }
       }
     }
@@ -581,7 +578,7 @@ class TableProducers extends Component {
           rotationMessage = 'Waiting for a proposal';
           break;
         case nodeFlag.SCHEDULE_PENDING:
-          rotationMessage = `Schedule Pending, ${nextRotation}`;
+          rotationMessage = `New schedule pending, ${nextRotation}`;
           break;
         case nodeFlag.EMPTY_ROTATION_TABLE:
           var activeVotedProds = producers.filter(bp=> bp.is_active == 1 && bp.total_votes > 0);
