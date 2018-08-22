@@ -105,7 +105,6 @@ class TableProducers extends Component {
     }
 
     async updateRotationStatus(){
-      console.log(this.state.rotationTable);
       //timer
       const nextRotation = this.getNextRotation();
       //console.log(nextRotation);
@@ -585,13 +584,18 @@ class TableProducers extends Component {
           rotationMessage = `Schedule Pending, ${nextRotation}`;
           break;
         case nodeFlag.EMPTY_ROTATION_TABLE:
-          rotationMessage = producers.length < 22 ? `No rotation, there are ${producers.length} producers.` : `The network is inactive`;
+          var activeVotedProds = producers.filter(bp=> bp.is_active == 1 && bp.total_votes > 0);
+          if(this.state.percentageVoteStaked == '' || parseInt(this.state.percentageVoteStaked) < 15) rotationMessage = 'The network is inactive';
+          else{
+            if(activeVotedProds.length < 22) rotationMessage = `No rotation, there are ${producers.length} producers.`;
+            else rotationMessage = nextRotation;
+          }
           break;
         case nodeFlag.NO_ROTATION:
           rotationMessage = nextRotation;
           break;
         default:
-          rotationMessage = 'Waiting for a proposal';
+          rotationMessage = nextRotation;
           break;
       }
       return rotationMessage;
