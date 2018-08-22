@@ -44,12 +44,16 @@ const clusterStyle = [
 	}
 ];
 
-const ProducerMap = ({ip_locations, producers}) => {
-	const get_markers = ip_locations.map((loc, i) => {
+const ProducerMap = ({ip_locations, producers}) => { 
+	var get_markers = null;
+	if(!ip_locations) {
+		 get_markers = ip_locations.map((loc, i) => {
 		if(typeof loc.latitude != 'number') return;
 		const thisProd = producers.find(prod => prod.name === loc.name);
 		return (<MarkerWithInfo key={i} loc={loc} producer={thisProd} />);
-	});
+		});
+	}
+	
 	return (
 		<GoogleMap
 			onClick={e => console.log(e)}
