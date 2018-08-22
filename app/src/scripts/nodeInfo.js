@@ -53,6 +53,18 @@ export default {
     }
   },
 
+  getBlockHeaderState: async(num) => {
+    try {
+      var response = await axios.post(
+          config.endPoint + 'v1/chain/get_block_header_state',
+          JSON.stringify({'block_num_or_id': num}));
+      return response.data;
+    } catch (error) {
+      // console.error(error);
+      return null;
+    }
+  },
+
   getAccountInfo: async(accountName) => {
     try {
       var response = await axios.post(

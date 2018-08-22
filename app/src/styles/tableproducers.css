@@ -46,6 +46,7 @@
 th.sortable {
     position: relative;
     cursor: pointer;
+    text-decoration: underline;
 }
 
 th.sortable::before {
@@ -68,4 +69,15 @@ th.sortable::before {
 
 .progress-bar-success{
     background-color: #F69A3C;
+}
+
+.bp_rotate_out,
+.bp_rotate_in {
+    display: inline-block;
+    margin-left: 20px;
+    cursor: auto;
+}
+
+.bp_rotate_in {
+    color: #468847;
 }

@@ -38,5 +38,11 @@ export default {
         axios.get(netConfig.apiEndpoint + 'api/v1/geolocate')
             .then(value => cb(value))
             .catch(err => console.error(err));
+    },
+
+    createAccount: (account, cb) => {
+        axios.post(netConfig.apiEndpoint + 'api/v1/producer/createaccount', account )
+            .then(value => cb(value))
+            .catch(err => console.error(err));
     }
 }

@@ -1,0 +1,6 @@
+.createAccountResponseContainer {
+	min-height: 198px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
