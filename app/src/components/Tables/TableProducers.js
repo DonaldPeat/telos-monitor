@@ -121,12 +121,15 @@ class TableProducers extends Component {
         }    
       }else{
         this.setState({rotationStatus: nodeFlag.EMPTY_ROTATION_TABLE});
+        return;
       }
       
       if(!lastRotationTime){
         //if none, we're gonna initialize it.
         const initRotationTable = await this.getRotationTable();
-        this.setState({lastRotationTime: initRotationTable.last_rotation_time});
+        if(initRotationTable){
+          this.setState({lastRotationTime: initRotationTable.last_rotation_time});
+        }
       }
 
       //compare timestamp of last rotation.  If newer, we have a proposal
