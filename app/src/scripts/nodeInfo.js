@@ -24,6 +24,23 @@ export default {
     }
   },
 
+  getProducersTable: async() => {
+    try {
+      var response = await axios.post(
+          config.endPoint + 'v1/chain/get_table_rows',
+          JSON.stringify({
+            'code': 'eosio',
+            'json': true,
+            'scope': 'eosio',
+            'table': 'producers'
+          }));
+      return response.data;
+    } catch (error) {
+      // console.error(error);
+      return null;
+    }
+  },
+
   getBlockInfo: async(num) => {
     try {
       var response = await axios.post(
@@ -68,6 +85,22 @@ export default {
             'json': true,
             'scope': 'eosio',
             'table': 'global'
+          }));
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  },
+
+  getProducersRotation: async() => {
+    try {
+      var response = await axios.post(
+          config.endPoint + 'v1/chain/get_table_rows', JSON.stringify({
+            'code': 'eosio',
+            'json': true,
+            'scope': 'eosio',
+            'table': 'rotations'
           }));
       return response.data;
     } catch (error) {

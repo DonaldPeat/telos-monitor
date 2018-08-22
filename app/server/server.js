@@ -13,7 +13,7 @@ const _port = 4200;
 console.log(process.env.MONGO_ENDPOINT);
 const _mongoURL = process.env.MONGO_ENDPOINT;
 mongoose.Promise = require('bluebird');
-mongoose.connect(_mongoURL)
+mongoose.connect(_mongoURL, {useNewUrlParser:true})
     .then(() => {
         console.log('Start listening to mongo...');
     })

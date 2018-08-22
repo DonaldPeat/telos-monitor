@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow} from 'react-google-maps';
 import MarkerClusterer from 'react-google-maps/lib/components/addons/MarkerClusterer';
 import mapStyles from '../mapStyles/telosStyle.json';
-import marker_icon from '../img/marker_gif3.gif';
-import inactive_icon from '../img/inactive_marker.png';
+import marker_icon from '../img/active_marker.gif';
+import inactive_icon from '../img/inactive_marker.gif';
 import cluster_icon from '../img/cluster_icon.png';
 
 const clusterStyle = [
@@ -78,6 +78,7 @@ class MarkerWithInfo extends Component {
 			infoBoxOpen: false
 		};
 	}
+  
 	render(){
 		const {producer, loc} = this.props;
  		return (

@@ -19,10 +19,10 @@ export default class InfoBar extends Component {
   
 	componentDidMount(){
 		serverAPI.getIpLocations((res) => {
-			console.log({myData: res.data});
 			this.setState({ip_locations: seperateIdenticalCoords(res.data)});
 		
 		serverAPI.getAllAccounts(res => {
+			//console.log({producers: res.data.filter(item => )});
 			this.setState({producers: res.data});
 		});
 	});
@@ -38,7 +38,11 @@ export default class InfoBar extends Component {
 					</Col>
 					<Col sm={6}>
 						<ButtonToolbar style={{float: 'right'}}>
-				    		<Button className='testnet_status_btn' bsStyle="primary" onClick={() => this.setState({showStatus: true})}>
+				    		<Button
+				    			className='testnet_status_btn'
+				    			bsStyle="primary"
+				    			onClick={() => this.setState({showStatus: true})}
+				    			style={{boxShadow: `0px 3px 0px 0px green`}}>
 				    			Testnet Status
 				    		</Button>
 					        <Button bsStyle="default" onClick={() => this.setState({show: true})}>
@@ -66,8 +70,8 @@ function seperateIdenticalCoords(ip_locations){
 			//if coords are identical...
 			if( thisIp.longitude === otherIp.longitude &&
 				thisIp.latitude === otherIp.latitude){
-				thisIp.longitude += 0.00001;
-				thisIp.latitude += 0.00001;
+				thisIp.longitude += 0.00002 * Math.random();
+				thisIp.latitude += 0.00002 * Math.random();
 				break;
 			}
 		}

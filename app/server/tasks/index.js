@@ -10,6 +10,8 @@ const IP_API_KEY = process.env.IP_API_KEY;
 const GEOCODE_ENDPOINT = 'https://api.opencagedata.com/geocode/v1/json';
 const GEOCODE_API_KEY = process.env.GEOCODE_API_KEY;
 
+const nodeInfoApi = require('../../src/scripts/nodeInfo');
+
 module.exports = {
 	scheduleGeoTasks: function(){
 		cron.schedule('*/15 * * * *', () => {
@@ -17,12 +19,23 @@ module.exports = {
 		});
 	},
 	getLatAndLong: function(){
-		const getProducerIps = (removeOldIpData) => {
+		async function getBcProds(getProducerIps){
+			const bcProds =  await nodeInfoApi.getProducers();
+			const filteredBcProds = bcProds.rows().filter(item => item.is_active === 1);
+			getProducerIps(removeOldIpData, filteredBcProds);
+		}
+
+		const getProducerIps = (removeOldIpData, bcProds) => {
 			ProducerModel.find({}, (err, items) => {
 				if(err){
 					console.log(err);
 				}else{
-					const addresses = items.slice(0, 21).map(acct => {
+					const activeItems = items.filter(item => {
+						return bcProds.findIndex(prod => {
+							return prod.owner === item.name;
+						}) > -1;
+					});
+					const addresses = activeItems.slice(0, 21).map(acct => {
 						if(acct.httpServerAddress == ''){
 							return {
 								serverLocation: acct.serverLocation,
@@ -40,7 +53,7 @@ module.exports = {
 						}
 					});
 
-					const inactive = items.slice(22).map(acct => {
+					const inactive = activeItems.slice(22).map(acct => {
 						if(acct.httpServerAddress == ''){
 							return {
 								serverLocation: acct.serverLocation,
@@ -57,8 +70,8 @@ module.exports = {
 							};
 						}
 					});
-
-					removeOldIpData(updateIpData, addresses.concat(inactive));
+					const allAddresses = addresses.concat(inactive);
+					removeOldIpData(updateIpData, allAddresses);
 				}
 			});
 		};
@@ -86,7 +99,8 @@ module.exports = {
 							ip: res.data.ip,
 							name: ip.name,
 							longitude: res.data.longitude,
-							latitude: res.data.latitude
+							latitude: res.data.latitude,
+							active: ip.active
 						});
 						geoModel.save();
 					})
@@ -105,7 +119,8 @@ module.exports = {
 								ip: ip.serverLocation,
 								name: ip.name,
 								longitude: res.data.results[0].geometry.lng,
-								latitude: res.data.results[0].geometry.lat
+								latitude: res.data.results[0].geometry.lat,
+								active: ip.active
 							});
 							geoModel.save();
 						}
@@ -115,6 +130,7 @@ module.exports = {
 			});
 		}
 
-		getProducerIps(removeOldIpData);	
+		getBcProds(removeOldIpData);
+		//getProducerIps(removeOldIpData);
 	}
 };

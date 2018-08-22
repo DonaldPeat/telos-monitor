@@ -23,6 +23,13 @@ class ModalProducerInfo extends Component {
                     });
                 }
             }
+        } else {
+            if(this.props.producername !== this.state.producerInfo.account_name && this.props.producername !== ""){
+                let producerInfo = await nodeInfoAPI.getAccountInfo(this.props.producername);
+                this.setState({
+                    producerInfo: producerInfo
+                });
+            }
         }
     }
     
