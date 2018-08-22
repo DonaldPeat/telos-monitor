@@ -27,11 +27,21 @@ producerRouter.route('/').post((req, res) => {
                         transferTLOS: data.transferResult 
                     };
                     res.json(msg);
-                    console.log("response: ", msg)
+                    console.log("response: ", msg);
                 })
                 .catch(err => console.log("error message: " + err));
         })
         .catch((err) => res.status(400).send("unable to save to database"));
+});
+
+
+producerRouter.route('/createaccount').post((req, res) => {
+  var account = req.body;
+  axios.post('http://localhost:5500/api/v1/teclos/createaccount', req.body)
+      .then(acc => {
+        res.json(acc.data);
+      })
+      .catch(err => console.log('error message: ' + err));
 });
 
 module.exports = producerRouter;

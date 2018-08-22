@@ -288,3 +288,9 @@ a:active {
 	color: #777;
 	font-size: 1.1em;
 }
+
+.status{
+	margin-top: 1em;
+	background: lightgrey;
+}
+

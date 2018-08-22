@@ -10,7 +10,10 @@ const IP_API_KEY = process.env.IP_API_KEY;
 const GEOCODE_ENDPOINT = 'https://api.opencagedata.com/geocode/v1/json';
 const GEOCODE_API_KEY = process.env.GEOCODE_API_KEY;
 
-const nodeInfoApi = require('../../src/scripts/nodeInfo');
+//const nodeInfoApi = require('../../src/scripts/nodeInfo');
+//config.endPoint + 'v1/chain/get_producers
+//http://localhost:4200/
+const GET_PRODUCERS_ENDPOINT = 'http://localhost:4200/v1/chain/get_producers';
 
 module.exports = {
 	scheduleGeoTasks: function(){
@@ -19,8 +22,18 @@ module.exports = {
 		});
 	},
 	getLatAndLong: function(){
-		async function getBcProds(getProducerIps){
+		/*async function getBcProds(getProducerIps){
 			const bcProds =  await nodeInfoApi.getProducers();
+			const filteredBcProds = bcProds.rows().filter(item => item.is_active === 1);
+			getProducerIps(removeOldIpData, filteredBcProds);
+		}*/
+
+		async function getBcProds(getProducerIps){
+			const req = await axios.post(
+				GET_PRODUCERS_ENDPOINT,
+				JSON.stringify({'json': true, 'limit': 1000})
+			);
+			const res = await req.json();
 			const filteredBcProds = bcProds.rows().filter(item => item.is_active === 1);
 			getProducerIps(removeOldIpData, filteredBcProds);
 		}
