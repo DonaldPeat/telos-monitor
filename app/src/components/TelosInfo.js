@@ -83,4 +83,5 @@ class TelosInfo extends Component {
     }
 }
 
+
 export default TelosInfo;
