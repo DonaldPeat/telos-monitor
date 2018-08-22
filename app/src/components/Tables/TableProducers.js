@@ -116,6 +116,8 @@ class TableProducers extends Component {
         return;
       }
       
+      if(!rotationTable) return;
+
       //check for no rotation
       if(rotationTable.next_rotation_time == rotationTable.last_rotation_time){
         if(rotationTable.sbp_currently_in === '' && rotationTable.bp_currently_out === ''){
