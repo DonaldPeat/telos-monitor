@@ -79,7 +79,12 @@ displayModalButtons() {
             </div>
         );
     } else {
-        return (<Button onClick={() => this.onModalHide()}>Close</Button>);
+        return (
+            <div>
+                <Button onClick={() => this.setState({isAccountCreated: !this.state.isAccountCreated})}>Test Toggle</Button>
+                <Button onClick={() => this.onModalHide()}>Close</Button>
+            </div>
+        );
     }
 }
 
