@@ -9,14 +9,6 @@ import ModalProducerInfo from '../Modals/ModalProducerInfo'
 import nodeFlag from '../../scripts/constants';
 import {displayTwoDigits} from '../../scripts/utils';
 
-const testTable = {  
-   "bp_currently_out":"prodnamejogz",
-   "sbp_currently_in":"prodnamefjkk",
-   "bp_out_index":4,
-   "sbp_in_index":25,
-   "next_rotation_time":"2018-08-22T00:10:55.500",
-   "last_rotation_time":"2018-08-22T00:25:55.500"
-};
 
 class TableProducers extends Component {
   constructor(props) {
@@ -112,6 +104,7 @@ class TableProducers extends Component {
       const {lastRotationTime, rotationTable, scheduleVersion, rotationStatus} = this.state;
       
       if(nextRotation === nodeFlag.COUNTDOWN_EXPIRED){
+        console.log(nextRotation);
         this.setState({rotationStatus: nodeFlag.WAITING_FOR_PROPOSAL});
         return;
       }
@@ -119,11 +112,16 @@ class TableProducers extends Component {
       if(!rotationTable) return;
 
       //check for no rotation
-      if(rotationTable.next_rotation_time == rotationTable.last_rotation_time){
-        if(rotationTable.sbp_currently_in === '' && rotationTable.bp_currently_out === ''){
+      if(rotationTable){
+        if(rotationTable.next_rotation_time == rotationTable.last_rotation_time){
+          if(rotationTable.sbp_currently_in === '' && rotationTable.bp_currently_out === ''){
+            this.setState({rotationStatus: nodeFlag.EMPTY_ROTATION_TABLE});
+            return;
+          }
           this.setState({rotationStatus: nodeFlag.EMPTY_ROTATION_TABLE});
           return;
-        }
+        }    
+      }else{
         this.setState({rotationStatus: nodeFlag.EMPTY_ROTATION_TABLE});
         return;
       }
@@ -131,14 +129,17 @@ class TableProducers extends Component {
       if(!lastRotationTime){
         //if none, we're gonna initialize it.
         const initRotationTable = await this.getRotationTable();
-        this.setState({lastRotationTime: initRotationTable.last_rotation_time});
+        if(initRotationTable){
+          this.setState({lastRotationTime: initRotationTable.last_rotation_time});
+        }
       }
 
       //compare timestamp of last rotation.  If newer, we have a proposal
       if(
         new Date(lastRotationTime) < new Date(rotationTable.last_rotation_time) ||
         nextRotation == nodeFlag.WAITING_FOR_PROPOSAL ||
-        rotationStatus === nodeFlag.SCHEDULE_PENDING
+        rotationStatus === nodeFlag.SCHEDULE_PENDING ||
+        rotationStatus === nodeFlag.ROTATION_ACTIVE
       ){
         //console.log('not waiting.  Conditions met.');
         const rs = await this.getRotationSchedule();
@@ -165,13 +166,13 @@ class TableProducers extends Component {
         // console.log(`pending: ${rsPendingVersion}, active: ${rsHeaderVersion}`);
 
         if(rsPendingVersion > rsHeaderVersion){
-          console.log('set pending after rsPendingVersion > rsHeaderVersion');
+          //console.log('set pending after rsPendingVersion > rsHeaderVersion');
           this.setState({rotationStatus: nodeFlag.SCHEDULE_PENDING});
         }else{
           const activeProducers = rs.active_schedule.producers;
           const pendingProducers = rs.pending_schedule.producers;
          
-          const {sbp_currently_in} = rotationTable;
+          const {sbp_currently_in, bp_currently_out} = rotationTable;
           
           if(pendingProducers.findIndex(bp=> bp.producer_name === sbp_currently_in) > -1){
             console.log('set pending after findIndex producer name in pendingProducers')
@@ -179,9 +180,16 @@ class TableProducers extends Component {
           }
           else if(activeProducers.findIndex(bp=> bp.producer_name === sbp_currently_in) > -1)
           {
-            //console.log('rotation active in update');
-            this.setState({rotationStatus: nodeFlag.ROTATION_ACTIVE});
-            this.rotateBlockProducers();
+            // console.log('rotation active in update');
+            // this.setState({rotationStatus: nodeFlag.ROTATION_ACTIVE});
+            // this.rotateBlockProducers();
+
+            //if bp out still in active producers array, then we don't have a new schedule yet.
+            if(activeProducers.findIndex(bp => bp.producer_name === bp_currently_out) > -1){
+              this.setState({rotationStatus: nodeFlag.SCHEDULE_PENDING});
+            }else{
+              this.setState({rotationStatus: nodeFlag.ROTATION_ACTIVE});
+            }
           } else{
             console.log('set pending after versions match, but sbp not in arrays');
             this.setState({rotationStatus: nodeFlag.SCHEDULE_PENDING});
@@ -245,8 +253,17 @@ class TableProducers extends Component {
             }
             else if(activeProducersSchedule.findIndex(bp=> bp.producer_name === rotationTable.sbp_currently_in) > -1)
             {
-              this.setState({rotationStatus: nodeFlag.ROTATION_ACTIVE});
-              this.rotateBlockProducers();
+              // console.log('rotation active set in init');
+              // this.setState({rotationStatus: nodeFlag.ROTATION_ACTIVE});
+              // this.rotateBlockProducers();
+
+              // if bp out is still in active producers array, then we don't have an active schedule yet
+              if(activeProducersSchedule.findIndex(bp => bp.producer_name === rotationTable.bp_currently_out) > -1){
+                this.setState({rotationStatus: nodeFlag.SCHEDULE_PENDING});
+              }else{
+                //bp out has changed
+                this.setState({rotationStatus: nodeFlag.ROTATION_ACTIVE});
+              }
             } 
           }
         } else this.setState({rotationStatus: nodeFlag.EMPTY_ROTATION_TABLE});
@@ -278,38 +295,63 @@ class TableProducers extends Component {
     }
 
     //need to figure out what this function does
-    async rotateBlockProducers(){
-        if(this.state.rotationStatus != nodeFlag.ROTATION_ACTIVE) return;
+  //   async rotateBlockProducers(){
+  //       if(this.state.rotationStatus != nodeFlag.ROTATION_ACTIVE) return;
 
-        const rotation = await nodeInfoAPI.getProducersRotation();
-        if(rotation){
-          // console.log('rotationTable set in rotateBlockProducers');
-          this.setState({rotationTable: rotation.rows[0]}); 
-          //not sure this is actually necessary
+  //       const rotation = await nodeInfoAPI.getProducersRotation();
+  //       if(rotation){
+  //         // console.log('rotationTable set in rotateBlockProducers');
+  //         this.setState({rotationTable: rotation.rows[0]}); 
+  //         //not sure this is actually necessary
           
-        //bps out of index
-    
-       this.setState({rotationStatus: nodeFlag.NO_ROTATION});
+  //       //bps out of index
+  //     console.log('no rotation set in rotateBlockProducers');  
+  //     this.setState({rotationStatus: nodeFlag.NO_ROTATION});
 
+  //   }
+  // }
+
+    async rotateBlockProducers(){
+      await true;
+      return;
     }
-  }
+
+
+    // async checkForNewRotationTable(){
+    //   const {rotationTable, rotationStatus} = this.state;
+    //   if(rotationStatus != nodeFlag.ROTATION_ACTIVE) return;
+    //   const rotation = await nodeInfoAPI.getProducersRotation();
+      
+    //   if(rotation != null && rotationTable != null){
+    //     const newRotationTable = rotation.rows[0];
+    //     if(rotationTable.bp_currently_out != newRotationTable.bp_currently_out){
+    //       //new table
+    //       console.log('rotationTable set in checkForNewRotationTable');
+    //       this.setState({
+    //         rotationTable: newRotationTable,
+    //         previousRotationTable: rotationTable
+    //       });
+    //       this.setState({rotationStatus: nodeFlag.NO_ROTATION});
+    //     }
+    //   }
+    // }
 
     async checkForNewRotationTable(){
       const {rotationTable, rotationStatus} = this.state;
-      if(rotationStatus != nodeFlag.ROTATION_ACTIVE) return;
-      const rotation = await nodeInfoAPI.getProducersRotation();
-      
-      if(rotation != null && rotationTable != null){
-        const newRotationTable = rotation.rows[0];
-        if(rotationTable.bp_currently_out != newRotationTable.bp_currently_out){
-          //new table
-          console.log('rotationTable set in checkForNewRotationTable');
-          this.setState({
-            rotationTable: newRotationTable,
-            previousRotationTable: rotationTable
-          });
-          this.setState({rotationStatus: nodeFlag.NO_ROTATION});
-        }
+      const newRotation = await this.getRotationTable();
+      if(!newRotation){
+        console.log('no new rotation. NO_ROTATION set in checkForNewRotationTable');
+        this.setState({rotationStatus: nodeFlag.NO_ROTATION});
+        return;
+      }
+      if(rotationTable){
+        if(rotationTable.bp_currently_out === newRotation.bp_currently_out) return;
+        this.setState({
+          previousRotationTable: rotationTable,
+          rotationTable: newRotation
+        });
+      }else{
+        this.setState({rotationTable: newRotation});
       }
     }
 

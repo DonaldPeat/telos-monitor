@@ -36,7 +36,7 @@ class TelosInfo extends Component {
                         <hr/>
                         <p className="pInfo1"><strong>1.</strong> Clone master branch</p>
                         <p className="pInfo2"><strong>a.</strong> <code>git clone https://github.com/Telos-Foundation/telos</code></p>
-                        <p className="pInfo2"><strong>b.</strong> <code>git checkout Stage2.0</code></p>
+                        <p className="pInfo2"><strong>b.</strong> <code>git checkout stage2.0</code></p>
                         <p className="pInfo2"><strong>c.</strong> <code>git submodule update --init --recursive</code></p>
                         <p className="pInfo1"><strong>2.</strong> Inside the telos folder run the following commands:</p>
                         <p className="pInfo2"><strong>a.</strong> <code>./telos_build.sh</code></p>
