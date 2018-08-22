@@ -45,7 +45,7 @@ class Navigation extends Component {
 							<NavItem onClick={() => this.props.history.push('/p2plist')}>P2P LIST</NavItem>
 							{/* <NavItem onClick={() => this.props.history.push('/stages/stage-1')}>STAGES</NavItem> */}
 							<NavItem onClick={() => this.showModalRegisterProducer()}>REGISTER</NavItem>
-							<NavItem onClick={() => this.showModalCreateAccount()} >CREATE ACCOUNT</NavItem>
+							{/* <NavItem onClick={() => this.showModalCreateAccount()} >CREATE ACCOUNT</NavItem> */}
 						</Nav>
 					</Navbar.Collapse>
 				</Navbar>
