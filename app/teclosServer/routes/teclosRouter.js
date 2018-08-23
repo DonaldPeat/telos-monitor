@@ -133,12 +133,13 @@ teclosRouter.route('/createaccount').post((req, res)=>{
         shell.echo("---------START CREATING ACCOUNT---------");
         shell.exec(teclosUnlockWallet);
         shell.exec(createAccountCMD);
-        shell.echo(execMessage);
-
+        
         shell.echo("---------END CREATING ACCOUNT---------");
         res.json({
             "account_created":true,
-            "msg": "Account created successfully"
+            "msg": "Account was created successfully",
+            "account": accName,
+            "pubKey": accPubKey
         });
       } catch (error) {
         shell.echo("---------ERROR CREATING ACCOUNT---------");

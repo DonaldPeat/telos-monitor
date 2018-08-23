@@ -106,10 +106,12 @@ displayResponseMessage(){
     if(this.state.serverResponse == null) return <h3>'Internal error. Please contact one our dev team on Telegram at https://t.me/TelosTestnet'</h3>
                 
     return (
-        <div className='createAccountResponseContainer'>
-            <h3>{this.state.serverResponse.account_created == true ? "Account created" : "Account was not created"}</h3>
-            <p>{this.state.serverResponse.msg}</p>
-        </div>
+            <Well>
+                <h3>{this.state.serverResponse.account_created == true ? "Account created" : "Account was not created"}</h3>
+                <p>{this.state.serverResponse.msg}</p>
+                <p><bold>Account name</bold>: {this.state.serverResponse.account}</p>
+                <p><bold>Public key</bold>: {this.state.serverResponse.pubKey}</p>
+            </Well>
     );
 }
 
