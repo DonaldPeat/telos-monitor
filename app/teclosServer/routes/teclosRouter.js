@@ -117,43 +117,41 @@ teclosRouter.route('/createaccount').post((req, res)=>{
 
     var account = req.body;
    
-    var execMessage = "";
-
-    // console.log(account != null); return;
     if (account != null) {
       try {
         var accName = account.name;
         var accPubKey = account.pubKey;
   
+        const teclosUnlockWallet = '/home/dev/telosfoundation/grow/grow.py wallet unlock';
         const createAccountCMD = `teclos system newaccount eosio ${accName} ${accPubKey} --stake-net "${NET}.0000 ${SYMBOL}" --stake-cpu "${CPU}.0000 ${SYMBOL}" --buy-ram "${RAM}.0000 ${SYMBOL}"`;
         var accPubKey = account.pubKey;
         
-        if(!validateTLOSKey(accPubKey)) throw new Error("invalid producer key");
+        if(!validateTLOSKey(accPubKey)) throw new Error("invalid public key");
 
-        if(!accountExists(accPubKey)) throw new Error("account already exists");
+        if(accountExists(accPubKey)) throw new Error("account already exists");
 
         shell.echo("---------START CREATING ACCOUNT---------");
-        execMessage = shell.exec(createAccountCMD);
+        shell.exec(teclosUnlockWallet);
+        shell.exec(createAccountCMD);
         shell.echo(execMessage);
 
         shell.echo("---------END CREATING ACCOUNT---------");
         res.json({
             "account_created":true,
-            "msg": execMessage
+            "msg": "Account created successfully"
         });
       } catch (error) {
         shell.echo("---------ERROR CREATING ACCOUNT---------");
-        shell.echo(execMessage, error);
         shell.echo("---------ERROR CREATING ACCOUNT---------");
         res.json({
             "account_created":false,
-            "msg": execMessage
+            "msg": "Account name already exists or invalid public key"
         });
       }
     } else {
         res.json({
             "account_created":false,
-            "msg": execMessage
+            "msg": "Bad request."
         });
     }
 
