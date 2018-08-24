@@ -1,0 +1,9 @@
+.faucet_selected {
+	background-image: none;
+	background-color: #ed4a2e;
+}
+
+.faucet_selected:hover {
+	background-image: none;
+	background-color: #872311;
+}
