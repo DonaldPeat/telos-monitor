@@ -133,7 +133,6 @@ teclosRouter.route('/createaccount').post((req, res)=>{
         shell.echo("---------START CREATING ACCOUNT---------");
         shell.exec(teclosUnlockWallet);
         shell.exec(createAccountCMD);
-        
         shell.echo("---------END CREATING ACCOUNT---------");
         res.json({
             "account_created":true,
@@ -142,7 +141,6 @@ teclosRouter.route('/createaccount').post((req, res)=>{
             "pubKey": accPubKey
         });
       } catch (error) {
-        shell.echo("---------ERROR CREATING ACCOUNT---------");
         shell.echo("---------ERROR CREATING ACCOUNT---------");
         res.json({
             "account_created":false,
@@ -156,6 +154,39 @@ teclosRouter.route('/createaccount').post((req, res)=>{
         });
     }
 
+})
+
+teclosRouter.route('/gettlos').post((req, res) => {
+  const SYMBOL = 'TLOS';
+  const MEMO = 'Transfer from TLOS Faucet';
+
+  var account = req.body;
+  if (account != null) {
+    try {
+      var accName = account.name;
+      var accPubKey = account.pubKey;
+      var amount = account.amount;
+      
+      const teclosUnlockWallet = '/home/dev/telosfoundation/grow/grow.py wallet unlock';
+      const transferCMD = `teclos transfer eosio ${accountName} "${amount}.0000 ${SYMBOL}" "${MEMO}"`;
+      
+      if(accountExists(accPubKey)) throw new Error("account already exists");
+      
+      shell.echo("---------START TRANSFER TLOS---------");
+      shell.exec(teclosUnlockWallet);
+      shell.exec(transferCMD);
+      shell.echo("---------END TRANSFER TLOS-----------");
+
+      res.json({
+        "msg": ""
+      });
+    } catch (error) {
+        shell.echo("---------ERROR TRANSFERIR TLOS---------");
+        res.json({
+            "msg": ""
+        });
+    }
+  } else res.json({"msg": ""});
 })
 
 module.exports = teclosRouter;

@@ -37,11 +37,23 @@ producerRouter.route('/').post((req, res) => {
 
 producerRouter.route('/createaccount').post((req, res) => {
   var account = req.body;
-  axios.post('http://localhost:5500/api/v1/teclos/createaccount', req.body)
+  axios.post('http://localhost:5500/api/v1/teclos/createaccount', account)
       .then(acc => {
         res.json(acc.data);
       })
       .catch(err => console.log('error message: ' + err));
 });
+
+producerRouter.route('/gettlos').post((req, res) => {
+    var account = req.body;
+
+    //Verify if account has exceeded withdrawal limit
+    
+    axios.post('http://localhost:5500/api/v1/teclos/gettlos', account)
+        .then(acc => {
+          res.json(acc.data);
+        })
+        .catch(err => console.log('error message: ' + err));
+  });
 
 module.exports = producerRouter;
