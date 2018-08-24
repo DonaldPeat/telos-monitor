@@ -594,7 +594,7 @@ class TableProducers extends Component {
           let seconds = Math.floor(timer - minutes * 60);
 
           //console.log(`next: ${rotationTable.next_rotation_time}, last: ${rotationTable.last_rotation_time}`);
-
+          console.log(timer);
           if(timer <= 0) {
             return nodeFlag.COUNTDOWN_EXPIRED;
           }
@@ -656,6 +656,7 @@ class TableProducers extends Component {
     render() {
         //get sort, and classes for table headers
         const {sortBy} = this.state;
+        console.log(this.state.rotationTable);
         const prodNameClass = () => {
             let prodClass = 'sortable';
             switch(sortBy){

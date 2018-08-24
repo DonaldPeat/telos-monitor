@@ -28,14 +28,26 @@ module.exports = {
 			getProducerIps(removeOldIpData, filteredBcProds);
 		}*/
 
-		async function getBcProds(getProducerIps){
-			const req = await axios.post(
+		function getBcProds(getProducerIps){
+			// console.log('testing this function');
+			// const req = await axios.post(
+			// 	GET_PRODUCERS_ENDPOINT,
+			// 	JSON.stringify({'json': true, 'limit': 1000})
+			// );
+			// const res = await req.json();
+			// const filteredBcProds = bcProds.rows().filter(item => item.is_active === 1);
+			// console.log(filteredBcProds);
+			//getProducerIps(removeOldIpData, filteredBcProds);
+			const request = axios.post(
 				GET_PRODUCERS_ENDPOINT,
 				JSON.stringify({'json': true, 'limit': 1000})
 			);
-			const res = await req.json();
-			const filteredBcProds = bcProds.rows().filter(item => item.is_active === 1);
-			getProducerIps(removeOldIpData, filteredBcProds);
+
+			request.then(res => {
+				console.log(res.data);
+			}).catch(error => {
+				console.log(error);
+			});
 		}
 
 		const getProducerIps = (removeOldIpData, bcProds) => {

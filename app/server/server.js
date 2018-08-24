@@ -23,9 +23,11 @@ mongoose.connect(_mongoURL, {useNewUrlParser:true})
     });
 
 //ip cron task
-var Tasks = require('./tasks/index');
+//var Tasks = require('./tasks/index');
+//Tasks.getLatAndLong();
+//Tasks.scheduleGeoTasks();
+const Tasks = require('./tasks/index');
 Tasks.getLatAndLong();
-Tasks.scheduleGeoTasks();
 
 var accountRouter = require('./routes/accountRouter');
 var emailRouter = require('./routes/emailRouter');
