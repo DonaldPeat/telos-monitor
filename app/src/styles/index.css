@@ -135,6 +135,13 @@ a:active {
 	margin-left: 3em;
 }
 
+@media (min-width: 768px) {
+	#map_modal .modal-lg {
+		width: 90%;
+		max-width:1200px;
+	}
+}
+
 .testnet_status_btn.btn.btn-primary,
 .testnet_status_btn.btn.btn-primary:focus,
 .testnet_status_btn.btn.btn-primary:active {
@@ -148,6 +155,11 @@ a:active {
 
 .testnet_status_btn.btn.btn-primary:hover {
 	background-color: #544b42;
+}
+
+/*map*/
+.map_info_table tr td:first-child {
+	padding-right: 5px;
 }
 
 /* footer */
@@ -276,3 +288,13 @@ a:active {
 	color: #777;
 	font-size: 1.1em;
 }
+
+.status{
+	margin-top: 1em;
+	background: rgb(216, 214, 214);
+	border-radius: 5px;
+}
+.status > p {
+	padding: .5em;
+}
+

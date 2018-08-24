@@ -24,10 +24,39 @@ export default {
     }
   },
 
+  getProducersTable: async() => {
+    try {
+      var response = await axios.post(
+          config.endPoint + 'v1/chain/get_table_rows',
+          JSON.stringify({
+            'code': 'eosio',
+            'json': true,
+            'scope': 'eosio',
+            'table': 'producers'
+          }));
+      return response.data;
+    } catch (error) {
+      // console.error(error);
+      return null;
+    }
+  },
+
   getBlockInfo: async(num) => {
     try {
       var response = await axios.post(
           config.endPoint + 'v1/chain/get_block',
+          JSON.stringify({'block_num_or_id': num}));
+      return response.data;
+    } catch (error) {
+      // console.error(error);
+      return null;
+    }
+  },
+
+  getBlockHeaderState: async(num) => {
+    try {
+      var response = await axios.post(
+          config.endPoint + 'v1/chain/get_block_header_state',
           JSON.stringify({'block_num_or_id': num}));
       return response.data;
     } catch (error) {
@@ -69,7 +98,23 @@ export default {
             'scope': 'eosio',
             'table': 'global'
           }));
-          return response.data;
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  },
+
+  getProducersRotation: async() => {
+    try {
+      var response = await axios.post(
+          config.endPoint + 'v1/chain/get_table_rows', JSON.stringify({
+            'code': 'eosio',
+            'json': true,
+            'scope': 'eosio',
+            'table': 'rotations'
+          }));
+      return response.data;
     } catch (error) {
       console.error(error);
       return null;

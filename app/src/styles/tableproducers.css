@@ -43,6 +43,41 @@
     align-self: center;
 }
 
+th.sortable {
+    position: relative;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+th.sortable::before {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    font-family: "FontAwesome";
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.sortByProd::before {
+    content: "\f0d7";
+}
+
+.sortByProdRev::before {
+    content: "\f0d8";
+}
+
 .progress-bar-success{
     background-color: #F69A3C;
+}
+
+.bp_rotate_out,
+.bp_rotate_in {
+    display: inline-block;
+    margin-left: 20px;
+    cursor: auto;
+}
+
+.bp_rotate_in {
+    color: #468847;
 }

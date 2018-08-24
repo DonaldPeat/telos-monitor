@@ -461,9 +461,9 @@ class ModalRegisterProducer extends Component {
             />
             <FormCustomControl
                 id="txtTelegramChannel"
-                label="Telegram channel"
+                label="Telegram username"
                 type="text"
-                help="@yourTelegramChannel"
+                help="@yourTelegramUsername"
                 value={this.state.telegramChannel}
                 onChange={(arg) => this.onTelegramChannelchange(arg)}
             />
