@@ -17,7 +17,7 @@ class TableProducers extends Component {
       accounts: [],
       producers: [],
       activeProducerName: '',
-      //   totalVotesWheight: 0,
+      totalProducersVoteWeight:0,
       currentBlockNumber: 0,
       blocksProduced: [],
       blockTime: 0,
@@ -293,47 +293,10 @@ class TableProducers extends Component {
       }
     }
 
-    //need to figure out what this function does
-  //   async rotateBlockProducers(){
-  //       if(this.state.rotationStatus != nodeFlag.ROTATION_ACTIVE) return;
-
-  //       const rotation = await nodeInfoAPI.getProducersRotation();
-  //       if(rotation){
-  //         // console.log('rotationTable set in rotateBlockProducers');
-  //         this.setState({rotationTable: rotation.rows[0]}); 
-  //         //not sure this is actually necessary
-          
-  //       //bps out of index
-  //     console.log('no rotation set in rotateBlockProducers');  
-  //     this.setState({rotationStatus: nodeFlag.NO_ROTATION});
-
-  //   }
-  // }
-
     async rotateBlockProducers(){
       await true;
       return;
     }
-
-
-    // async checkForNewRotationTable(){
-    //   const {rotationTable, rotationStatus} = this.state;
-    //   if(rotationStatus != nodeFlag.ROTATION_ACTIVE) return;
-    //   const rotation = await nodeInfoAPI.getProducersRotation();
-      
-    //   if(rotation != null && rotationTable != null){
-    //     const newRotationTable = rotation.rows[0];
-    //     if(rotationTable.bp_currently_out != newRotationTable.bp_currently_out){
-    //       //new table
-    //       console.log('rotationTable set in checkForNewRotationTable');
-    //       this.setState({
-    //         rotationTable: newRotationTable,
-    //         previousRotationTable: rotationTable
-    //       });
-    //       this.setState({rotationStatus: nodeFlag.NO_ROTATION});
-    //     }
-    //   }
-    // }
 
     async checkForNewRotationTable(){
       const {rotationTable, rotationStatus} = this.state;
@@ -377,11 +340,13 @@ class TableProducers extends Component {
     let data = await nodeInfoAPI.getGlobalState();
     // 10000 decimals
     let totalVoteStaked = data.rows[0].total_activated_stake / 10000;
+    let tvw = data.rows[0].total_producer_vote_weight / 10000;
 
     if (totalVoteStaked !== 0) {
       let percentage = (totalVoteStaked * 100) / this.totalTLOS;
       this.setState({
         totalVotesStaked: totalVoteStaked,
+        totalProducersVoteWeight:tvw,
         percentageVoteStaked:
             percentage.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]
       });
@@ -429,17 +394,12 @@ class TableProducers extends Component {
   }
 
   getProducerPercentage(bp) {
-    if (parseFloat(bp.total_votes) > 0 && this.state.totalVotesStaked > 0) {
-      //   console.log(bp.owner, bp.total_votes / 10000);
+    if (parseInt(bp.total_votes) > 0 && this.state.totalVotesStaked > 0) {
       let bpVote = bp.total_votes / 10000;
-      let producerPercentage = (bpVote * 100) / this.state.totalVotesStaked;
-      let strProducerPercentage =
-          producerPercentage.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
-
+      let producerPercentage = (bpVote * 100) / this.state.totalProducersVoteWeight
+      let strProducerPercentage = producerPercentage.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
       return strProducerPercentage;
-      }
-    else
-      return 0;
+     } else return 0;
     }
 
   async getProducerLatency(producerIndex) {
