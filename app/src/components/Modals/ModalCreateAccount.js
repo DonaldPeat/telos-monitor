@@ -11,18 +11,16 @@ class ModalCreateAccount extends Component {
     this.state = {
         accountName:"",
         publicKey:"",
-        isAccountCreated: false
+        isAccountCreated: false,
+        serverResponse:null
     }
   }
 
   onModalHide() {
-
-    this.props.onHide();
+  this.props.onHide();
   }
 
   getProducerNameValidationState() {
-    // if (!this.state.producerNameTouched) return null;
-
     const producerRegex = new RegExp(/^[a-z1-5_\-]+$/);
     const {accountName} = this.state;
     const length = accountName.length;
@@ -34,7 +32,6 @@ class ModalCreateAccount extends Component {
   }
 
   getProducerPublicKeyValidationState() {
-    // if (!this.state.producerPublicKeyTouched) return null;
     const { publicKey } = this.state;
     const length = publicKey.length;
     const publicKeyRegex = new RegExp(/^[a-zA-Z0-9_\-]+$/);
@@ -49,23 +46,21 @@ class ModalCreateAccount extends Component {
     return null;
 }
 
-onAccountNameChange(arg) {
-  this.setState({accountName: arg.target.value});
-    }
+  onAccountNameChange(arg) { this.setState({accountName: arg.target.value}); }
 
-onPublicKeyChange(arg) {
-  this.setState({publicKey: arg.target.value});
-}
+  onPublicKeyChange(arg) { this.setState({publicKey: arg.target.value}) }
 
 onCreateAccount(){
     let account = {};
     account.name = this.state.accountName;
     account.pubKey = this.state.publicKey;
-
-    serverAPI.createAccount(account, (res)=>{
-        let response = res.data;
-
-        console.log("res",response.msg);
+    
+    serverAPI.createAccount(account, (res) => {
+      let response = res.data;
+      this.setState({
+          serverResponse: response,
+          isAccountCreated: !this.state.isAccountCreated
+        });
     });
 }
 
@@ -73,19 +68,13 @@ displayModalButtons() {
     if (!this.state.isAccountCreated) {
         return (
             <div>
-                <Button onClick={() => this.setState({isAccountCreated: !this.state.isAccountCreated})}>Test Toggle</Button>
                 <Button onClick={() => this.onModalHide()}>Close</Button>
-                <Button onClick={() => this.onCreateAccount()}>Create account</Button>
+                <Button 
+                    onClick={() => this.onCreateAccount()} 
+                    disabled={this.getProducerNameValidationState() === 'error' || this.getProducerPublicKeyValidationState() === 'error'}>Create account</Button>
             </div>
         );
-    } else {
-        return (
-            <div>
-                <Button onClick={() => this.setState({isAccountCreated: !this.state.isAccountCreated})}>Test Toggle</Button>
-                <Button onClick={() => this.onModalHide()}>Close</Button>
-            </div>
-        );
-    }
+    } else return (<div> <Button onClick={() => this.onModalHide()}>Close</Button> </div>);
 }
 
 displayCreateAccountForm(){
@@ -99,7 +88,6 @@ displayCreateAccountForm(){
                 help="length 12, lowercase a-z, 1-5"
                 value={this.state.accountName}
                 onChange={(arg) => this.onAccountNameChange(arg)}
-                // onFocus={() => this.setState({ producerNameTouched: true })}
             />
              <FormCustomControl
                 id="txtPublicKey"
@@ -109,20 +97,23 @@ displayCreateAccountForm(){
                 help="TLOS7d9vjuzCT67Jv9hZrBY8R3LhvHMrHepN1ArSeY3e1EKKaEUEc8"
                 value={this.state.publicKey}
                 onChange={(arg) => this.onPublicKeyChange(arg)}
-                // onFocus={() => this.setState({ producerPublicKeyTouched: true })}
             />
         </div>
     );
 }
 
 displayResponseMessage(){
+    if(this.state.serverResponse == null) return <h3>'Internal error. Please contact one our dev team on Telegram at https://t.me/TelosTestnet'</h3>
+                
     return (
-        <div className='createAccountResponseContainer'>
-            <h3>Response message here.</h3>
-        </div>
+            <Well>
+                <h3>{this.state.serverResponse.account_created == true ? "Account created" : "Account was not created"}</h3>
+                <p>{this.state.serverResponse.msg}</p>
+                <p><bold>Account name</bold>: {this.state.serverResponse.account}</p>
+                <p><bold>Public key</bold>: {this.state.serverResponse.pubKey}</p>
+            </Well>
     );
 }
-
 
 render() {
     const {isAccountCreated} = this.state;
@@ -139,7 +130,7 @@ render() {
                 {isAccountCreated ? this.displayResponseMessage() : this.displayCreateAccountForm()}
             </Modal.Body>
             <Modal.Footer>
-                    {this.displayModalButtons()}
+                {this.displayModalButtons()}
             </Modal.Footer>
         </Modal>
     );

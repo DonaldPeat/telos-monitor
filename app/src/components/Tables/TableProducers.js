@@ -110,6 +110,7 @@ class TableProducers extends Component {
       }
       
       if(!rotationTable) return;
+
       //check for no rotation
       if(rotationTable){
         if(rotationTable.next_rotation_time == rotationTable.last_rotation_time){
