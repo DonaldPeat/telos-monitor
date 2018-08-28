@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Button, FormControl, Modal, Well} from 'react-bootstrap';
 import serverAPI from '../../scripts/serverAPI';
+import nodeInfoAPI from '../../scripts/nodeInfo';
 import FormCustomControl from '../FormControls/FormCustomControl';
 
 class ModelFaucet extends Component {
@@ -35,14 +36,22 @@ class ModelFaucet extends Component {
     let account = {};
     account.name = this.state.accountName;
 
-    serverAPI.getTLOS(account, (res) => {
-      let response = res.data;
-
-      this.setState({
-        serverResponse: response,
-        accountGotTLOS: !this.state.accountGotTLOS
-      });
-    });
+    nodeInfoAPI.getAccountInfo(account.name).then(acc=>{
+      if (acc) {
+        serverAPI.getTLOS(account, (res) => {
+          let response = res.data;
+          this.setState({
+            serverResponse: response,
+            accountGotTLOS: !this.state.accountGotTLOS
+          });
+        });
+      }else {
+        this.setState({
+            serverResponse: {msg: "Account doesn't exist"},
+            accountGotTLOS: !this.state.accountGotTLOS
+          });
+      }
+    }).catch(err=> console.log(err));
   }
 
   displayModalButtons() {
