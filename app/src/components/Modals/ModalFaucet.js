@@ -1,6 +1,6 @@
 //I think that's what it's called.  Faucet.
 import React, {Component} from 'react';
-import {Modal, Button, ButtonGroup, FormGroup, FormControl} from 'react-bootstrap';
+import {Modal, Button, ButtonGroup, ButtonToolbar, ToggleButtonGroup, ToggleButton, FormGroup, FormControl} from 'react-bootstrap';
 import '../../styles/modal_faucet.css';
 
 export default class ModalFaucet extends Component {
@@ -43,7 +43,7 @@ export default class ModalFaucet extends Component {
                 {...this.props}
             >
                 <Modal.Header closeButton>
-                    <ButtonGroup className='pull-right'>
+                    {/*<ButtonGroup className='pull-right'>
                     	<Button 
                     		className={TLOS ? 'faucet_btn faucet_selected' : 'faucet_btn'}
                     		onClick={() => this.setState({TLOS: true})}
@@ -56,7 +56,13 @@ export default class ModalFaucet extends Component {
                     	>
                     		Token
                     	</Button>
-                    </ButtonGroup>
+                    </ButtonGroup>*/}
+					<ButtonToolbar>
+						<ToggleButtonGroup type="radio" name="options" defaultValue={'TLOS'}>
+							<ToggleButton value='TLOS'>TLOS</ToggleButton>
+							<ToggleButton value='Tokens'>Tokens</ToggleButton>
+						</ToggleButtonGroup>
+					</ButtonToolbar>
                 </Modal.Header>
                 <Modal.Body>
                 	{!formSubmitted ? this.renderForm() : this.renderSuccessMessage()}

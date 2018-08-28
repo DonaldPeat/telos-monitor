@@ -10,6 +10,7 @@ export default class ModalNodeMap extends Component {
 	}
 
 	render(){
+		console.log('map modal opened');
 		return (
 			<Modal
 				{...this.props}
@@ -20,17 +21,13 @@ export default class ModalNodeMap extends Component {
 			  	<h2>Node Map</h2>
 			  </Modal.Header>
 			  <Modal.Body>
-			  	{this.props.ip_locations.length > 0 ? 
-			  		<ProducerMap
-			  			producers={this.props.producers}
-			  			loadingElement={<div style={{ height: `100%` }} />}
-			  			containerElement={<div style={{ height: `800px` }} />}
-			  			mapElement={<div style={{ height: `100%` }} />}
-			  			googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${MAPS_API_KEY}`}
-			  			ip_locations={this.props.ip_locations} /> 
-			  		: 
-			  		<div>Getting Nodes...</div>
-			  	}
+		  		<ProducerMap
+		  			producers={this.props.producers}
+		  			loadingElement={<div style={{ height: `100%` }} />}
+		  			containerElement={<div style={{ height: `800px` }} />}
+		  			mapElement={<div style={{ height: `100%` }} />}
+		  			googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${MAPS_API_KEY}`}
+		  			ip_locations={this.props.ip_locations} />
 			  </Modal.Body>
 			</Modal>
 		);

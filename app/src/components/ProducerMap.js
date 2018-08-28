@@ -45,11 +45,17 @@ const clusterStyle = [
 ];
 
 const ProducerMap = ({ip_locations, producers}) => {
-	const get_markers = ip_locations.map((loc, i) => {
-		if(typeof loc.latitude != 'number') return;
-		const thisProd = producers.find(prod => prod.name === loc.name);
-		return (<MarkerWithInfo key={i} loc={loc} producer={thisProd} />);
-	});
+	let get_markers = [];
+	if(ip_locations.length > 0){
+		get_markers = ip_locations.map((loc, i) => {
+			if(!loc) return;
+			if(typeof loc.latitude != 'number') return;
+			const thisProd = producers.find(prod => prod.name === loc.name);
+			return (<MarkerWithInfo key={i} loc={loc} producer={thisProd} />);
+		});
+	}
+
+	console.log('producer map open');
 	return (
 		<GoogleMap
 			onClick={e => console.log(e)}

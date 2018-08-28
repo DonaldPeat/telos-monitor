@@ -30,6 +30,7 @@ export default class InfoBar extends Component {
 
 	render(){
 		const {producers} = this.state;
+		console.log(this.state.ip_locations);
     	return (
 			<div>
 				<Row>
