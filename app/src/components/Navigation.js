@@ -4,11 +4,18 @@ import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import logo from '../img/Telos_MarketingSite_TelosLogo_500px.png';
 import ModalRegisterProducer from './Modals/ModalRegisterProducer';
 import ModalCreateAccount from './Modals/ModalCreateAccount';
+import ModalFaucet from './Modals/ModalFaucet';
 
 class Navigation extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {}
+	}
+
+	showModalFaucet() {
+		this.setState({
+			showModalFaucet: !this.state.showModalFaucet
+		});
 	}
 
 	showModalRegisterProducer() {
@@ -45,11 +52,14 @@ class Navigation extends Component {
 							<NavItem onClick={() => this.props.history.push('/p2plist')}>P2P LIST</NavItem>
 							<NavItem onClick={() => this.showModalRegisterProducer()}>REGISTER</NavItem>
 							<NavItem onClick={() => this.showModalCreateAccount()} >CREATE ACCOUNT</NavItem>
+							<NavItem onClick={() => this.showModalFaucet()}>FAUCET</NavItem>
 						</Nav>
 					</Navbar.Collapse>
 				</Navbar>
+
 				<ModalCreateAccount show={this.state.showModalCreateAccount} onHide={() => this.showModalCreateAccount()} />
 				<ModalRegisterProducer show={this.state.showModalRegisterProd} onHide={() => this.showModalRegisterProducer()} />
+				<ModalFaucet show={this.state.showModalFaucet} onHide={() => this.showModalFaucet()} />
 			</div>
 		);
 	}

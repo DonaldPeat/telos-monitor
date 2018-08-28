@@ -12,12 +12,12 @@ function validateTLOSKey(key) {
   return regexResult;
 }
 
-function accountExists(pubKey) {
-    const verifyAccountsCMD = `teclos get accounts ${pubKey}`
-    var resultAccountsCMDJSON = shell.exec(verifyAccountsCMD);
-    var result = JSON.parse(resultAccountsCMDJSON);
-
-    return result.account_names.length > 0;
+async function accountExists(accountName) {
+    const verifyAccountsCMD = `teclos get account ${accountName}`
+    //if account doesn't exist it command throws an execption.
+    await shell.exec(verifyAccountsCMD, async (code, stdout, stderr) => {
+       return code != 1
+    });
 }
 
 teclosRouter.route('/:prodKey').get((req, res) => {
@@ -38,7 +38,7 @@ teclosRouter.route('/:prodKey').get((req, res) => {
             var result = JSON.parse(resultAccountsCMDJSON)
 
             shell.echo("---END EXEC---");
-            res.json({
+            res.status(200).json({
                 "error": "",
                 "accounts": result.account_names,
                 "numberAccounts": result.account_names.length
@@ -46,14 +46,14 @@ teclosRouter.route('/:prodKey').get((req, res) => {
         } catch (error) {
             shell.echo("---------ERROR---------");
             shell.echo(error);
-            res.json({
+            res.status(500).json({
                 "error": "invalid prodKey",
                 "accounts": [],
                 "numberAccounts": -1
             });
         }
     } else {
-        res.json({
+        res.status(400).json({
             "error": "prodKey is undefined",
             "accounts": [],
             "numberAccounts": -1
@@ -92,14 +92,14 @@ teclosRouter.route('/').post((req, res) => {
         var transferResult = shell.exec(transferCMD);
         shell.echo("---END EXEC---");
 
-        res.json({
+        res.status(200).json({
             "error": "",
             "createAccountResult": createAccountResult,
             "transferResult": transferResult
         });
 
     } else {
-        res.json({
+        res.status(400).json({
             "error": "producer is undefined",
             "createAccountResult": "",
             "transferResult": ""
@@ -108,7 +108,7 @@ teclosRouter.route('/').post((req, res) => {
 
 });
 
-teclosRouter.route('/createaccount').post((req, res)=>{
+teclosRouter.route('/createaccount').post(async (req, res)=>{
     const SYMBOL = "TLOS";
     const CPU = "1000";
     const NET = "1000";
@@ -128,13 +128,13 @@ teclosRouter.route('/createaccount').post((req, res)=>{
         
         if(!validateTLOSKey(accPubKey)) throw new Error("invalid public key");
 
-        if(accountExists(accPubKey)) throw new Error("account already exists");
+        if(await !accountExists(accName)) throw new Error("account doesn't exist");
 
         shell.echo("---------START CREATING ACCOUNT---------");
         shell.exec(teclosUnlockWallet);
         shell.exec(createAccountCMD);
         shell.echo("---------END CREATING ACCOUNT---------");
-        res.json({
+        res.status(200).json({
             "account_created":true,
             "msg": "Account was created successfully",
             "account": accName,
@@ -142,51 +142,50 @@ teclosRouter.route('/createaccount').post((req, res)=>{
         });
       } catch (error) {
         shell.echo("---------ERROR CREATING ACCOUNT---------");
-        res.json({
+        res.status(500).json({
             "account_created":false,
-            "msg": "Account name already exists or invalid public key"
+            "msg": "Account name already exists or invalid public key",
+            "account": "",
+            "pubKey": ""
         });
       }
     } else {
-        res.json({
+        res.status(400).json({
             "account_created":false,
-            "msg": "Bad request."
+            "msg": "Bad request.",
+            "account": "",
+            "pubKey": ""
         });
     }
 
 })
 
-teclosRouter.route('/gettlos').post((req, res) => {
+teclosRouter.route('/gettlos').post(async (req, res) => {
   const SYMBOL = 'TLOS';
   const MEMO = 'Transfer from TLOS Faucet';
+  const AMOUNT = "100";
 
   var account = req.body;
   if (account != null) {
     try {
       var accName = account.name;
-      var accPubKey = account.pubKey;
-      var amount = account.amount;
       
-      const teclosUnlockWallet = '/home/dev/telosfoundation/grow/grow.py wallet unlock';
-      const transferCMD = `teclos transfer eosio ${accountName} "${amount}.0000 ${SYMBOL}" "${MEMO}"`;
-      
-      if(accountExists(accPubKey)) throw new Error("account already exists");
+      //const teclosUnlockWallet = '/home/dev/telosfoundation/grow/grow.py wallet unlock';
+      const teclosUnlockWallet = '/home/dev/telos-dev-test/grow/grow.py wallet unlock';
+      const transferCMD = `teclos transfer eosio ${accName} "${AMOUNT}.0000 ${SYMBOL}" "${MEMO}"`;
+      if(await !accountExists(accName)) throw new Error("account doesn't exist");
       
       shell.echo("---------START TRANSFER TLOS---------");
       shell.exec(teclosUnlockWallet);
       shell.exec(transferCMD);
       shell.echo("---------END TRANSFER TLOS-----------");
 
-      res.json({
-        "msg": ""
-      });
+      res.status(200).json({"msg": "TLOS transfered successfully"});
     } catch (error) {
-        shell.echo("---------ERROR TRANSFERIR TLOS---------");
-        res.json({
-            "msg": ""
-        });
+        shell.echo("---------ERROR TRANSFERING TLOS---------");
+        res.status(500).json({"msg": "Teclos internal error"});
     }
-  } else res.json({"msg": ""});
+  } else res.status(400).json({"msg": "Invalid parameters"});
 })
 
 module.exports = teclosRouter;
