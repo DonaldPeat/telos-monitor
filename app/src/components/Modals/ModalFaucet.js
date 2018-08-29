@@ -1,73 +1,128 @@
-//I think that's what it's called.  Faucet.
 import React, {Component} from 'react';
-import {Modal, Button, ButtonGroup, ButtonToolbar, ToggleButtonGroup, ToggleButton, FormGroup, FormControl} from 'react-bootstrap';
-import '../../styles/modal_faucet.css';
+import {Button, FormControl, Modal, Well} from 'react-bootstrap';
+import serverAPI from '../../scripts/serverAPI';
+import nodeInfoAPI from '../../scripts/nodeInfo';
+import FormCustomControl from '../FormControls/FormCustomControl';
 
-export default class ModalFaucet extends Component {
-	constructor(){
-		super();
+class ModelFaucet extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      accountName: '',
+      accountGotTLOS: false,
+    }
+  }
 
-		this.state = {
-			TLOS: true, //vs tokens
-			formSubmitted: false,
-		};
-	}
+  onModalHide() {
+    this.props.onHide();
+  }
 
-	onHide(){
-		this.props.onHide();
-	}
+  getAccountNameValidationState() {
+    const producerRegex = new RegExp(/^[a-z1-5_\-]+$/);
+    const {accountName} = this.state;
+    const length = accountName.length;
 
-	handleSubmit(e){
-		e.preventDefault();
-	}
+    if (length != 12 || !producerRegex.test(accountName))
+      return 'error';
+    else
+      return 'success';
+  }
 
-	renderForm(){
-		return (
-			<form>
+  onAccountNameChange(arg) {
+    this.setState({accountName: arg.target.value});
+  }
 
-			</form>
-		);
-	}
+  onGetTLOS() {
+    let account = {};
+    account.name = this.state.accountName;
 
-	renderSuccessMessage(){
-		return (
-			<div>success</div>
-		);
-	}
+    nodeInfoAPI.getAccountInfo(account.name).then(acc=>{
+      if (acc) {
+        serverAPI.getTLOS(account, (res) => {
+          let response = res.data;
+          this.setState({
+            serverResponse: response,
+            accountGotTLOS: !this.state.accountGotTLOS
+          });
+        });
+      }else {
+        this.setState({
+            serverResponse: {msg: "Account doesn't exist"},
+            accountGotTLOS: !this.state.accountGotTLOS
+          });
+      }
+    }).catch(err=> console.log(err));
+  }
 
-	render(){
-		const {formSubmitted, TLOS} = this.state;
-
-		return (
-            <Modal
-                {...this.props}
-            >
-                <Modal.Header closeButton>
-                    {/*<ButtonGroup className='pull-right'>
-                    	<Button 
-                    		className={TLOS ? 'faucet_btn faucet_selected' : 'faucet_btn'}
-                    		onClick={() => this.setState({TLOS: true})}
-                    	>
-                    		TLOS
-                    	</Button>
-                    	<Button
-                    		className={!TLOS ? 'faucet_btn faucet_selected' : 'faucet_btn'}
-                    		onClick={() => this.setState({TLOS: false})}
-                    	>
-                    		Token
-                    	</Button>
-                    </ButtonGroup>*/}
-					<ButtonToolbar>
-						<ToggleButtonGroup type="radio" name="options" defaultValue={'TLOS'}>
-							<ToggleButton value='TLOS'>TLOS</ToggleButton>
-							<ToggleButton value='Tokens'>Tokens</ToggleButton>
-						</ToggleButtonGroup>
-					</ButtonToolbar>
-                </Modal.Header>
-                <Modal.Body>
-                	{!formSubmitted ? this.renderForm() : this.renderSuccessMessage()}
-                </Modal.Body>
-            </Modal>
-		);
-	}
+  displayModalButtons() {
+    if (!this.state.accountGotTLOS) {
+        return (
+            <div>
+                <Button onClick={() => this.onModalHide()}>Close</Button>
+                <Button 
+                    onClick={() => this.onGetTLOS()} 
+                    disabled={this.getAccountNameValidationState() === 'error'}>Get TLOS</Button>
+            </div>
+        );
+    } else return (<div> <Button onClick={() => this.onModalHide()}>Close</Button> </div>);
 }
+
+displayCreateAccountForm(){
+    return (
+        <div>
+            <FormCustomControl
+                id="txtAccountName"
+                validationstate={this.getAccountNameValidationState()}
+                label="Account name"
+                type="text"
+                help="length 12, lowercase a-z, 1-5"
+                value={this.state.accountName}
+                onChange={(arg) => this.onAccountNameChange(arg)}
+            />
+        </div>
+    );
+    }
+
+    displayResponseMessage() {
+      if (this.state.serverResponse == null) return (<Well><h3>Internal error. Please contact one our dev team on Telegram at https://t.me/TelosTestnet</h3></Well>);
+      else if (this.state.serverResponse.msg){
+        return (
+            <Well>
+                <h3>TLOS wasn't transfered.</h3>
+                <p>{this.state.serverResponse.msg}</p>
+            </Well>
+        );
+      } else { 
+        var timeRequested = new Date(this.state.serverResponse.timeRequested).toString();
+        return (
+            <Well>
+                <h3>TLOS transfered successfully</h3>
+                <p><bold>Account name</bold>: {this.state.serverResponse.name}</p>
+                <p><bold>Time requested</bold>: {timeRequested}</p>
+            </Well>
+        );
+      }          
+}
+
+  render() {
+    const {accountGotTLOS} = this.state;
+    return (
+        <Modal
+            {...this.props}
+            bsSize="large"
+            aria-labelledby="contained-modal-title-lg">
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-lg">TLOS Faucet</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                {accountGotTLOS ? this.displayResponseMessage() : this.displayCreateAccountForm()}
+            </Modal.Body>
+            <Modal.Footer>
+                {this.displayModalButtons()}
+            </Modal.Footer>
+        </Modal>
+    );
+    }
+    }
+
+  export default ModelFaucet;

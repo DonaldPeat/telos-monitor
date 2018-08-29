@@ -91,8 +91,8 @@ module.exports = {
 
 
 				//use p2pProds for testing, but bcProdsData late on
-				filterServerData(p2pProds, updateIpData);
-				//filterServerData(bcProdsData, updateIpData);
+				//filterServerData(p2pProds, updateIpData);
+				filterServerData(bcProdsData, updateIpData);
 			});
 		};
 

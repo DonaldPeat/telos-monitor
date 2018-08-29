@@ -291,6 +291,10 @@ a:active {
 
 .status{
 	margin-top: 1em;
-	background: lightgrey;
+	background: rgb(216, 214, 214);
+	border-radius: 5px;
+}
+.status > p {
+	padding: .5em;
 }
 

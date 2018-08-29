@@ -12,6 +12,12 @@ class Navigation extends Component {
 		this.state = {}
 	}
 
+	showModalFaucet() {
+		this.setState({
+			showModalFaucet: !this.state.showModalFaucet
+		});
+	}
+
 	showModalRegisterProducer() {
 		this.setState({
 			showModalRegisterProd: !this.state.showModalRegisterProd
@@ -50,13 +56,13 @@ class Navigation extends Component {
 							<NavItem onClick={() => this.props.history.push('/blocks')}>BLOCKS</NavItem>
 							<NavItem onClick={() => this.props.history.push('/transactions')}>TRANSACTIONS</NavItem>
 							<NavItem onClick={() => this.props.history.push('/p2plist')}>P2P LIST</NavItem>
-							{/* <NavItem onClick={() => this.props.history.push('/stages/stage-1')}>STAGES</NavItem> */}
 							<NavItem onClick={() => this.showModalRegisterProducer()}>REGISTER</NavItem>
-							{/* <NavItem onClick={() => this.showModalCreateAccount()} >CREATE ACCOUNT</NavItem> */}
+							<NavItem onClick={() => this.showModalCreateAccount()} >CREATE ACCOUNT</NavItem>
 							<NavItem onClick={() => this.showModalFaucet()}>FAUCET</NavItem>
 						</Nav>
 					</Navbar.Collapse>
 				</Navbar>
+
 				<ModalCreateAccount show={this.state.showModalCreateAccount} onHide={() => this.showModalCreateAccount()} />
 				<ModalRegisterProducer show={this.state.showModalRegisterProd} onHide={() => this.showModalRegisterProducer()} />
 				<ModalFaucet show={this.state.showModalFaucet} onHide={() => this.showModalFaucet()} />

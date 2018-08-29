@@ -44,5 +44,18 @@ export default {
         axios.post(netConfig.apiEndpoint + 'api/v1/producer/createaccount', account )
             .then(value => cb(value))
             .catch(err => console.error(err));
+    },
+    
+    getTLOS: (account, cb) => {
+        axios.post(netConfig.apiEndpoint + 'api/v1/producer/gettlos', account )
+            .then(value => cb(value))
+            .catch((err) => {
+                var response = err.response;
+                if(response){
+                    if(response.status === 403){
+                        cb(response);
+                    } else console.log(err, err.response);
+                } else console.log(err, err.response);
+            });
     }
 }

@@ -55,7 +55,6 @@ const ProducerMap = ({ip_locations, producers}) => {
 		});
 	}
 
-	console.log('producer map open');
 	return (
 		<GoogleMap
 			onClick={e => console.log(e)}
