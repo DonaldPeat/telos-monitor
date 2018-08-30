@@ -104,7 +104,7 @@ class TableProducers extends Component {
       const {lastRotationTime, rotationTable, scheduleVersion, rotationStatus} = this.state;
       
       if(nextRotation === nodeFlag.COUNTDOWN_EXPIRED){
-        console.log(nextRotation);
+        //console.log(nextRotation);
         this.setState({rotationStatus: nodeFlag.WAITING_FOR_PROPOSAL});
         return;
       }
@@ -175,7 +175,7 @@ class TableProducers extends Component {
           const {sbp_currently_in, bp_currently_out} = rotationTable;
           
           if(pendingProducers.findIndex(bp=> bp.producer_name === sbp_currently_in) > -1){
-            console.log('set pending after findIndex producer name in pendingProducers')
+            //console.log('set pending after findIndex producer name in pendingProducers')
             this.setState({rotationStatus: nodeFlag.SCHEDULE_PENDING});
           }
           else if(activeProducers.findIndex(bp=> bp.producer_name === sbp_currently_in) > -1)
@@ -191,7 +191,7 @@ class TableProducers extends Component {
               this.setState({rotationStatus: nodeFlag.ROTATION_ACTIVE});
             }
           } else{
-            console.log('set pending after versions match, but sbp not in arrays');
+            //console.log('set pending after versions match, but sbp not in arrays');
             this.setState({rotationStatus: nodeFlag.SCHEDULE_PENDING});
             //console.log('countdown started, but sbp not in pending or active');
           }
@@ -202,7 +202,7 @@ class TableProducers extends Component {
         const rs = await this.getRotationSchedule();
         if(rs){
           if(rs.pending_schedule.version > rs.header.schedule_version){
-            console.log('set pending after conditions not met, but pending version > header version');
+            //console.log('set pending after conditions not met, but pending version > header version');
             this.setState({rotationStatus: nodeFlag.SCHEDULE_PENDING});
             return;
           }
@@ -270,7 +270,7 @@ class TableProducers extends Component {
       } else this.setState({rotationStatus: nodeFlag.EMPTY_ROTATION_TABLE});
       
       // console.log("rotation 1 ", rotationTable);
-      console.log('rotation table set in init');
+      //console.log('rotation table set in init');
       this.setState({
         rotationTable: rotationTable,
          scheduleVersion: blockHeaderState != null ? blockHeaderState.header.version : 0
@@ -303,7 +303,7 @@ class TableProducers extends Component {
       const {rotationTable, rotationStatus} = this.state;
       const newRotation = await this.getRotationTable();
       if(!newRotation){
-        console.log('no new rotation. NO_ROTATION set in checkForNewRotationTable');
+        //console.log('no new rotation. NO_ROTATION set in checkForNewRotationTable');
         this.setState({rotationStatus: nodeFlag.NO_ROTATION});
         return;
       }
@@ -556,7 +556,7 @@ class TableProducers extends Component {
           let seconds = Math.floor(timer - minutes * 60);
 
           //console.log(`next: ${rotationTable.next_rotation_time}, last: ${rotationTable.last_rotation_time}`);
-
+          //console.log(timer);
           if(timer <= 0) {
             return nodeFlag.COUNTDOWN_EXPIRED;
           }
@@ -618,6 +618,7 @@ class TableProducers extends Component {
     render() {
         //get sort, and classes for table headers
         const {sortBy} = this.state;
+        //console.log(this.state.rotationTable);
         const prodNameClass = () => {
             let prodClass = 'sortable';
             switch(sortBy){

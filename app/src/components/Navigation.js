@@ -30,6 +30,12 @@ class Navigation extends Component {
 		});
 	}
 
+	showModalFaucet(){
+		this.setState({
+			showModalFaucet: !this.state.showModalFaucet
+		});
+	}
+
 
 	render() {
 		return (

@@ -22,7 +22,6 @@ export default class InfoBar extends Component {
 			this.setState({ip_locations: seperateIdenticalCoords(res.data)});
 		
 		serverAPI.getAllAccounts(res => {
-			//console.log({producers: res.data.filter(item => )});
 			this.setState({producers: res.data});
 		});
 	});
