@@ -42,7 +42,7 @@ module.exports = {
 						const currentTime = new Date();
 						const seconds = (currentTime.getTime() - timeDbWritten.getTime()) / 1000;
 						
-						//check if 30 minutes elapsed
+						//check if 15 minutes elapsed
 						if(seconds > 900){
 							console.log('replacing the geo db');
 							GeolocateModel.remove({}, err => {
@@ -88,14 +88,11 @@ module.exports = {
 					return;
 				}
 				const bcProdsData = bcProducers.map(bcProd => {
-					const indexOfProducer = p2pProds.indexOf(p2pProd => p2pProd.name === bcProd.owner);
+					const indexOfProducer = p2pProds.findIndex(p2pProd => p2pProd.name === bcProd.owner);
 					if(indexOfProducer > -1) return p2pProds[indexOfProducer];
 					return null;
 				}).filter(item => item != null);
 
-
-				//use p2pProds for testing, but bcProdsData late on
-				//filterServerData(p2pProds, updateIpData);
 				filterServerData(bcProdsData, updateIpData);
 			});
 		};
@@ -132,7 +129,7 @@ module.exports = {
 			}
 
 			bcProducers.forEach(prod => {
-				if(prod.url.indexOf('0.0.0.0') < 0){
+				if(prod.url.indexOf('0.0.0.0') < 0 && prod.url != '127.0.0.1'){
 					//not local, use ipstack to get coordinates of server
 					axios.get(IP_API_ENDPOINT + prod.url, {
 						params: {
@@ -164,7 +161,7 @@ module.exports = {
 					})
 					.then(res => {
 						if(res.data.status.code == 200){
-							if(res.data.longitude != null && res.data.latitude != null){
+							if(res.data.results[0].geometry.lng != null && res.data.results[0].geometry.lat != null){
 								const geoModel = new GeolocateModel({
 									ip: prod.serverLocation,
 									name: prod.name,
@@ -173,6 +170,8 @@ module.exports = {
 									active: prod.active
 								});
 								geoModel.save();
+							}else{
+								console.log(res.data);
 							}
 						}
 					})
@@ -180,7 +179,6 @@ module.exports = {
 				}
 			});
 		};
-
 		//initialize.
 		checkGeoDb(initProducers, filterProducers);
 	}

@@ -45,6 +45,7 @@ const clusterStyle = [
 ];
 
 const ProducerMap = ({ip_locations, producers}) => {
+	console.log(producers);
 	let get_markers = [];
 	if(ip_locations.length > 0){
 		get_markers = ip_locations.map((loc, i) => {
@@ -92,7 +93,7 @@ class MarkerWithInfo extends Component {
 				onClick={() => this.setState({open: true})}>
 				
 				{/*get data for this server above*/}
- 				{this.state.open && 
+ 				{this.state.open && producer != null && producer != undefined && 
 				<InfoWindow position={{lat: this.props.loc.latitude, lng: this.props.loc.longitude}}
 			                onCloseClick={() => this.setState({open: false})}>
 				    <div style={{position: 'relative'}}>
