@@ -10,22 +10,20 @@ const IP_API_KEY = process.env.IP_API_KEY;
 const GEOCODE_ENDPOINT = 'https://api.opencagedata.com/geocode/v1/json';
 const GEOCODE_API_KEY = process.env.GEOCODE_API_KEY;
 
-//we will have to change this to match the netconfig file
-//const GET_PRODUCERS_ENDPOINT = 'http://64.38.144.182:8888/v1/chain/get_producers';
-const GET_PRODUCERS_ENDPOINT = 'http://64.38.144.179:8888/v1/chain/get_producers';
+//we will have to keep this updated to match netConfig file
+const GET_PRODUCERS_ENDPOINT = 'http://localhost:8888/v1/chain/get_producers';
 
 module.exports = {
 	scheduleGeoTasks: function(){
-		cron.schedule('*/15 * * * *', () => {
+		cron.schedule('*/5 * * * *', () => {
 			this.getLatAndLong();
 		});
 	},
 	getLatAndLong: function(){
-		//eventually, gonna check entries in geo db for timestamps.  Before other operations.
+		//check geo db for 1. entries exist, and 2. how recent, before proceeding
 		const checkGeoDb = (initProducers, filterProducers) => {
 			GeolocateModel.find({}, (error, items) => {
 				if(error) console.log(error);
-
 				//if empty, populate table
 				if(items.length === 0){
 					initProducers(filterProducers);
@@ -45,7 +43,7 @@ module.exports = {
 						const seconds = (currentTime.getTime() - timeDbWritten.getTime()) / 1000;
 						
 						//check if 30 minutes elapsed
-						if(seconds > 1800){
+						if(seconds > 900){
 							console.log('replacing the geo db');
 							GeolocateModel.remove({}, err => {
 								if(err) console.log(err);
@@ -54,6 +52,12 @@ module.exports = {
 						}else{
 							console.log('its too soon to update the geo db');
 						}
+					}else{
+						console.log('no timestamp, db probably old entries');
+						GeolocateModel.remove({}, err => {
+							if(err) console.log(err);
+							else initProducers(filterProducers);
+						});
 					}
 				}
 			});
@@ -129,26 +133,29 @@ module.exports = {
 
 			bcProducers.forEach(prod => {
 				if(prod.url.indexOf('0.0.0.0') < 0){
-					//not local, use ipstack
+					//not local, use ipstack to get coordinates of server
 					axios.get(IP_API_ENDPOINT + prod.url, {
 						params: {
 							access_key: IP_API_KEY
 						}
 					})
 					.then(res => {
-						const geoModel = new GeolocateModel({
-							ip: res.data.ip,
-							name: prod.name,
-							longitude: res.data.longitude,
-							latitude: res.data.latitude,
-							active: prod.active
-						});
-						geoModel.save();
+						//we don't want to write to db if we don't have lat and long
+						if(res.data.longitude != null && res.data.latitude != null){
+							const geoModel = new GeolocateModel({
+								ip: res.data.ip,
+								name: prod.name,
+								longitude: res.data.longitude,
+								latitude: res.data.latitude,
+								active: prod.active
+							});
+							geoModel.save();
+						}
 					})
 					.catch(err => console.log(err));					
 
 				}else{
-					//local host, use geocode api
+					//local host, use geocode api to get coordinates of serverLocation
 					axios.get(GEOCODE_ENDPOINT, {
 						params: {
 							key: GEOCODE_API_KEY,
@@ -157,14 +164,16 @@ module.exports = {
 					})
 					.then(res => {
 						if(res.data.status.code == 200){
-							const geoModel = new GeolocateModel({
-								ip: prod.serverLocation,
-								name: prod.name,
-								longitude: res.data.results[0].geometry.lng,
-								latitude: res.data.results[0].geometry.lat,
-								active: prod.active
-							});
-							geoModel.save();
+							if(res.data.longitude != null && res.data.latitude != null){
+								const geoModel = new GeolocateModel({
+									ip: prod.serverLocation,
+									name: prod.name,
+									longitude: res.data.results[0].geometry.lng,
+									latitude: res.data.results[0].geometry.lat,
+									active: prod.active
+								});
+								geoModel.save();
+							}
 						}
 					})
 					.catch(err => console.log(err));

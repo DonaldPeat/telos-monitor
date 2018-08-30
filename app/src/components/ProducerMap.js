@@ -57,7 +57,6 @@ const ProducerMap = ({ip_locations, producers}) => {
 
 	return (
 		<GoogleMap
-			onClick={e => console.log(e)}
 			defaultZoom={2}
 			defaultCenter={{lat: 13.491665, lng: -92.508646}}
 			defaultOptions={{

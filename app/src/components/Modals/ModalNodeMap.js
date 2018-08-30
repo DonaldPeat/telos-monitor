@@ -10,7 +10,6 @@ export default class ModalNodeMap extends Component {
 	}
 
 	render(){
-		console.log('map modal opened');
 		return (
 			<Modal
 				{...this.props}
